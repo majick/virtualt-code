@@ -37,6 +37,7 @@
 extern "C" {
 #endif
 extern int gDelayUpdateKeys;
+void initpref(void);
 void initdisplay(void);
 void drawbyte(int driver, int column, int value);
 void power_down();
