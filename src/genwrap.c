@@ -94,6 +94,7 @@ char* DLLCALL lastchar(const char* str)
 	return((char*)str);
 }
 
+#ifndef WIN32
 /****************************************************************************/
 /* Return character value of C-escaped (\) character						*/
 /****************************************************************************/
@@ -161,6 +162,8 @@ char* DLLCALL unescape_cstr(char* str)
 	free(buf);
 	return(str);
 }
+
+#endif
 
 /****************************************************************************/
 /* Convert ASCIIZ string to upper case										*/

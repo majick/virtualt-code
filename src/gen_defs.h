@@ -125,6 +125,13 @@ enum {
 #ifndef DWORD
 #define DWORD	ulong
 #endif
+#ifndef UINT64
+#if defined(WIN32)
+#define UINT64  __int64
+#else
+#define UINT64  unsigned long long
+#endif
+#endif
 #ifndef BOOL
 #define BOOL	int
 #endif
