@@ -33,23 +33,6 @@
 
 #include "display.h"
 
-typedef struct Std_ROM_Addresses {
-	int	addr;
-	char*		desc;
-} Std_ROM_Addresses_t;
-
-typedef struct Std_ROM_Table {
-	int addr;
-	int size;
-	char type;
-} Std_ROM_Table_t;
-
-typedef struct RomDescription {
-	Std_ROM_Table_t		*pTables;
-	Std_ROM_Addresses_t *pVars;
-	Std_ROM_Addresses_t	*pFuns;
-} RomDescription_t;
-
 
 class VTDis 
 {
@@ -72,17 +55,5 @@ protected:
 
 };
 
-enum {
-	 TABLE_TYPE_STRING
-	,TABLE_TYPE_JUMP
-	,TABLE_TYPE_CODE
-	,TABLE_TYPE_MODIFIED_STRING
-	,TABLE_TYPE_2BYTE
-	,TABLE_TYPE_3BYTE
-	,TABLE_TYPE_CTRL_DELIM
-	,TABLE_TYPE_BYTE_LOOKUP
-	,TABLE_TYPE_4BYTE_CMD
-	,TABLE_TYPE_CATALOG
-};
 
 #endif
