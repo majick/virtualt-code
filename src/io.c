@@ -141,9 +141,10 @@ void init_io(void)
 }
 
 
+int cROM = 0;
+
 void out(uchar port, uchar val)
 {
-	static cROM=0;
 	int		c;
 
 	switch(port) {
