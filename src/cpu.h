@@ -82,6 +82,8 @@ extern uchar optROM[ROMSIZE];
 #define NXTINS memory[PC+1]
 #define INS16 (((int)memory[PC])|(((int)memory[PC+1])<<8))
 #define CF (F&0x01)
+#define XF ((F&0x02)>>1)
+#define XF_BIT	0x02
 #define PF ((F&0x04)>>2)
 #define AC ((F&0x10)>>4)
 #define ZF ((F&0x40)>>6)
