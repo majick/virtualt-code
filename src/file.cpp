@@ -28,18 +28,19 @@
  */
 
 
+
+#include <sys/types.h>
+#include <ctype.h>
+#include <stdio.h>
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 #include <FL/Fl.H>
 #include <FL/Fl_Help_Dialog.h>
 #include <FL/fl_ask.H> 
 #include <FL/Fl_File_Chooser.H>
 #include <FL/Fl_Hold_Browser.H>
-
-
-#include <sys/types.h>
-#include <stdio.h>
-#ifdef _WIN32
-#include <windows.h>
-#endif
 
 extern "C"
 {
