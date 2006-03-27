@@ -76,8 +76,7 @@ extern "C" {
 /* Compiler Description */
 #if defined(__BORLANDC__)
 
-	#define DESCRIBE_COMPILER(str) sprintf(str,"BCC %X.%02X" \
-		,__BORLANDC__>>8,__BORLANDC__&0xff);	
+	#define DESCRIBE_COMPILER(str) sprintf(str,"BCC %X.%02X",__BORLANDC__>>8,__BORLANDC__&0xff);	
 
 #elif defined(_MSC_VER)
 
@@ -85,18 +84,15 @@ extern "C" {
 
 #elif defined(__GNUC__)
 
-	#define DESCRIBE_COMPILER(str) sprintf(str,"GCC %u.%02u" \
-		,__GNUC__,__GNUC_MINOR__);
+	#define DESCRIBE_COMPILER(str) sprintf(str,"GCC %u.%02u",__GNUC__,__GNUC_MINOR__);
 
 #elif defined(__WATCOMC__)
 
-	#define DESCRIBE_COMPILER(str) sprintf(str,"WATC %d" \
-		,__WATCOMC__);
+	#define DESCRIBE_COMPILER(str) sprintf(str,"WATC %d",__WATCOMC__);
 
 #elif defined(__DMC__)	/* Digital Mars C/C++ */
 
-	#define DESCRIBE_COMPILER(str) sprintf(str,"DMC %X.%02X" \
-		,__DMC__>>8,__DMC__&0xff);	
+	#define DESCRIBE_COMPILER(str) sprintf(str,"DMC %X.%02X",__DMC__>>8,__DMC__&0xff);	
 
 #else /* Unknown compiler */
 
@@ -201,13 +197,9 @@ extern "C" {
 #elif defined(__unix__) || defined(__APPLE__)
 
 	#if defined(_PTH_PTHREAD_H_)
-		#define SLEEP(x)		({ int y=x; struct timeval tv; \
-								tv.tv_sec=(y/1000); tv.tv_usec=((y%1000)*1000); \
-								pth_nap(tv); })
+		#define SLEEP(x)		({ int y=x; struct timeval tv; tv.tv_sec=(y/1000); tv.tv_usec=((y%1000)*1000); pth_nap(tv); })
 	#else
-		#define SLEEP(x)		({	int y=x; struct timeval tv; \
-								tv.tv_sec=(y/1000); tv.tv_usec=((y%1000)*1000); \
-								select(0,NULL,NULL,NULL,&tv); })
+		#define SLEEP(x)		({	int y=x; struct timeval tv;	tv.tv_sec=(y/1000); tv.tv_usec=((y%1000)*1000);	select(0,NULL,NULL,NULL,&tv); })
 	#endif
 
 	#define YIELD()			SLEEP(1)

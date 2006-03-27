@@ -1,9 +1,9 @@
-/* m100emu.h */
+/* sound.h */
 
 /* $Id$ */
 
 /*
- * Copyright 2004 Stephen Hurd and Ken Pettit
+ * Copyright 2005 Ken Pettit
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,43 +28,13 @@
  */
 
 
-#ifndef _M100EMU_H_
-#define _M100EMU_H_
+#ifndef SOUND_H
+#define SOUND_H
 
-#include "gen_defs.h"
-#include "roms.h"
-
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-extern char  op[26];
-extern int trace;
-extern int fullspeed;
-extern int gExitApp;
-extern float cpu_speed;
-extern uchar memory[65536];
-extern RomDescription_t	 *gStdRomDesc;
-extern int   gModel;
-extern char gsOptRomFile[256];
-__inline double hirestimer(void);
-typedef void (*mem_monitor_cb)(void);
-void	mem_set_monitor_callback(mem_monitor_cb cb);
-
-	
-int		check_model_support(int model);
-void	get_emulation_path(char* emu, int model);
-void	get_model_string(char* str, int model);
-void	get_rom_path(char* file, int model);
-void	init_cpu(void);
-void	cpu_delay(int cy);
-void	resetcpu(void);
-void	cb_int65(void);
-
-#ifdef __cplusplus
-}
-#endif
-
+void	init_sound				(void);
+void	deinit_sound			(void);
+void	sound_start_tone		(int freq);
+void	sound_stop_tone			(void);
+void	sound_toggle_speaker	(int bitVal);
 
 #endif

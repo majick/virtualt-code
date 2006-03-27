@@ -1,9 +1,9 @@
-/* m100emu.h */
+/* memedit.h */
 
 /* $Id$ */
 
 /*
- * Copyright 2004 Stephen Hurd and Ken Pettit
+ * Copyright 2004 Ken Pettit and Stephen Hurd 
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,43 +28,63 @@
  */
 
 
-#ifndef _M100EMU_H_
-#define _M100EMU_H_
-
-#include "gen_defs.h"
-#include "roms.h"
+#ifndef MEMEDIT_H
+#define MEMEDIT_H
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "FL/Fl_File_Chooser.H"
 
-extern char  op[26];
-extern int trace;
-extern int fullspeed;
-extern int gExitApp;
-extern float cpu_speed;
-extern uchar memory[65536];
-extern RomDescription_t	 *gStdRomDesc;
-extern int   gModel;
-extern char gsOptRomFile[256];
-__inline double hirestimer(void);
-typedef void (*mem_monitor_cb)(void);
-void	mem_set_monitor_callback(mem_monitor_cb cb);
+void cb_MemoryEditor (Fl_Widget* w, void*);
+void cb_MemoryEditorUpdate(void);
 
-	
-int		check_model_support(int model);
-void	get_emulation_path(char* emu, int model);
-void	get_model_string(char* str, int model);
-void	get_rom_path(char* file, int model);
-void	init_cpu(void);
-void	cpu_delay(int cy);
-void	resetcpu(void);
-void	cb_int65(void);
 
-#ifdef __cplusplus
-}
-#endif
+#define		MENU_HEIGHT	32
 
+class T100_MemEditor : public Fl_Widget
+{
+public:
+	T100_MemEditor(int x, int y, int w, int h);
+	~T100_MemEditor();
+
+	void			SetMemRegion(int region);
+	void			SetMemAddress(int address);
+	void			SetScrollSize(void);
+	void			SetRegionOptions(void);
+	int				GetRegionEnum(void);
+	void			UpdateAddressText(void);
+	void			UpdateDispMem(void);
+	int				m_FirstLine;
+				
+protected:
+//	virtual int handle(int event);
+	void			draw();
+	virtual int		handle(int event);
+	void			DrawCursor(void);
+	void			EraseCursor(void);
+	void			ScrollUp(int lines);
+	void			ScrollDown(int lines);
+
+	int				m_MyFocus;
+	int				m_Region;
+	int				m_Cols;
+	int				m_Lines;
+	double			m_Max;
+	double			m_Height;
+	double			m_Width;
+	int				m_FirstAddress;
+
+	int				m_CursorAddress;
+	int				m_CursorCol;
+	int				m_CursorRow;
+	int				m_CursorField;
+
+	// Current selection control -- active & start / end addresses
+	int				m_SelActive;
+	long			m_SelEndRow;
+	long			m_SelEndCol;
+
+	Fl_Scrollbar*	m_pScroll;
+
+};
 
 #endif
