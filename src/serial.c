@@ -29,6 +29,9 @@
 
 #if defined(WIN32)
 #include <windows.h>
+#else
+#define TRUE (!0)
+#define FALSE (0)
 #endif
 #include <stdio.h>
 #include <string.h>
