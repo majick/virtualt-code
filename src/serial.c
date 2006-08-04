@@ -40,6 +40,7 @@
 #include "serial.h"
 #include "setup.h"
 #include "display.h"
+#include "gen_defs.h"
 
 ser_params_t	sp;
 
