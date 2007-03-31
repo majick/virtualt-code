@@ -31,9 +31,9 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <malloc.h>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -353,7 +353,7 @@ void init_sound(void)
 	gExit = 0;
 
 	// Create sin table
-	gpOneHertz = malloc(m_SamplingRate * sizeof(unsigned short));
+	gpOneHertz = (unsigned short *)malloc(m_SamplingRate * sizeof(unsigned short));
 	w = 2.0 * 3.14159 / (double) m_SamplingRate;
 	for (x = 0; x < m_SamplingRate; x++)
 	{

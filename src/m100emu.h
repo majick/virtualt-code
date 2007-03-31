@@ -66,7 +66,7 @@ void	get_emulation_path(char* emu, int model);
 void	get_model_string(char* str, int model);
 void	get_rom_path(char* file, int model);
 void	init_cpu(void);
-void	cpu_delay(int cy);
+//void	cpu_delay(int cy);
 void	resetcpu(void);
 void	cb_int65(void);
 

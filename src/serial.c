@@ -29,18 +29,15 @@
 
 #if defined(WIN32)
 #include <windows.h>
-#else
-#define TRUE (!0)
-#define FALSE (0)
 #endif
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
 
+#include "VirtualT.h"
 #include "serial.h"
 #include "setup.h"
 #include "display.h"
-#include "gen_defs.h"
 
 ser_params_t	sp;
 

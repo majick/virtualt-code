@@ -1,9 +1,9 @@
-/* VirtualT.h */
+/* multiwin_icons.cpp */
 
 /* $Id$ */
 
 /*
- * Copyright 2004 Stephen Hurd and Ken Pettit
+ * Copyright 2006 Ken Pettit
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,22 +28,27 @@
  */
 
 
-#ifndef _VIRTUALT_H_
-#define _VIRTUALT_H_
+#ifndef MULTIWIN_ICONS_H
+#define	MULTIIWN_ICONS_H
 
-#define VERSION	"0.9"
+#include <FL/Fl.H>
+#include <FL/Fl_Pixmap.H>
 
-enum {
-	 MODEL_M100
-	,MODEL_M102
-	,MODEL_T200
-	,MODEL_PC8201
-	,MODEL_PC8300
-};
+extern Fl_Pixmap gMultiWinDocIcon;
+extern Fl_Pixmap gCloseIcon;
+extern Fl_Pixmap gCloseIconSelected;
+extern Fl_Pixmap gCloseIconInactive;
+extern Fl_Pixmap gMinimizeIcon;
+extern Fl_Pixmap gMinimizeIconSelected;
+extern Fl_Pixmap gMinimizeIconInactive;
+extern Fl_Pixmap gMaximizeIcon;
+extern Fl_Pixmap gMaximizeIconSelected;
+extern Fl_Pixmap gMaximizeIconInactive;
+extern Fl_Pixmap gRestoreIcon;
+extern Fl_Pixmap gRestoreIconSelected;
+extern Fl_Pixmap gRestoreIconInactive;
 
-#ifndef TRUE
-#define TRUE 1
-#define FALSE 0
+extern char * gMultiWinDoc_xpm[];
+
 #endif
 
-#endif
