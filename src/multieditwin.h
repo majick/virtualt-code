@@ -1,9 +1,9 @@
-/* multiwin.h */
+/* multieditwin.h */
 
 /* $Id$ */
 
 /*
- * Copyright 2006 Ken Pettit
+ * Copyright 2007 Ken Pettit
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,64 +28,40 @@
  */
 
 
-#ifndef _MULTIWIN_H_
-#define _MULTIWIN_H_
+#ifndef _MULTIEDITWIN_H_
+#define _MULTIEDITWIN_H_
 
-#define	MW_TITLE_HEIGHT	28
-#define	MW_BORDER_WIDTH	4
-#define	MW_MINIMIZE_WIDTH	150
+#include "multiwin.h"
 
-#include <FL/Fl_Double_Window.H>
-#include <FL/Fl_Pixmap.H>
-#include <FL/Fl_Text_Editor.H>
-#include <FL/Fl_Text_Buffer.H>
-#include "vtobj.h"
-#include "MString.h"
-
-class Fl_Multi_Window : public Fl_Double_Window, public VTObject
+class Fl_Multi_Edit_Window : public Fl_Multi_Window
 {
 public:
-	Fl_Multi_Window(int x=0, int y=0, int w=600, int h=500, const char *label = 0);
-	~Fl_Multi_Window();
+	Fl_Multi_Edit_Window(int x=0, int y=0, int w=600, int h=500, const char *label = 0);
+	~Fl_Multi_Edit_Window();
 
-	Fl_Window*		ClientArea() { return m_pClientArea; };
+	DECLARE_DYNCREATE(Fl_Multi_Edit_Window)
 
-	int				m_NoResize;
+	void			OpenFile(const MString& filename);
+	void			SaveFile(const MString& rootpath);
+	void			SaveAs(const MString& rootpath);
+	void			Copy(void);
+	void			Cut(void);
+	void			Paste(void);
+	int				ReplaceAll(const char * pFind, const char *pReplace);
+	int				ReplaceNext(const char * pFind, const char *pReplace);
+	int				IsModified(void) { return m_Modified; }
+	void			Modified(void);
+	void			ModifedCB(int, int, int, int, const char *);
+	const MString&	Filename(void) { return m_FileName; }
+	void			Title(const MString& title);
 
-	DECLARE_DYNCREATE(Fl_Multi_Window)
-
+	Fl_Text_Editor*	m_te;
 protected:
-	void virtual	draw(void);
-	int	 virtual	handle(int event);
-	void			CloseIconSelected();
-	void			MaximizeIconSelected();
-	void			MinimizeIconSelected();
+	Fl_Text_Buffer*	m_tb;
+	MString			m_FileName;
+	MString			m_Title;
+	int				m_Modified;
 	int virtual		OkToClose(void);
-
-	Fl_Window*		m_pClientArea;
-	Fl_Pixmap*		m_pIcon;
-	char*			m_pLabel;
-	int				m_InDragArea;
-	int				m_InResizeArea;
-	int				m_InIconArea;
-	int				m_LastInIconArea;
-	VT_Rect			m_IconArea[3];
-	Fl_Pixmap*		m_NormalIcon[3];
-	Fl_Pixmap*		m_PushedIcon[3];
-	Fl_Pixmap*		m_InactiveIcon[3];
-	int				m_Minimized;
-	int				m_Maximized;
-	VT_Rect			m_MinimizeRect;
-	VT_Rect			m_RestoreRect;
-	int				m_MinimizeLoc;
-	static int		m_MinimizeRegions[200];
-
-	int				m_CaptureMode;
-	int				m_MouseLastX, m_MouseLastY;
-	int				m_MouseAnchorX, m_MouseAnchorY;
-	int				m_WinAnchorX, m_WinAnchorY;
-
-	static	int		m_WindowCount;
 };
 
 #endif
