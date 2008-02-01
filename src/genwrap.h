@@ -123,6 +123,8 @@ extern "C" {
 	#define PLATFORM_DESC	"NetBSD"
 #elif defined(__APPLE__) && defined(__MACH__) && defined(__POWERPC__)
 	#define PLATFORM_DESC	"MacOSX"
+#elif defined(__APPLE__)
+	#define PLATFORM_DESC	"MacOSX"
 #elif defined(BSD)
 	#define PLATFORM_DESC	"BSD"
 #elif defined(__solaris__)

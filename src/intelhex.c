@@ -193,7 +193,7 @@ void save_hex_file_ext(int begin, int end, int region, FILE* fd)
 	while (count > 0)
 	{
 		// Read next buffer from memory
-		get_memory8_ext(region, addr, len, buffer);
+		get_memory8_ext(region, addr, len, (unsigned char*) buffer);
 
 		// Output all bytes in the buffer
 		for (x = 0; x < len; x++)

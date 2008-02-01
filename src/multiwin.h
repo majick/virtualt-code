@@ -48,7 +48,8 @@ public:
 	Fl_Multi_Window(int x=0, int y=0, int w=600, int h=500, const char *label = 0);
 	~Fl_Multi_Window();
 
-	Fl_Window*		ClientArea() { return m_pClientArea; };
+//	Fl_Window*		ClientArea() { return m_pClientArea; };
+	Fl_Window*		ClientArea() { return this; };
 
 	int				m_NoResize;
 

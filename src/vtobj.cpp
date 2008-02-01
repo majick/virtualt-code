@@ -28,7 +28,7 @@
  */
 
 #include	<memory.h>
-#include	<malloc.h>
+#include	<stdlib.h>
 #include	"VirtualT.h"
 #include	"vtobj.h"
 

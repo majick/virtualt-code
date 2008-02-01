@@ -43,7 +43,7 @@
 #include <errno.h>		/* errno */
 #include <ctype.h>		/* toupper/tolower */
 
-#if defined(__unix__)
+#if defined(__unix__) || (defined __APPLE__)
 	#include <sys/ioctl.h>		/* ioctl() */
 	#include <sys/utsname.h>	/* uname() */
 	/* KIOCSOUND */
@@ -329,7 +329,7 @@ char* DLLCALL os_version(char *str)
 			,winver.dwMajorVersion, winver.dwMinorVersion
 			,winver.dwBuildNumber,winver.szCSDVersion);
 
-#elif defined(__unix__)
+#elif defined(__unix__) || defined(__APPLE__)
 
 	struct utsname unixver;
 

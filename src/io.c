@@ -1014,7 +1014,7 @@ int inport(uchar port)
 		case 0xCE:
 			if (gModel == MODEL_T200)
 			{
-				ser_read_byte(&ret);
+				ser_read_byte((char *) &ret);
 				return ret;
 			}
 		case 0xCF:
@@ -1034,7 +1034,7 @@ int inport(uchar port)
 				}
 			}
 			else
-				ser_read_byte(&ret);
+				ser_read_byte((char *) &ret);
 			return ret;
 
 		case 0xD0:	/* Status control register for UART, modem, and phone (6402)  */

@@ -190,11 +190,7 @@ void load_setup_preferences(void)
 		else 
 		{
 			strcpy(path,ret);
-			#ifdef __unix__
 			strcat(path,"/");
-			#else
-			strcat(path,"\\");
-			#endif 
 			virtualt_prefs.set("Path",path); // set pref path
 		}
 	}

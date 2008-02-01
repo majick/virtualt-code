@@ -33,7 +33,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#include <malloc.h>
+#include <stdlib.h>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -42,7 +42,7 @@
 #include <process.h>
 #endif
 
-#ifdef __unix__
+#if defined(__unix__) || defined(__APPLE__)
 #include <signal.h>
 #include <unistd.h>
 #endif

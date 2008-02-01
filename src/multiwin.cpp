@@ -74,8 +74,7 @@ Fl_Multi_Window::Fl_Multi_Window(int x, int y, int w, int h, const char* title)
 
 	m_pClientArea = new Fl_Window(MW_BORDER_WIDTH, MW_TITLE_HEIGHT, w - MW_BORDER_WIDTH*2,
 		h - MW_BORDER_WIDTH - MW_TITLE_HEIGHT);
-	m_pClientArea->color(FL_WHITE);
-//	resizable(m_pClientArea);
+	resizable(m_pClientArea);
 	m_pLabel = new char[strlen(title) + 1];
 	strcpy(m_pLabel, title);
 	label(m_pLabel);
