@@ -444,6 +444,8 @@ void check_installation(void)
 		if (check_model_support(model))
 			continue;
 
+		printf("copying rom file\n");
+
 		/* ROM file doesn't exist.  Try to open in ROMs dir */
 		get_rom_path(path, model);
 		sprintf(roms_path, "ROMs%s", strrchr(path, '/'));
