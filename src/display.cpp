@@ -1412,13 +1412,11 @@ void power_down()
 
 void process_windows_event()
 {
-        Fl::check();
-	return;
 	if (gOsDelay)
 #ifdef WIN32
 		Fl::wait(0.001);
 #elif defined(__APPLE__)
-        	Fl::check();
+        Fl::check();
 #else
 		Fl::wait(0.00001);
 #endif
