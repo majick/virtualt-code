@@ -252,7 +252,6 @@ int check_mem_access_break(void)
 	len = 1;
 	write = FALSE;
 	read = FALSE;
-
 	switch (ins)
 	{
 		case 0x02:	/* STAX B */
