@@ -49,6 +49,8 @@ void	unlock_remote(void);
 #define	BPTYPE_RAM		0x08
 #define	BPTYPE_RAM2		0x10
 #define	BPTYPE_RAM3		0x20
+#define	BPTYPE_READ		0x40
+#define	BPTYPE_WRITE	0x80
 
 typedef struct
 {
