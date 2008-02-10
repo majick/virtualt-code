@@ -460,7 +460,8 @@ void cb_UnloadOptRom (Fl_Widget* w, void*)
 	load_opt_rom();
 
 	// Reset the CPU
-	resetcpu();
+	if (w != NULL)
+		resetcpu();
 
 }
 

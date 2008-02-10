@@ -40,6 +40,10 @@ void cb_LoadOptRom (Fl_Widget* w, void*);
 void cb_UnloadOptRom (Fl_Widget* w, void*);
 void cb_LoadFromHost(Fl_Widget* w, void*);
 void cb_SaveToHost(Fl_Widget* w, void*);
+int  load_optrom_file(const char* filename);
+
+#define	FILE_ERROR_INVALID_HEX			1
+#define FILE_ERROR_FILE_NOT_FOUND		2
 
 extern int		BasicSaveMode;
 extern int		COSaveMode;
