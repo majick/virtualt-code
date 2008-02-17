@@ -42,6 +42,7 @@
 #include "m100emu.h"
 #include "memory.h"
 #include "sound.h"
+#include "lpt.h"
 
 uchar lcd[10][256];
 uchar lcdpointers[10]={0,0,0,0,0,0,0,0,0,0};
@@ -749,6 +750,9 @@ void out(uchar port, uchar val)
 //					break;
 				}
 			}
+			/* Check for data to the printer */
+			if ((val & 0x02) && !(ioE8 & 0x02))
+				send_to_lpt(ioB9);
 
 			ioE8 = val;
 
@@ -987,7 +991,7 @@ int inport(uchar port)
 				flags |= 0x01;				/* Low Power Sense (not) */
 			else
 				flags |= clock_serial_out;
-			return flags;
+			return flags | 0x02;
 
 		case 0xB4:	/* 8155 Timer register.  LSB of timer counter */
 		case 0xBC:
