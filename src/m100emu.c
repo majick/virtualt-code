@@ -56,6 +56,7 @@
 #include "m100emu.h"
 #include "sound.h"
 #include "remote.h"
+#include "serial.h"
 #include "lpt.h"
 
 int		fullspeed=0;
@@ -855,6 +856,7 @@ void emulate(void)
 					unlock_remote();
 					gOsDelay = nxtmaint == 0;
 					maint();
+					ser_poll();
 					check_interrupts();
 					if (gOsDelay)
 						nxtmaint=gMaintCount;
