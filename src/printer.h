@@ -58,6 +58,7 @@ public:
 	virtual int			GetBusyStatus() = 0;			// Read BUSY from printer
 	virtual void		SendAutoFF(void) = 0;			// Send a FormFeed if needed
 	virtual void		Deinit(void) = 0;				// Deiniatalizes the printer
+	virtual int			CancelPrintJob(void) = 0;		// Cancels the current print job
 
 	// Common printer setup functions
 	virtual void		Init(Fl_Preferences* pPref);	// Initialization routine

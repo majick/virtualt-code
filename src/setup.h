@@ -49,6 +49,7 @@ typedef struct peripheral_setup
 	char	com_cmd[128];				// Command file for simulation
 	char	com_other[256];				// Command file for simulation
 	int		com_throttle;				// Flag if serial I/O should be throttled
+	int		com_ignore_flow;			// Set if flow control is ignored
 
 	// LPT port emulation settings
 

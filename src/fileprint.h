@@ -51,6 +51,7 @@ public:
 	virtual void		SendAutoFF(void);			// Send a FF to printer
 	void				UpdateFormatForPage(void);
 	virtual void		Deinit(void);				// Deinit routine
+	virtual int			CancelPrintJob(void);
 
 protected:
 	virtual void		Init(void);					// Initialization routine

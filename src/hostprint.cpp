@@ -246,4 +246,15 @@ void VTHostPrint::Deinit(void)
 	#endif
 }
 
+/*
+=======================================================
+Cancel the current print job
+=======================================================
+*/
+int VTHostPrint::CancelPrintJob(void)
+{
+	CloseSession();
+
+	return PRINT_ERROR_NONE;
+}
 
