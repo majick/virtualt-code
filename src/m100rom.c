@@ -1000,6 +1000,7 @@ RomDescription_t gM100_Desc = {
 	0xFAD8,						/* BASIC Size */
 	0xFF9A,						/* Keyscan location */
 	0x7711,						/* Character generator table */
+	0xF92D,						/* Loacation of Year storage */
 
 	24,							/* Number of directory entries */
 	8,							/* Index of first Dir entry */

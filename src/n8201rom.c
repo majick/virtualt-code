@@ -911,6 +911,7 @@ RomDescription_t gN8201_Desc = {
 	0xF9CA,						/* BASIC Size */
 	0xFE58,						/* Keyscan array */
 	0x78B7,						/* Character generator array */
+	0xF83C,						/* Location of Year storage */
 
 	24,							/* Number of directory entries */
 	8,							/* Index of first Dir entry */

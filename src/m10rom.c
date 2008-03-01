@@ -982,6 +982,7 @@ RomDescription_t gM10_Desc = {
 	0xFADE,						/* BASIC Size */
 	0xFF5C,						/* Keyscan array */
 	0x742B,						/* Character generator table */
+	0xF934,						/* Location of Year storage */
 
 	24,							/* Number of directory entries */
 	8,							/* Index of first Dir entry */

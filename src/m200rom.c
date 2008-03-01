@@ -985,6 +985,7 @@ RomDescription_t gM200_Desc = {
 	0xF505,						/* BASIC size */
 	0xFD0E,						/* Keyscan array */
 	0x9063,						/* Character generator array */
+	0x0000,						/* Location of Year - not used for T200 */
 
 	52,							/* Number of directory entries */
 	9,							/* Index of first dir entry */

@@ -893,6 +893,7 @@ void emulate(void)
 					unlock_remote();
 					gOsDelay = nxtmaint == 0;
 					maint();
+					ser_poll();
 					check_interrupts();
 					if (gOsDelay)
 						nxtmaint=gMaintCount;

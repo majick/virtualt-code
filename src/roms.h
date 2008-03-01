@@ -77,6 +77,7 @@ typedef struct RomDescription {
 	unsigned short		sBasicSize;	       /* Size of all BASIC programs */
 	unsigned short		sKeyscan;	       /* Location of Keyscan array */
 	unsigned short		sCharTable;        /* Location of Charater generator table */
+	unsigned short		sYear;             /* Location of Year storage */
 
 	unsigned short		sDirCount;         /* Number of entries in Directory */
 	unsigned short		sFirstDirEntry;    /* Index of first available enry */
