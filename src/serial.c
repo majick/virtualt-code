@@ -1313,10 +1313,7 @@ int ser_get_flags(unsigned char *flags)
 
 			if (setup.com_ignore_flow)
 			{
-				if (sp.dtrState);
-					*flags |= SER_FLAG_DSR;
-				if (sp.rtsState)
-					*flags |= SER_FLAG_CTS;
+				*flags &= ~(SER_FLAG_CTS | SER_FLAG_DSR);
 			}
 			else
 			{
@@ -1413,8 +1410,7 @@ int ser_get_signals(unsigned char *flags)
 			// interpret flags
 			if (setup.com_ignore_flow)
 			{
-				if (status & TIOCM_RTS) *flags |= SER_SIGNAL_CTS;
-				if (status & TIOCM_DTR) *flags |= SER_SIGNAL_DSR;
+				*flags |= SER_SIGNAL_RTS | SER_SIGNAL_DTR;
 			}
 			else
 			{
