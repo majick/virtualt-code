@@ -1547,6 +1547,11 @@ ser_poll: opportunity to invoke INT6.5 callback
 int ser_poll ()
 {
 
+	if (	   setup.com_mode != SETUP_COM_HOST
+		&& setup.com_mode != SETUP_COM_OTHER
+	) return;
+	if (sp.fd < 0) return;
+
 #ifndef WIN32
 	int bytes;
 
