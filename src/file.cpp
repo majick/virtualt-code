@@ -924,6 +924,7 @@ void cb_save (Fl_Widget* w, void*)
 
 void cb_cancel (Fl_Widget* w, void*)
 {
+	gSave = 0;
 	gSaveToHost->hide();
 }
 
@@ -964,6 +965,11 @@ void save_file(model_t_files_t *pFile)
 
 
 	// Check if a file was selected
+	if (fc->value() == 0)
+	{
+		delete fc;
+		return;
+	}
 	if (strlen(fc->value()) == 0)
 	{
 		delete fc;
