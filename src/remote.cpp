@@ -128,7 +128,7 @@ std::string cmd_help(ServerSocket& sock)
 	sock << "  lcd_mon(lm) [on off]\n";
 	sock << "  list_break(lb)\n";
 	sock << "  load filename\n";
-	sock << "  model [m100 m102 t200 pc8201 m10]\n";
+	sock << "  model [m100 m102 t200 pc8201 m10 kc85]\n";
 	sock << "  optrom [unload, filename]\n";
 	sock << "  out port, value\n";
 	sock << "  radix [10 or 16]\n";
@@ -1776,6 +1776,11 @@ std::string cmd_model(ServerSocket& sock, std::string& args)
 	{
 		if (gModel != MODEL_PC8201)
 			local_switch_model(MODEL_PC8201);
+	}
+	else if (more_args == "kc85")
+	{
+		if (gModel != MODEL_KC85)
+			local_switch_model(MODEL_KC85);
 	}
 	else
 		return "Parameter Error\nOk";

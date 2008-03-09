@@ -123,6 +123,7 @@ protected:
 	Fl_Round_Button*	m_pM102;
 	Fl_Round_Button*	m_pT200;
 	Fl_Round_Button*	m_pPC8201;
+	Fl_Round_Button*	m_pKC85;
 };
 
 class VT_ProjectSettings
@@ -174,6 +175,7 @@ protected:
 	Fl_Round_Button*	m_pM102;
 	Fl_Round_Button*	m_pT200;
 	Fl_Round_Button*	m_pPC8201;
+	Fl_Round_Button*	m_pKC85;
 	Fl_Check_Button*	m_pAutoLoad;
 	Fl_Check_Button*	m_pUpdateHIMEM;
 

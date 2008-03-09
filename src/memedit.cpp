@@ -866,6 +866,7 @@ void T100_MemEditor::SetRegionOptions(void)
 		switch (gModel)
 		{
 		case MODEL_M100:
+		case MODEL_KC85:
 		case MODEL_M102:
 		case MODEL_M10:
 			memedit_ctrl.pRegion->add("RAM");
@@ -917,6 +918,7 @@ void T100_MemEditor::SetScrollSize(void)
 		switch (gModel)
 		{
 		case MODEL_M100:
+		case MODEL_KC85:
 		case MODEL_M10:
 		case MODEL_M102:
 		case MODEL_PC8201:
