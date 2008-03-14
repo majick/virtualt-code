@@ -111,3 +111,18 @@ void VTPrinter::EndPrintSession(void)
 	}
 }
 
+/*
+================================================================================
+Get the text for a specified error number
+================================================================================
+*/
+MString VTPrinter::GetError(int index)
+{
+	MString		none;
+
+	if (index < m_errors.GetSize())
+		return m_errors[index];
+
+	return	none;
+}
+
