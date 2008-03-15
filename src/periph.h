@@ -32,6 +32,7 @@
 #define PERIPH_H
 
 #include <FL/Fl_Scrollbar.H>
+#include "vtobj.h"
 
 void cb_PeripheralDevices (Fl_Widget* w, void*);
 
@@ -104,5 +105,15 @@ protected:
 };
 
 
+class VTLptDevice : public VTObject
+{
+public:
+	VTLptDevice() { pTab = NULL; pName = NULL; }
+	~VTLptDevice() { if (pName != NULL) delete pName; }
+
+	Fl_Group*		pTab;
+	char*			pName;
+
+};
 
 #endif
