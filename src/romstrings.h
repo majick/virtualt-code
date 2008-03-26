@@ -868,7 +868,8 @@ enum {
 	R_PORT_90H,
 	R_RST0_HOOK,
 	R_EXEC_2ND_ROM,
-	R_TELCOM_FKEY_VCTR
+	R_TELCOM_FKEY_VCTR,
+	R_UNUSED
 };
 
 #ifdef __cplusplus

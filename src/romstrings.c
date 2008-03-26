@@ -871,5 +871,6 @@ Std_ROM_Strings_t gDisStrings[] = {
 	{ R_RST0_HOOK,			     "RST 0 Hook" },
 	{ R_EXEC_2ND_ROM,		     "Hook to execute Option ROM" },
 	{ R_TELCOM_FKEY_VCTR,	     "Main TELCOM Funciton Key Vector Table" },
+	{ R_UNUSED,				     "Unused Space" },
 	{ -1, "" },
 };
