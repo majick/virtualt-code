@@ -829,7 +829,7 @@ void cb_LoadFromHost(Fl_Widget* w, void* host_filename)
 	// may exist.
 	if (file_type == TYPE_BA)
 	{
-		addr3 = get_memory16(gStdRomDesc->sFilePtrBA)+len;
+		addr3 = get_memory16(gStdRomDesc->sFilePtrBA);
 
 		while (get_memory16(addr3) != 0)
 		{
