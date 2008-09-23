@@ -60,6 +60,8 @@ void	debug_halt(void);
 void	debug_run(void);
 void	remote_switch_model(int model);
 extern	char	gDebugActive;
+extern	char	gIntActive;
+extern	char	gDebugInts;
 extern	char	gStopped;
 extern	char	gSingleStep;
 extern	int		gDebugMonitorFreq;
@@ -70,6 +72,7 @@ extern	int		gNoGUI;
 #define	DEBUG_CPU_HALTED	2
 #define	DEBUG_CPU_RESUME	3
 #define	DEBUG_CPU_STEP		4 
+#define	DEBUG_INTERRUPT		5
 
 #define	SPEED_REAL			0
 #define	SPEED_FRIENDLY1		1
