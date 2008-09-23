@@ -1510,8 +1510,9 @@ Build the Monitor Tab controls for the specified printer
 */
 void VTLpt::BuildPrinterMonTab(int printer)
 {
-	if (printer < m_Printers.GetSize())
-		((VTPrinter*) m_Printers[printer])->BuildMonTab();
+	if (m_EmulationMode != LPT_MODE_NONE)
+		if (printer < m_Printers.GetSize())
+			((VTPrinter*) m_Printers[printer])->BuildMonTab();
 }
 
 /*
