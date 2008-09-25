@@ -59,6 +59,7 @@
 #include "rememcfg.h"
 #include "lpt.h"
 #include "fl_action_icon.h"
+#include "clock.h"
 
 extern "C" {
 extern RomDescription_t		gM100_Desc;
@@ -784,6 +785,9 @@ void switch_model(int model)
 	save_ram();
 	free_mem();
 
+	// Save time for current model
+	save_model_time();
+
 	/* Switch to new model */
 	gModel = model;
     virtualt_prefs.set("Model",gModel);
@@ -793,6 +797,7 @@ void switch_model(int model)
 	/* Load Memory preferences */
 	load_memory_preferences();
 	init_mem();
+	get_model_time();
 
 	gRomSize = 32768;
 	/* Set pointer to ROM Description */

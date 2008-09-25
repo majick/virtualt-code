@@ -58,6 +58,7 @@
 #include "remote.h"
 #include "serial.h"
 #include "lpt.h"
+#include "clock.h"
 
 int		fullspeed=0;
 int		gModel = MODEL_M100;
@@ -1117,12 +1118,14 @@ int main(int argc, char **argv)
 	init_cpu();					/* Initialize the CPU */
 	init_remote();				/* Initialize the remote control */
 	init_lpt();					/* Initialize the printer subsystem */
+	get_model_time();			/* Load the emulated time for current model */
 
 	/* Perform Emulation */
 	emulate();					/* Main emulation loop */
 
 	/* Save RAM contents after emulation */
 	save_ram();
+	save_model_time();			/* Save the emulated time */
 
 	/* Cleanup */
 	deinit_io();				/* Deinitialize I/O */

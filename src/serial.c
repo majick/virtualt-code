@@ -56,6 +56,8 @@
 #include "display.h"
 
 ser_params_t	sp;
+extern int   gModel;
+
 
 #ifndef WIN32
 /*
@@ -258,7 +260,7 @@ int ser_get_port_list(char* port_list, int max, int *count)
 			// Append port name to list
 			strcat(port_list, str);
 
-			*count++;
+			(*count)++;
 		}
 	}
 #else
@@ -1277,12 +1279,28 @@ int ser_get_flags(unsigned char *flags)
 			}
 			{
 				// Set CTS flag
-				if ((modem_status & MS_CTS_ON) == 0)
-					*flags |= SER_FLAG_CTS;
+				if (gModel == MODEL_T200)
+				{
+					if (modem_status & MS_CTS_ON)
+						*flags |= SER_FLAG_CTS;
+				}
+				else
+				{
+					if ((modem_status & MS_CTS_ON) == 0)
+						*flags |= SER_FLAG_CTS;
+				}
 
 				// Set DSR flag
-				if ((modem_status & MS_DSR_ON) == 0)
-					*flags |= SER_FLAG_DSR;
+				if (gModel == MODEL_T200)
+				{
+					if (modem_status & MS_DSR_ON)
+						*flags |= SER_FLAG_DSR;
+				}
+				else
+				{
+					if ((modem_status & MS_DSR_ON) == 0)
+						*flags |= SER_FLAG_DSR;
+				}
 			}
 
 			// RING flag
