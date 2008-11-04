@@ -411,6 +411,8 @@ void init_lpt(void)
 		gLpt->UpdatePreferences(&virtualt_prefs);
 	}
 
+	gpPrint->label("Idle");
+
 }
 
 /*

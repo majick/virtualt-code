@@ -1430,10 +1430,9 @@ void init_display(void)
 	gpMap->labelsize(10);
 	gpPrint = new Fl_Action_Icon(420, MENU_HEIGHT+DispHeight*MultFact + 
 		50*DisplayMode+2, 60, 20, "Print Menu");
-	gpPrint->set_image(&gPrinterIcon);
 	gpPrint->align(FL_ALIGN_TOP | FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
+	gpPrint->set_image(&gPrinterIcon);
 	gpPrint->menu(gPrintMenu);
-	gpPrint->label("Idle");
 	if (MultFact < 3)
 	{
 		gpKeyInfo = new Fl_Box(FL_DOWN_BOX,480, MENU_HEIGHT+DispHeight*MultFact +
@@ -1495,6 +1494,8 @@ void init_display(void)
 		fl_alert(gDelayedError);
 		gDelayedError[0] = '\0';
 	}
+
+	gpPrint->label("Idle");
 }
 
 static char	label[40];

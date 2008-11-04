@@ -399,7 +399,6 @@ void save_model_time(void)
 	strcpy(pref, str);
 	strcat(pref, "_RefTime");
 	virtualt_prefs.set(pref, ctime(&gRefTime));
-	printf(ctime(&gRefTime));
 
 	// Save Start Time
 	strcpy(pref, str);

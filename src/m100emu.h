@@ -53,6 +53,7 @@ double hirestimer(void);
 typedef void (*mem_monitor_cb)(void);
 typedef void (*debug_monitor_callback)(int reason);
 void	mem_set_monitor_callback(mem_monitor_cb cb);
+void	mem_clear_monitor_callback(mem_monitor_cb cb);
 int		debug_set_monitor_callback(debug_monitor_callback pCallback);
 void	debug_clear_monitor_callback(debug_monitor_callback pCallback);
 void	debug_step(void);

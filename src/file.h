@@ -33,6 +33,10 @@
 
 #include "gen_defs.h"
 
+#define TYPE_BA	0x80
+#define	TYPE_CO	0xA0
+#define	TYPE_DO	0xC0
+#define TYPE_HEX 0x40
 
 void cb_LoadRam (Fl_Widget* w, void*);
 void cb_SaveRam (Fl_Widget* w, void*);

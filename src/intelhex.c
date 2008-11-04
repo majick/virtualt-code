@@ -41,6 +41,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include "gen_defs.h"
 #include "intelhex.h"
 #include "memory.h"
 

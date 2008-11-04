@@ -50,6 +50,7 @@
 #include "memory.h"
 #include "io.h"
 #include "VirtualT.h"
+#include "fileview.h"
 
 #define		MENU_HEIGHT	32
 
@@ -80,7 +81,7 @@ Fl_Menu_Item gRememCfg_menuitems[] = {
 	{ "Memory Editor",         0, cb_MemoryEditor },
 	{ "Peripheral Devices",    0, cb_PeripheralDevices },
 //	{ "Simulation Log Viewer", 0, 0 },
-	{ "Model T File Viewer",   0, 0 },
+	{ "Model T File Viewer",   0, cb_FileView },
 	{ 0 },
   { 0 }
 };
