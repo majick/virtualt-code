@@ -354,14 +354,15 @@ void process_read_byte(ser_params_t *sp, char byte)
 
 	sp->rxIn = new_rxIn;
 
-	ReleaseMutex(sp->hReadMutex);
-
 	// Call callback to indicate receipt of data
 	if (sp->pCallback != NULL)
 	{
 		sp->pCallback();
 		sp->fIntPending = TRUE;
 	}
+
+	ReleaseMutex(sp->hReadMutex);
+
 }
 
 /*
@@ -1315,6 +1316,8 @@ int ser_get_flags(unsigned char *flags)
 
 			// FRAMING Error flag
 
+			WaitForSingleObject(sp.hReadMutex, 2000);
+
 			if ((sp.rxIn != sp.rxOut) && (sp.fIntPending == 0))
 			{
 				if (sp.pCallback != NULL)
@@ -1323,6 +1326,9 @@ int ser_get_flags(unsigned char *flags)
 					sp.fIntPending = TRUE;
 				}
 			}
+
+			ReleaseMutex(sp.hReadMutex);
+
 		#else
 		{
 
