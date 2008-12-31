@@ -1696,7 +1696,7 @@ void T100_ComMon::SaveLog(void)
 				else
 					rxtx = CLE_RX;
 
-				sprintf(outLine, "%04d %s ", line++, rxtx == CLE_TX ? "tx" : "rx");
+				sprintf(outLine, "%04d %s ", line++, rxtx == CLE_TX ? "TX" : "RX");
 				cnt = 0;			// No bytes on this line yet
 			}
 
