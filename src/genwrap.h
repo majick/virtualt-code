@@ -187,7 +187,7 @@ extern "C" {
 	#define BEEP(freq,dur)	Beep((DWORD)(freq),(DWORD)(dur))
 	#define	popen			_popen
 	#define pclose			_pclose
-	#define tzname			_tzname
+//	#define tzname			_tzname
 
 #elif defined(__OS2__)
 
