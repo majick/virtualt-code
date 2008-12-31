@@ -75,6 +75,7 @@ public:
 	void			AddByte(int rx_tx, char byte, char flags);
 	void			CalcLineStarts(void);
 	void			Clear(void);
+	void			SaveLog(void);
 	int				m_FirstLine;
 				
 protected:
