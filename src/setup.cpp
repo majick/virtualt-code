@@ -250,10 +250,13 @@ void cb_setup_OK(Fl_Widget* w, void*)
 		}
 
 		// Check if we are changing ports
-		if (strcmp(setup_ctrl.com.pPort->text(), setup.com_port) != 0)
-		{	
-			ser_close_port();
-			open_port = TRUE;
+		if (setup_ctrl.com.pPort->text() != NULL)
+		{
+			if (strcmp(setup_ctrl.com.pPort->text(), setup.com_port) != 0)
+			{	
+				ser_close_port();
+				open_port = TRUE;
+			}
 		}
 	}
 
