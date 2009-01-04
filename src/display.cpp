@@ -61,6 +61,7 @@
 #include "fl_action_icon.h"
 #include "clock.h"
 #include "fileview.h"
+//#include "tpddclient.h"
 
 extern "C" {
 extern RomDescription_t		gM100_Desc;
@@ -487,8 +488,8 @@ void cb_coldBoot (Fl_Widget* w, void*)
 	
 	if(a != 0) 
 	{
+		cold_boot_mem();
 		resetcpu();
-		reinit_mem();
 
 		show_remem_mode();
 
@@ -740,6 +741,7 @@ Fl_Menu_Item menuitems[] = {
 	{ "Peripheral Devices",    0, cb_PeripheralDevices },
 //	{ "Simulation Log Viewer", 0, 0 },
 	{ "Model T File Viewer",   0, cb_FileView },
+//	{ "TPDD Client",           0, cb_TpddClient },
 	{ 0 },
   { "&Help", 0, 0, 0, FL_SUBMENU },
 	{ "Help", 0, cb_help },
