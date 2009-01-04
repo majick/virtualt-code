@@ -106,7 +106,9 @@ extern Fl_Pixmap	gPrinterIcon;
 
 void switch_model(int model);
 
+#ifndef	WIN32
 #define	min(a,b)	((a)<(b) ? (a):(b))
+#endif
 
 void setMonitorWindow(Fl_Window* pWin)
 {
