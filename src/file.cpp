@@ -743,8 +743,16 @@ void cb_LoadFromHost(Fl_Widget* w, void* host_filename)
 	// Determine if file alaready exists in directory
 	addr2 = gStdRomDesc->sDirectory;
 	dir_index = 0;
-	while ((get_memory8(addr2) != 0) && (dir_index < gStdRomDesc->sDirCount))
+	while (dir_index < gStdRomDesc->sDirCount)
 	{
+		// Test if this slot is empty
+		if (get_memory8(addr2) == 0)
+		{
+			addr2 += 11;
+			dir_index++;
+			continue;
+		}
+
 		// Compare this entry to the file being added
 		for (x = 0; x < 8; x++)
 		{
