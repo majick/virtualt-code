@@ -510,6 +510,11 @@ void remote_cold_boot(void)
 	cb_coldBoot(NULL, NULL);
 }
 
+void cb_ReloadOptRom (Fl_Widget* w, void*)
+{
+	load_opt_rom();
+}
+
 void cb_UnloadOptRom (Fl_Widget* w, void*)
 {
 	char	option_name[32];
@@ -733,6 +738,7 @@ Fl_Menu_Item menuitems[] = {
 		{ gsMenuROM,             0, 0, 0, FL_MENU_DIVIDER },
 		{ "Load ROM...",         0, cb_LoadOptRom, 0, 0 },
 		{ "Unload ROM",          0, cb_UnloadOptRom, 0, 0 },
+		{ "Reload ROM",          0, cb_ReloadOptRom, 0, 0 },
 		{ 0 },
 	{ 0 },
 
