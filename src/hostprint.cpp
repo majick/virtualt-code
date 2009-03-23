@@ -45,6 +45,7 @@
 #include <fcntl.h>
 
 #ifdef __unix__
+#include <unistd.h>
 #endif
 
 #include "VirtualT.h"

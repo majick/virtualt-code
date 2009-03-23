@@ -32,8 +32,9 @@
 #include <string.h>
 #include <stdio.h>
 
-#ifdef WIN32
 #include <algorithm>
+
+#ifdef WIN32
 #include <cctype>
 #else
 #include <pthread.h>

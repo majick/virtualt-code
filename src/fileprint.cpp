@@ -42,6 +42,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <algorithm>
+#include <ctime>
+#include <iterator>
+
 #include "VirtualT.h"
 #include "fileprint.h"
 #include "m100emu.h"
