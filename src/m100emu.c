@@ -96,6 +96,7 @@ int		gMaintCount = 262888;
 int		gOsDelay = 0;
 int		gNoGUI = 0;
 int		gSocketPort = 0;
+int		gTelnet = FALSE;
 int		gRemoteSwitchModel = -1;
 
 //Added J. VERNET
@@ -906,7 +907,7 @@ void emulate(void)
 				}
 
 				/* Instruction emulation contained in header file */
-				#include "do_instruct.h"
+			//	#include "do_instruct.h"
 
 				// Check if next inst is SIM
 				if (get_memory8(PC) == 0xF3)
@@ -1029,6 +1030,9 @@ int process_args(int argc, char **argv)
 		// Search for No-GUI flag
 		if (!strcmp(argv[i], "-nogui"))
 			gNoGUI = 1;
+
+		if (!strcmp(argv[i], "-t"))
+			gTelnet = TRUE;
 
 		// Search for Socket Port flag
 		if (!strncmp(argv[i], "-p", 2))

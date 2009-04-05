@@ -325,13 +325,20 @@ void load_file_to_mem(const char *filename, int address)
 		FILE* fd;
 		if ((fd = fopen(filename, "r")) != NULL)
 		{
+			int read_len;
+
 			// Determine file length
 			fseek(fd, 0, SEEK_END);
 			len = ftell(fd);
 			buffer = new unsigned char[len];
 			fseek(fd, 0, SEEK_SET);
-			fread(buffer, 1, len, fd);
-			set_memory8_ext(region, address, len, buffer);
+			while (len != 0)
+			{
+				read_len = fread(buffer, 1, len, fd);
+				set_memory8_ext(region, address, read_len, buffer);
+				len -= read_len;
+				address += read_len;
+			}
 			fclose(fd);
 
 			delete buffer;

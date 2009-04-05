@@ -107,9 +107,6 @@ void update_keys(void)
 		}
 	}
 
-	gDelayUpdateKeys = 0;
-	gDelayCount = 0;
-	
 	if (gModel == MODEL_M10)
 	{
 		keyscan[0] = ~(gKeyStates['q']       | (gKeyStates['w'] << 1) |
@@ -227,6 +224,10 @@ void update_keys(void)
 					 	(unsigned char) (((gSpecialKeys & MT_CAP_LOCK) | ~MT_CAP_LOCK) >> 1);
 		}
 	}
+
+	gDelayUpdateKeys = 0;
+	gDelayCount = 0;
+	
 }
 
 void init_io(void)

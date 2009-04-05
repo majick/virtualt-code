@@ -67,6 +67,7 @@ extern	char	gStopped;
 extern	char	gSingleStep;
 extern	int		gDebugMonitorFreq;
 extern	int		gSocketPort;
+extern	int		gTelnet;
 extern	int		gNoGUI;
 
 #define	DEBUG_PC_CHANGED	1
