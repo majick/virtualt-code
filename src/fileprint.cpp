@@ -721,7 +721,7 @@ int VTFilePrint::CancelPrintJob(void)
 	// Remove all files in the print job
 	count = m_printFiles.GetSize();
 	for (c = 0; c < count; c++)
-		std::remove((const char *) m_printFiles[c]);
+		remove((const char *) m_printFiles[c]);
 
 	// Delete all print files from the array
 	m_printFiles.RemoveAll();
