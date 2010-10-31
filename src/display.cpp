@@ -148,7 +148,7 @@ void setMonitorWindow(Fl_Window* pWin)
 int T100_Disp::m_simKeys[32];
 int	T100_Disp::m_simEventKey;
 
-char *gSpKeyText[] = {
+const char *gSpKeyText[] = {
 	"SHIFT",
 	"CTRL",
 	"GRAPH",
@@ -1492,7 +1492,7 @@ void init_display(void)
 			display_map_mode(temp);
 		}
 		else
-			display_map_mode("Normal");
+			display_map_mode((char *) "Normal");
 	}
         
 
@@ -1592,8 +1592,8 @@ void T100_Disp::PowerDown()
         Fl::check();
         
 	// Print power down message
-	char *msg = "System Powered Down";
-	char *msg2 = "Press any key to reset";
+	char *msg = (char *) "System Powered Down";
+	char *msg2 = (char *) "Press any key to reset";
 	int x;
 	int col;
 	int driver, column;

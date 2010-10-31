@@ -171,10 +171,10 @@ void cb_LoadOptRom (Fl_Widget* w, void*)
 }
 
 
-char			*gIllformedBasic = "Ill formed BASIC file";
-static char		*gTooLargeMsg = "File too large for available memory";
+const char			*gIllformedBasic = "Ill formed BASIC file";
+static const char		*gTooLargeMsg = "File too large for available memory";
 
-char *gKeywordTable[] = {
+const char *gKeywordTable[] = {
 	"END",    "FOR",   "NEXT",  "DATA",    "INPUT", "DIM",    "READ",   "LET",
 	"GOTO",	  "RUN",   "IF",    "RESTORE", "GOSUB", "RETURN", "REM",    "STOP",
 	"WIDTH",  "ELSE",  "LINE",  "EDIT",    "ERROR", "RESUME", "OUT",    "ON",

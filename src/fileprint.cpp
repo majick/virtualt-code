@@ -561,7 +561,7 @@ int VTFilePrint::OpenSession(void)
 	else
 	{
 		filename = m_DirName;
-		filename += "lpt_out.txt";
+		filename += (char *) "lpt_out.txt";
 	}
 
 	// Check if Prompt is enabled

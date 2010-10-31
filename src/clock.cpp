@@ -417,7 +417,7 @@ void save_model_time(void)
 convert_ctime:	Convert from string time to time_t.
 =============================================================================
 */
-char *gMonths[12] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+const char *gMonths[12] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", 
 							"Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
 time_t convert_ctime(char* stime)
 {

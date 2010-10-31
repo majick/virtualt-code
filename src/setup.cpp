@@ -289,7 +289,7 @@ void cb_setup_OK(Fl_Widget* w, void*)
 
 	if (setup_ctrl.com.pNone->value() == 1)
 	{
-		ser_set_port("No Emulation");
+		ser_set_port((char *) "No Emulation");
 		setup.com_mode = SETUP_COM_NONE;
 	}
 	else if (setup_ctrl.com.pSim->value() == 1)

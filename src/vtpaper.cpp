@@ -1526,7 +1526,7 @@ int VTlprPaper::Print(void)
 
 	// Test if stderr redirection is part of cmd line
 	if (strstr((const char *) cmd, "2>&1") == NULL)
-		cmd += " 2>&1";
+		cmd += (char *) " 2>&1";
 
 	// Now spool the job
 	//if (fork() == 0)

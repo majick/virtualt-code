@@ -67,7 +67,7 @@ void close_cb(Fl_Widget* w, void*)
 }
 
 // Table of OPCODE
-char * gStrTable[256] = {
+const char * gStrTable[256] = {
 	"NOP",     "LXI B,",  "STAX B",  "INX B",   "INR B",   "DCR B",    "MVI B,",  "RLC",
 	"DSUB",    "DAD B",   "LDAX B",  "DCX B",   "INR C",   "DCR C",    "MVI C,",  "RRC", 
 
