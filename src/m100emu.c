@@ -1101,10 +1101,12 @@ void setup_working_path(char **argv)
     int         found;
 	char		temp[512];
 	struct stat romStat;
+#endif
 
 	getcwd(path, sizeof(path));
 
 	//J. VERNET: Get Absolute Path, as getcwd doesn't return anything when launch from finder
+#if defined(__APPLE__)
 	found = FALSE;
 		
 	/* Recursively search up the path until we find the ROMs directory */
