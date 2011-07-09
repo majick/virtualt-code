@@ -1694,7 +1694,7 @@ void T100_ComMon::SaveLog(void)
 				}
 				outLine[col + fill] = 0;
 				strcat(outLine, "\n");
-				fprintf(fd, outLine);
+				fprintf(fd, "%s", outLine);
 				outLine[0] = 0;
 
 				// Clear RXTX so we will start a new line below
@@ -1753,7 +1753,7 @@ void T100_ComMon::SaveLog(void)
 			// Terminate the line, append \n and print to file
 			outLine[col + fill] = 0;
 			strcat(outLine, "\n");
-			fprintf(fd, outLine);
+			fprintf(fd, "%s", outLine);
 
 			// Next line of same packet
 			strcpy(outLine, "        ");

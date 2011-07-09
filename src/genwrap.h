@@ -145,7 +145,9 @@ extern "C" {
 /* String Functionss */
 /*********************/
 
+#ifndef __APPLE__
 #define snprintf	safe_snprintf
+#endif
 
 #if defined(_MSC_VER) || defined(__MINGW32__) || defined(__DMC__)
 	#define vsnprintf		_vsnprintf

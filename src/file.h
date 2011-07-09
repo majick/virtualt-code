@@ -54,12 +54,15 @@ extern int		COSaveMode;
 
 #ifdef	__APPLE__
 //JV 10/08/05
-char* ChooseWorkDir();
+const char* ChooseWorkDir();
 
 #ifdef __cplusplus
-extern "C"
+extern "C" {
 #endif
 extern char path[255];
+#ifdef __cplusplus
+}
+#endif
 
 //JV
 #endif

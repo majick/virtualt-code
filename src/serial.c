@@ -1318,8 +1318,7 @@ int ser_set_signals(unsigned char flags)
 
 	// Check for a monitor window and report change
 	if (sp.pMonCallback != NULL)
-		sp.pMonCallback(SER_MON_COM_SIGNAL, (char)((flags>>8) | 
-					(flags & (SER_FLAG_DSR | SER_FLAG_CTS))));
+		sp.pMonCallback(SER_MON_COM_SIGNAL, flags & (SER_FLAG_DSR | SER_FLAG_CTS));
 
 	return SER_NO_ERROR;
 }
@@ -1362,6 +1361,7 @@ int ser_get_flags(unsigned char *flags)
 			}
 
 			ReleaseMutex(sp.hReadMutex);
+			(void *) modem_status;
 
 		#else
 		{
@@ -1410,7 +1410,7 @@ int ser_get_signals(unsigned char *flags)
 {
 
 #ifdef WIN32
-	long modem_status;
+	long modem_status=0;
 #endif
 
 	if ((setup.com_mode == SETUP_COM_HOST) || 

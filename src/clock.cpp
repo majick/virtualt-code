@@ -177,20 +177,23 @@ void pd1990ac_chip_cmd(uchar val)
 			clock_sr_save[x] = clock_sr[x];
 //		clock_sr_index = 0;
 
-		if (gModel == MODEL_PC8201)
+		if (gStdRomDesc != NULL)
 		{
-			if ((get_memory8(gStdRomDesc->sYear+1) == '8') && (get_memory8(gStdRomDesc->sYear) == '3'))
+			if (gModel == MODEL_PC8201)
 			{
-				set_memory8(gStdRomDesc->sYear, (unsigned char) (mytime->tm_year % 10) + '0');
-				set_memory8(gStdRomDesc->sYear+1, (unsigned char) ((mytime->tm_year % 100) / 10) + '0');
+				if ((get_memory8(gStdRomDesc->sYear+1) == '8') && (get_memory8(gStdRomDesc->sYear) == '3'))
+				{
+					set_memory8(gStdRomDesc->sYear, (unsigned char) (mytime->tm_year % 10) + '0');
+					set_memory8(gStdRomDesc->sYear+1, (unsigned char) ((mytime->tm_year % 100) / 10) + '0');
+				}
 			}
-		}
-		else
-		{
-			if ((get_memory8(gStdRomDesc->sYear+1) == 0) && (get_memory8(gStdRomDesc->sYear) == 0))
+			else
 			{
-				set_memory8(gStdRomDesc->sYear, (unsigned char) (mytime->tm_year % 10));
-				set_memory8(gStdRomDesc->sYear+1, (unsigned char) ((mytime->tm_year % 100) / 10));
+				if ((get_memory8(gStdRomDesc->sYear+1) == 0) && (get_memory8(gStdRomDesc->sYear) == 0))
+				{
+					set_memory8(gStdRomDesc->sYear, (unsigned char) (mytime->tm_year % 10));
+					set_memory8(gStdRomDesc->sYear+1, (unsigned char) ((mytime->tm_year % 100) / 10));
+				}
 			}
 		}
 	}

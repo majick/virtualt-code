@@ -119,7 +119,7 @@ void cb_CharGenLoad(Fl_Widget* w, void *)
 void cb_CharGenSave(Fl_Widget* w, void * format)
 {	
 	if (gpCharGen != NULL)
-		gpCharGen->Save((int) format);
+		gpCharGen->Save((intptr_t) format);
 }
 
 /*

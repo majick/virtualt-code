@@ -2276,16 +2276,16 @@ void T100_MemEditor::UpdateAddressText()
 		(region == REGION_RAM3) || region == REGION_RAM1)
 	{
 		if (gReMem)
-			sprintf(string, "0x%06X", address + RAMSTART);
+			sprintf(string, "0x%06X", (unsigned int) (address + RAMSTART));
 		else
-			sprintf(string, "0x%04X", address + RAMSTART);
+			sprintf(string, "0x%04X", (unsigned int) (address + RAMSTART));
 	}
 	else
 	{
 		if (gReMem)
-			sprintf(string, "0x%06X", address);
+			sprintf(string, "0x%06X", (unsigned int) address);
 		else
-			sprintf(string, "0x%04X", address);
+			sprintf(string, "0x%04X", (unsigned int) address);
 	}
 	memedit_ctrl.pMemRange->value(string);
 }

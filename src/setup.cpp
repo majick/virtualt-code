@@ -186,7 +186,7 @@ void load_setup_preferences(void)
 	#ifdef	__APPLE__
 		//JV 10/08/05
 		int ex;
-		char *ret;
+		const char *ret;
 		//---------JV
 	#endif
 
@@ -218,7 +218,7 @@ void load_setup_preferences(void)
 	ex=virtualt_prefs.get("Path",path,".",256);
 	if(ex==0) // no path in the pref file or pref file nonexistent 
 	{
-		ret=ChooseWorkDir(); // return the directory
+		ret = ChooseWorkDir(); // return the directory
 		if(ret==NULL) 
 			return; //nothing choose: do nothing....
 		else 
@@ -226,6 +226,7 @@ void load_setup_preferences(void)
 			strcpy(path,ret);
 			strcat(path,"/");
 			virtualt_prefs.set("Path",path); // set pref path
+			load_sys_rom();
 		}
 	}
 	//JV

@@ -265,10 +265,10 @@ void Flu_Wrap_Group :: draw()
   if( scrollbar.value() > scrollbar.maximum() )
     {
       ((Fl_Valuator*)&scrollbar)->value( scrollbar.maximum() );
-      layout( scrollbar.visible(), scrollTo!=NULL );
+      layout( scrollbar.visible()!=0, scrollTo!=NULL );
     }
   else if( scrollTo )
-    layout( scrollbar.visible(), true );
+    layout( scrollbar.visible()!=0, true );
 
   scrollTo = NULL;
 

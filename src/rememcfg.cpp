@@ -430,15 +430,13 @@ Callback routine for the RememCfg window
 void cb_rememcfgwin (Fl_Widget* w, void*)
 {
 	int		ret;
-	char	temp[40];
 
 	// Test if current map was modified
 	save_vector_edits();
 	if (gMapModified)
 	{
-		sprintf(temp, "Save Map %d changes to ReMem RAM?", gMap);
 		// Ask user if map should be saved
-		ret = fl_choice(temp, "Cancel", "Yes", "No");
+		ret = fl_choice("Save Map %d changes to ReMem RAM?", "Cancel", "Yes", "No", gMap);
 
 		// Test for Cancel
 		if (ret == 0)
@@ -479,7 +477,7 @@ void cb_mapselect (Fl_Widget* w, void*)
 		sprintf(temp, "Save Map %d changes to ReMem RAM?", gMap);
 
 		// Ask user if map should be saved
-		ret = fl_choice(temp, "Cancel", "Yes", "No");
+		ret = fl_choice("Save Map %d changes to ReMem RAM?", "Cancel", "Yes", "No", gMap);
 
 		// Test for Cancel
 		if (ret == 0)

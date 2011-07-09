@@ -152,7 +152,7 @@ void cb_okNewProject(Fl_Widget* w, void*)
 	{
 		fclose(fd);
 		sprintf(projPath, "Project %s already exists!", projName);
-		fl_alert(projPath);
+		fl_alert("%s", projPath);
 		return;
 	}
 

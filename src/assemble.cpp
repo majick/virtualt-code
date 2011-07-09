@@ -40,6 +40,9 @@
 #include		<string.h>
 #include		<stdio.h>
 #include		<stdlib.h>
+#ifndef WIN32
+#include 		<unistd.h>
+#endif
 
 extern "C"
 {
@@ -2880,7 +2883,7 @@ int VTAssembler::Assemble()
 					break;
 
 				case OPCODE_2REG:
-					opcode |= (int) pInst->m_Group - '0';
+					opcode |= (intptr_t) pInst->m_Group - '0';
 					opcode |= atoi(*pInst->m_Operand1) << 3;
 					break;
 				}
