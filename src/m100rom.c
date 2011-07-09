@@ -1001,6 +1001,8 @@ RomDescription_t gM100_Desc = {
 	0xFF9A,						/* Keyscan location */
 	0x7711,						/* Character generator table */
 	0xF92D,						/* Loacation of Year storage */
+	0xFE00,						/* LCD Buffer storage area */
+	0xf63d,						/* Label line enable flag */
 
 	24,							/* Number of directory entries */
 	8,							/* Index of first Dir entry */

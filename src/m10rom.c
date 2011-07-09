@@ -983,6 +983,8 @@ RomDescription_t gM10_Desc = {
 	0xFF5C,						/* Keyscan array */
 	0x742B,						/* Character generator table */
 	0xF934,						/* Location of Year storage */
+	0xFE00,						/* LCD Buffer storage area */
+	0xF644,						/* Label line enable flag */
 
 	24,							/* Number of directory entries */
 	8,							/* Index of first Dir entry */

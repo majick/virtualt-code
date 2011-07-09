@@ -227,6 +227,23 @@ void save_hex_file(int begin, int end, FILE* fd)
 	hexout(fd, 0, 0, 1);
 }
 
+/* the command string format is "S begin end filename" where */
+/* "begin" and "end" are the locations to dump to the intel */
+/* hex file, specified in hexidecimal. */
+
+void save_hex_file_buf(char *buf, int begin, int end, FILE* fd)
+{
+	int  addr;
+
+	if (begin > end) {
+		return;
+	}
+	for (addr=begin; addr <= end; addr++)
+		hexout(fd, buf[(unsigned short) addr], addr, 0);
+	hexout(fd, 0, 0, 1);
+}
+
+
 
 /* produce intel hex file output... call this routine with */
 /* each byte to output and it's memory location.  The file */

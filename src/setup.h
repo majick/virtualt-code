@@ -34,6 +34,7 @@
 #ifdef __cplusplus
 void cb_PeripheralSetup (Fl_Widget* w, void*);
 void cb_MemorySetup (Fl_Widget* w, void*);
+void cb_SocketSetup (Fl_Widget* w, void*);
 extern "C" {
 #endif
 
@@ -60,6 +61,7 @@ typedef struct peripheral_setup
 	// BCR port emulation settings
 
 	// Sound emulation settings
+	int		sound_enable;				// Set TRUE when sound is enabled
 
 } peripheral_setup_t;
 

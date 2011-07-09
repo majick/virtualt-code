@@ -61,7 +61,7 @@ uchar			clock_sr_index = 0;
 int				gClockTimingMode;
 int				gTimeElapse;
 int				gReload;
-clock_ctrl_t	gClockCtrl;
+vt_clock_ctrl_t	gClockCtrl;
 extern RomDescription_t	*gStdRomDesc;
 extern	Fl_Preferences virtualt_prefs;
 
@@ -453,6 +453,9 @@ time_t convert_ctime(char* stime)
 	tm_time.tm_sec = atoi(&stime[17]);		// Convert seconds
 	tm_time.tm_year = atoi(&stime[20]);		// Convert year
 	tm_time.tm_year -= 1900;
+    tm_time.tm_wday = 0;
+    tm_time.tm_yday = 1;
+    tm_time.tm_isdst = 0;
 
 	// Convert to time_t format
 	convTime = mktime(&tm_time);

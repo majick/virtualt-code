@@ -32,8 +32,11 @@
 #define _MULTIEDITWIN_H_
 
 #include "multiwin.h"
+#include "My_Text_Editor.h"
+#include "highlight.h"
 
-class Fl_Multi_Edit_Window : public Fl_Multi_Window
+//class Fl_Multi_Edit_Window : public Fl_Multi_Window
+class Fl_Multi_Edit_Window : public My_Text_Editor, public VTObject
 {
 public:
 	Fl_Multi_Edit_Window(int x=0, int y=0, int w=600, int h=500, const char *label = 0);
@@ -54,10 +57,16 @@ public:
 	void			ModifedCB(int, int, int, int, const char *);
 	const MString&	Filename(void) { return m_FileName; }
 	void			Title(const MString& title);
+	MString&		Title(void) { return m_Title; }
+	void			DisableHl(void);
+	void			EnableHl(void);
+	int				ForwardSearch(const char *pFind, int caseSensitive = TRUE);
+	virtual void	show(void);
 
-	Fl_Text_Editor*	m_te;
+//	Fl_Text_Editor*	m_te;
 protected:
 	Fl_Text_Buffer*	m_tb;
+	HighlightCtrl_t	*m_pHlCtrl;
 	MString			m_FileName;
 	MString			m_Title;
 	int				m_Modified;

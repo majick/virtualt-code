@@ -42,6 +42,8 @@
 #include <FL/Fl_Bitmap.H>
 #include <FL/fl_ask.H>
 
+#include "FLU/Flu_File_Chooser.h"
+
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -672,7 +674,7 @@ Load data from a file
 */
 void VTCharacterGen::Load(void)
 {
-	Fl_File_Chooser*	fc;
+	Flu_File_Chooser*	fc;
 	unsigned char		data[12];
 	int					index;
 
@@ -681,7 +683,9 @@ void VTCharacterGen::Load(void)
 		return;
 
 	// Create a file chooser
-	fc = new Fl_File_Chooser(".", "*.fcr", 1, "Load FX-80 Character ROM");
+	fl_cursor(FL_CURSOR_WAIT);
+	fc = new Flu_File_Chooser(".", "*.fcr", 1, "Load FX-80 Character ROM");
+	fl_cursor(FL_CURSOR_DEFAULT);
 
 	// Show the file dialog
 	fc->show();
@@ -738,7 +742,7 @@ Save data to a file
 */
 void VTCharacterGen::Save(int format)
 {
-	Fl_File_Chooser*	fc;
+	Flu_File_Chooser*	fc;
 	unsigned char		data[12];
 	int					index, len, c;
 	char				ch;
@@ -753,20 +757,26 @@ void VTCharacterGen::Save(int format)
 	// Create a file chooser
 	if (format == CHARGEN_FORMAT_BINARY)
 	{
-		fc = new Fl_File_Chooser(".", "*.fcr", Fl_File_Chooser::CREATE, 
+		fl_cursor(FL_CURSOR_WAIT);
+		fc = new Flu_File_Chooser(".", "*.fcr", Fl_File_Chooser::CREATE, 
 			"Save FX-80 Character ROM");
+		fl_cursor(FL_CURSOR_DEFAULT);
 		strcpy(ext, ".fcr");
 	}
 	else if (format == CHARGEN_FORMAT_C)
 	{
-		fc = new Fl_File_Chooser(".", "*.c", Fl_File_Chooser::CREATE, 
+		fl_cursor(FL_CURSOR_WAIT);
+		fc = new Flu_File_Chooser(".", "*.c", Fl_File_Chooser::CREATE, 
 			"Save FX-80 Character ROM");
+		fl_cursor(FL_CURSOR_DEFAULT);
 		strcpy(ext, ".c");
 	}
 	else if (format == CHARGEN_FORMAT_BASIC)
 	{
-		fc = new Fl_File_Chooser(".", "*.BA", Fl_File_Chooser::CREATE, 
+		fl_cursor(FL_CURSOR_WAIT);
+		fc = new Flu_File_Chooser(".", "*.BA", Fl_File_Chooser::CREATE, 
 			"Save FX-80 Character ROM");
+		fl_cursor(FL_CURSOR_DEFAULT);
 		strcpy(ext, ".ba");
 	}
 

@@ -48,7 +48,7 @@ extern Fl_Pixmap gRestoreIcon;
 extern Fl_Pixmap gRestoreIconSelected;
 extern Fl_Pixmap gRestoreIconInactive;
 
-extern char * gMultiWinDoc_xpm[];
+extern const char * gMultiWinDoc_xpm[];
 
 #endif
 

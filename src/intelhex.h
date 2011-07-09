@@ -36,6 +36,6 @@ int load_hex_file(char *filename, char *buffer, unsigned short *start_addr);
 /* this writes a part of memory[] to an intel hex file */
 void save_hex_file(int begin, int end, FILE* fd);
 void save_hex_file_ext(int begin, int end, int region, FILE* fd);
-
+void save_hex_file_buf(char *buf, int begin, int end, FILE* fd);
 
 #endif

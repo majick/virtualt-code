@@ -73,6 +73,7 @@ protected:
 	double			m_Height;
 	double			m_Width;
 	int				m_FirstAddress;
+	int				m_FontSize;
 
 	int				m_CursorAddress;
 	int				m_CursorCol;

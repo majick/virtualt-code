@@ -78,6 +78,8 @@ typedef struct RomDescription {
 	unsigned short		sKeyscan;	       /* Location of Keyscan array */
 	unsigned short		sCharTable;        /* Location of Charater generator table */
 	unsigned short		sYear;             /* Location of Year storage */
+	unsigned short		sLcdBuf;           /* Lccation of LCD buffer */
+	unsigned short		sLabelEn;		   /* Label line enable flag */
 
 	unsigned short		sDirCount;         /* Number of entries in Directory */
 	unsigned short		sFirstDirEntry;    /* Index of first available enry */

@@ -89,7 +89,7 @@ void	get_rom_path(char* file, int model);
 void	init_cpu(void);
 //void	cpu_delay(int cy);
 void	resetcpu(void);
-void	cb_int65(void);
+void	cb_int65(int pinLevel);
 
 #ifdef __cplusplus
 }

@@ -119,11 +119,15 @@ Draw the action icon.
 */
 void Fl_Action_Icon::draw(void)
 {
+	int		tx = x() +  m_pImage->w() + 5;
+	int		ty = y() + h() - 5;
+	fl_push_clip(x(), y(), w(), h());
 	Fl_Box::draw();
 
 	// Draw the label
 	window()->make_current();
 	fl_color(FL_BLACK);
-	fl_draw(label(),x() +  m_pImage->w() + 5, y() + h() -5 );
+	fl_draw(label(),tx, ty );
+	fl_pop_clip();
 }
 

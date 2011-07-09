@@ -47,7 +47,7 @@ extern "C" {
 #define OPTROMSIZE		32768
 #define ADDRESSSPACE	65536
 
-extern uchar cpu[14];
+extern volatile uchar cpu[14];
 extern uchar *gMemory[64];
 extern int gRomSize;
 

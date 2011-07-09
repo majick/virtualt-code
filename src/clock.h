@@ -59,7 +59,7 @@ typedef struct
 	Fl_Round_Button*	pEmulTime;
 	Fl_Check_Button*	pReload;
 	Fl_Check_Button*	pTimeElapse;
-} clock_ctrl_t;
+} vt_clock_ctrl_t;
 
 #define	CLOCK_MODE_SYS		1
 #define	CLOCK_MODE_EMUL		2
