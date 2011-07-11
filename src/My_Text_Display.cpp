@@ -2844,7 +2844,7 @@ void My_Text_Display::draw(void) {
 
   // draw the non-text, non-scrollbar areas.
   if (damage() & FL_DAMAGE_ALL) {
-	  Fl_Region r = XRectangleRegion(0, 0, w(), h());
+//	  Fl_Region r = XRectangleRegion(0, 0, w(), h());
 	  fl_push_clip(0, 0, w(), h());
 	 // fl_clip_region(r);
 	  

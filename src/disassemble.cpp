@@ -611,7 +611,6 @@ void VTDis::Disassemble()
 					int next;
 					int last = c + m_pRom->pTables[x].size;
 					int str_active = 0;
-					int quote_active = 0;
 					for (next = c; next < last; next++)
 					{
 						if ((m_memory[next] > 0x7E) && (str_active))

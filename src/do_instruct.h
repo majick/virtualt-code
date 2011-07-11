@@ -27,6 +27,8 @@
  * SUCH DAMAGE.
  */
 
+#ifndef INST_8085
+#define INST_8085
 
 #define LXI(rp,h,l,rps)	{ \
 							INCPC; \
@@ -299,6 +301,7 @@
 								INCPC2; \
 							cycle_delta+=(7); \
 						}
+#endif
 
 {
 //	if(trace)

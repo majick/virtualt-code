@@ -1560,6 +1560,7 @@ int VTlprPaper::Print(void)
 		pclose(pFD);
 		//exit(0);
 	}
+	return 0;
 }
 
 #else
