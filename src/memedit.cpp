@@ -373,7 +373,7 @@ void save_mem_to_file(const char *filename, int address, int count, int save_as_
 		if (fd == NULL)
 			return;
 
-		save_hex_file_ext(address, address+count-1, region, fd);
+		save_hex_file_ext(address, address+count-1, region, 0, fd);
 
 		fclose(fd);
 	}

@@ -1162,7 +1162,7 @@ void save_file(model_t_files_t *pFile)
 		len = get_memory16(addr1+2) + 6;
 		if (COSaveMode == 1)
 		{
-			save_hex_file(addr1, addr1+len, fd);
+			save_hex_file(addr1, addr1+len, 0, fd);
 		}
 		else
 		{

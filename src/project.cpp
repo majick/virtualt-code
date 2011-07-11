@@ -139,7 +139,7 @@ void cb_okNewProject(Fl_Widget* w, void*)
 	}
 	
 	// Check if project type provided
-	if (pNewProject->getProjType() == 0)
+	if (pNewProject->getProjType() < 0)
 	{
 		fl_alert("Project type must be specified!");
 		return;
