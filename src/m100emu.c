@@ -1334,7 +1334,7 @@ void setup_working_path(char **argv)
 	char*		pContents, *pStr;
 #endif
 
-	getcwd(path, sizeof(path));
+	(void) getcwd(path, sizeof(path));
 
 #if defined(__APPLE__)
 	/* On MacOSX, getcwd returns nothing when launched from the Finder.  So
@@ -1423,7 +1423,7 @@ void setup_working_path(char **argv)
 	if ((i > 0) && (path[i-1] != '/'))
 		strcat(path, "/");
 # else
-	_getcwd(path, sizeof(path));
+	(void) _getcwd(path, sizeof(path));
 	strcat(path,"\\");
 #endif
 }
