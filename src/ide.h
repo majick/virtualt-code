@@ -126,6 +126,7 @@ public:
 	void			OpenProject(void);
 	void			OpenProject(const char *filename);
 	void			SaveProject(void);
+	int				CloseAllFiles(void);
 	void			SaveProjectIdeSettings(void);
 	void			ReadProjectIdeSettings(void);
 	void			BuildTreeControl(void);
@@ -164,6 +165,9 @@ public:
 	MString			ProjectName(void);
 	void			Stdout(const char *msg);
 	int				ProjectDirty(void);
+	void			ErrorReport(int lineNo, char* pFilename);
+	int				SpliterHeight(void) { return m_ProjWindow->h(); }
+	int				SpliterWidth(void) { return m_ProjWindow->w(); }
 
 	Fl_Window*		m_EditWindow;
 	Fl_Ide_Tabs*	m_EditTabs;
@@ -179,7 +183,8 @@ protected:
 	Fl_Window*					m_ProjWindow;
 	Flu_Tree_Browser*			m_ProjTree;
 	Fl_Window*					m_TabWindow;
-	Fl_Tabs*					m_Tabs;
+	Fl_Ide_Tabs*					m_Tabs;
+//	Fl_Tabs*					m_Tabs;
 	Fl_Group*					m_BuildTab;
 	My_Text_Display*			m_BuildTextDisp;
 	Fl_Text_Buffer*				m_BuildTextBuf;

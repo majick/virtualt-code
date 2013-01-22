@@ -137,6 +137,14 @@ void Flu_Combo_Box :: selected( const char *v )
   do_callback();
 }
 
+void Flu_Combo_Box :: selectall(void)
+{
+	const char *v = input.value();
+	if (v)
+		input.position(0, strlen(v));
+	input.redraw();
+}
+
 int Flu_Combo_Box::Popup :: handle( int event )
 {
   // FL_MOVE is generated while window is moving
