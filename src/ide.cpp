@@ -2148,8 +2148,6 @@ int VT_Ide::CloseAllFiles(void)
 			else
 			{
 				// Ask if we should save the file
-				MString	q;
-				q.Format("Save file %s?", mw->Title());
 				int ans = fl_choice("Save file %s?", "Cancel", "Yes", "No", (const char *) mw->Title());
 
 				// Test for CANCEL
@@ -3628,7 +3626,9 @@ void VT_Ide::BuildProject(void)
 				if (pSource->m_Name[0] == '/' || pSource->m_Name[1] == ':')
 					linkerScript = pSource->m_Name;
 				else
-					linkerScript = m_ActivePrj->m_RootPath + "/" + pSource->m_Name;
+				{
+					linkerScript = m_ActivePrj->m_RootPath + "/";
+					linkerScript += pSource->m_Name;
 				linkerScriptFound = true;
 			}
 		}
