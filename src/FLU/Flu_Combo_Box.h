@@ -63,6 +63,8 @@ public:
   //! Override of Fl_Group::resize()
   void resize( int X, int Y, int W, int H );
 
+  void selectall(void);
+
   //! Set the function that will be called when the input area is interacted with
   inline void input_callback( void (*cb)(Fl_Widget*,void*), void* cbd = NULL )
     { _inputCB = cb; _inputCBD = cbd; }
