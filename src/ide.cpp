@@ -3629,6 +3629,7 @@ void VT_Ide::BuildProject(void)
 				{
 					linkerScript = m_ActivePrj->m_RootPath + "/";
 					linkerScript += pSource->m_Name;
+				}
 				linkerScriptFound = true;
 			}
 		}
