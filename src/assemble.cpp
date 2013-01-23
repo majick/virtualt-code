@@ -822,7 +822,7 @@ void VTAssembler::opcode_arg_2reg(int opcode)
 	if (pInst != NULL)
 	{
 		// Append instruction with operands
-		pInst->m_Group = (VTObject *) (int) reg[--reg_cnt];	// Get register operand
+		pInst->m_Group = (VTObject *) (intptr_t) reg[--reg_cnt];	// Get register operand
 		pInst->m_Operand1 = new MString;			// Allocte operand object
 		pInst->m_Operand1->Format("%c", reg[--reg_cnt]);	// Get register operand
 	}

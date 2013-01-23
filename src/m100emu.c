@@ -1326,6 +1326,7 @@ void setup_working_path(char **argv)
 {
 #if defined(__unix__) || defined(__APPLE__)
 	int			i; 
+	char*		pCwd;
     
 #if defined(__APPLE__)
     int         found;
@@ -1334,7 +1335,8 @@ void setup_working_path(char **argv)
 	char*		pContents, *pStr;
 #endif
 
-	(void) getcwd(path, sizeof(path));
+	pCwd = getcwd(path, sizeof(path));
+	(void) pCwd;
 
 #if defined(__APPLE__)
 	/* On MacOSX, getcwd returns nothing when launched from the Finder.  So

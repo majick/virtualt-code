@@ -669,7 +669,7 @@ void cb_LoadFromHost(Fl_Widget* w, void* host_filename)
 
 	// Read contents to buffer
 	fseek(fd, 0, SEEK_SET);
-	fread(data, 1, len, fd);
+	int readlen = fread(data, 1, len, fd);
 
 	// Close the file
 	fclose(fd);

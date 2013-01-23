@@ -92,7 +92,10 @@ void VTHostPrint::PrintByte(unsigned char byte)
 	#else
 		// Write byte to the host
 		if (m_OutFd != -1)
-			write(m_OutFd, &byte, 1); 
+		{
+			int size = write(m_OutFd, &byte, 1); 
+			(void) size;
+		}
 	#endif
 
 	// Save byte so we know if we should do an AFF

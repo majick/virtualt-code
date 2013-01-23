@@ -1026,6 +1026,7 @@ void VTFX80Print::ResetPrinter(void)
 	int		c, r;
 	int		fileLoaded;
 	FILE*	fd;
+	int		readlen;
 
 	// Reset the print and protocol mode
 	ResetMode();
@@ -1051,7 +1052,7 @@ void VTFX80Print::ResetPrinter(void)
 			if (fd != NULL)
 			{
 				// Read data from File into charRam buffer
-				fread(m_charRom, 1, sizeof(m_charRom), fd);
+				readlen = fread(m_charRom, 1, sizeof(m_charRom), fd);
 				fclose(fd);
 				
 				// Indicate ROM loaded
@@ -1078,7 +1079,7 @@ void VTFX80Print::ResetPrinter(void)
 			if (fd != NULL)
 			{
 				// Read data from File into charRam buffer
-				fread(m_charRam, 1, sizeof(m_charRam), fd);
+				readlen = fread(m_charRam, 1, sizeof(m_charRam), fd);
 				fclose(fd);
 				
 				// Indicate RAM loaded

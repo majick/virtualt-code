@@ -721,7 +721,7 @@ void VTCharacterGen::Load(void)
 	// Loop through all character in the chartable
 	for (index = 0; index < 256; index++)
 	{
-		fread(data, 1, sizeof(data), fd);
+		int readlen = fread(data, 1, sizeof(data), fd);
 /*		if (data[0] == 0)
 			data[0] = 0x80;
 		else

@@ -3251,7 +3251,7 @@ Flu_Tree_Browser::Node* Flu_Tree_Browser :: Node :: modify( const char* path, in
 	    int ID = n->id();
 	    _children.erase( n );
 	    delete n;
-	    retNode = (Node*)ID; // non-null return value means remove was successful
+	    retNode = (Node*)(intptr_t) ID; // non-null return value means remove was successful
 	    rdata.forceResize = true;
 	    rdata.visibilityChanged = true;
 	  }
