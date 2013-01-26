@@ -1325,6 +1325,7 @@ VT_Ide::VT_Ide(int x, int y, int w, int h, const char *title)
 	m_BuildTextDisp->textcolor(hl_plain);
 	m_BuildTextDisp->color(background_color);
 	m_BuildTextDisp->selection_color(FL_DARK_BLUE);
+	m_BuildTextDisp->blink_enable(0);
 
 	// Create a Text Buffer for the Text Editor to work with
 	m_BuildTextBuf = new Fl_Text_Buffer();
@@ -1358,6 +1359,7 @@ VT_Ide::VT_Ide(int x, int y, int w, int h, const char *title)
 	md->textcolor(hl_plain);
 	md->color(background_color);
 	md->selection_color(FL_DARK_BLUE);
+	md->blink_enable(0);
 
 	// Create a Text Buffer for the Text Editor to work with
 	Fl_Text_Buffer *tb = new Fl_Text_Buffer();
@@ -1395,6 +1397,7 @@ VT_Ide::VT_Ide(int x, int y, int w, int h, const char *title)
 	md->textcolor(hl_plain);
 	md->color(background_color);
 	md->selection_color(FL_DARK_BLUE);
+	md->blink_enable(0);
 
 	// Create a Text Buffer for the Text Editor to work with
 	tb = new Fl_Text_Buffer();
@@ -1419,6 +1422,7 @@ VT_Ide::VT_Ide(int x, int y, int w, int h, const char *title)
 	md->textcolor(hl_plain);
 	md->color(background_color);
 	md->selection_color(FL_DARK_BLUE);
+	md->blink_enable(0);
 
 	// Create a Text Buffer for the Text Editor to work with
 	tb = new Fl_Text_Buffer();

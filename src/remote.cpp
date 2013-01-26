@@ -137,6 +137,7 @@ extern int fl_wait(double);
 extern void simulate_keydown(int key);
 extern void simulate_keyup(int key);
 extern	Fl_Preferences virtualt_prefs;
+extern int gSimKey;
 
 extern "C"
 {
@@ -1606,10 +1607,13 @@ std::string cmd_list_break(ServerSocket& sock, std::string& args)
 
 void key_delay(void)
 {
-	fl_wait(0.01);
+	//fl_wait(0.01);
+	while (gSimKey != 0)
+		fl_wait(0.001);
+
 	while (gDelayUpdateKeys)
 		fl_wait(0.001);
-	fl_wait(0.01);
+	//fl_wait(0.01);
 }
 /*
 =======================================================
