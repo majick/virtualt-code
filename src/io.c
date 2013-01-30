@@ -264,12 +264,13 @@ void update_keys(void)
 		}
 	}
 
-	if (gSpecialKeys & (MT_GRAPH | MT_CODE | MT_SHIFT) && !gCapture)
+	if ((gSpecialKeys & (MT_GRAPH | MT_CODE | MT_SHIFT) == 0) && !gCapture)
 	{
 		FILE* fd;
 		int		d, col, row;
 		gCapture = TRUE;
 		
+		printf("capture 0x%0x\n", gSpecialKeys);
 		fd = fopen("lcd_cap.txt", "w");
 		if (fd != NULL)
 		{
