@@ -2248,7 +2248,10 @@ static char mapStr[40];
 
 void display_cpu_speed(void)
 {
-	sprintf(label, "%4.1f Mhz", cpu_speed + .05);
+	if (cpu_speed + 0.5 < 10.0)
+		sprintf(label, "%4.2f Mhz", cpu_speed);
+	else
+		sprintf(label, "%4.1f Mhz", cpu_speed + .05);
 	Fl::check();
 	gpSpeed->label(label);
 }
@@ -3255,7 +3258,6 @@ int T100_Disp::handle(int event)
 	case FL_DND_RELEASE:
 		return 1;
 	case FL_PASTE:
-		printf("PASTE: %s", Fl::event_text());
 		if (IsInMenu() == 1)
 			remote_load_from_host(Fl::event_text());
 		return 1;
