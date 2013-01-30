@@ -270,7 +270,6 @@ void update_keys(void)
 		int		d, col, row;
 		gCapture = TRUE;
 		
-		printf("capture 0x%0x\n", gSpecialKeys);
 		fd = fopen("lcd_cap.txt", "w");
 		if (fd != NULL)
 		{
