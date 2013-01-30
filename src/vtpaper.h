@@ -133,6 +133,7 @@ protected:
 	char*				m_pLineCnts;				// Pointer to m_height byte counts
 	int					m_pageNum;					// Active page number
 	int					m_topPixel;					// Top pixel on window
+	int					m_leftPixel;				// Pixel number of left edge of page
 
 	Fl_Scrollbar*		m_pScroll;
 };
