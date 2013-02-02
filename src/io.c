@@ -264,7 +264,7 @@ void update_keys(void)
 		}
 	}
 
-	if ((gSpecialKeys & (MT_GRAPH | MT_CODE | MT_SHIFT) == 0) && !gCapture)
+	if (((gSpecialKeys & (MT_GRAPH | MT_CODE | MT_SHIFT)) == 0) && !gCapture)
 	{
 		FILE* fd;
 		int		d, col, row;
