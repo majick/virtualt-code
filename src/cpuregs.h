@@ -68,7 +68,8 @@ typedef struct cpu_trace_data
 The CPU Registers Window
 ================================================
 */
-class VTCpuRegs : public Fl_Double_Window
+//class VTCpuRegs : public Fl_Double_Window
+class VTCpuRegs : public Fl_Window
 {
 public:
 	VTCpuRegs(int x, int y, const char* title);
