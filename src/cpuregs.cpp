@@ -68,7 +68,9 @@ VTDis			cpu_dis;
 extern			Fl_Preferences virtualt_prefs;
 
 extern "C"
+{
 extern volatile UINT64			cycles;
+}
 
 // Menu item callback definitions
 static void cb_save_trace(Fl_Widget* w, void*);
