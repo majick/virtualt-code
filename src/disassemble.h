@@ -51,6 +51,7 @@ public:
 	void 		SetTextViewer(class Fl_Text_Editor* pTextViewer);
 	void 		CopyIntoMem(unsigned char * ptr, int len);
 	int			DisassembleLine(int address, char* line);
+	int			DisassembleLine(int address, unsigned char opcode, unsigned short operand, char* line);
 	void		SetBaseAddress(int address);
 	void		AppendComments(char* line, int opcode, int address);
 

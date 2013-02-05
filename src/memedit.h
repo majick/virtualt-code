@@ -37,6 +37,8 @@
 void cb_MemoryEditor (Fl_Widget* w, void*);
 void cb_MemoryEditorUpdate(void);
 
+void MemoryEditor_LoadPrefs(void);
+void MemoryEditor_SavePrefs(void);
 
 #define		MENU_HEIGHT	32
 
@@ -55,6 +57,7 @@ public:
 	void			UpdateDispMem(void);
 	void			MoveTo(int value);
 	int				m_FirstLine;
+	int				m_x, m_y, m_w, m_h;		// user preferences for window position
 				
 protected:
 //	virtual int handle(int event);
@@ -86,7 +89,6 @@ protected:
 	long			m_SelEndCol;
 
 	Fl_Scrollbar*	m_pScroll;
-
 };
 
 #endif

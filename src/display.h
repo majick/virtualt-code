@@ -52,6 +52,7 @@ void t200_command(unsigned char ir, unsigned char data);
 unsigned char t200_readport(unsigned char port);
 void handle_simkey(void);
 void switch_model(int);
+void init_other_windows(void);
 
 typedef int (*get_key_t)(int);
 typedef int (*event_key_t)(void);

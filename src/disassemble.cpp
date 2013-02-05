@@ -926,3 +926,41 @@ int VTDis::DisassembleLine(int address, char* line)
 
 	return 1+op_len;
 }
+
+int VTDis::DisassembleLine(int address, unsigned char opcode, unsigned short operand, char* line)
+{
+	char			arg[60];
+	unsigned char	op_len;
+
+	// Determine length of this opcode
+	op_len = gLenTable[opcode] & 0x03;
+
+	// Print the address and opcode value to the temporary line buffer
+	sprintf(line, "%04XH  ", address);
+
+	// Print the opcode text to the temp line buffer
+	strcat(line, gStrTable[opcode]);
+
+	// Check if this opcode has a single byte argument
+	if (op_len == 1)
+	{
+		// Single byte argument
+		sprintf(arg, "%02XH", operand & 0xFF);
+		strcat(line, arg);
+	}
+
+	// Check if this opcode as a 2 byte argument
+	else if (op_len == 2)
+	{
+		// Double byte argument
+		sprintf(arg, "%04XH", operand);
+		strcat(line, arg);
+
+		if (m_WantComments)
+		{
+			AppendComments(line, opcode, operand);
+		}
+	}
+
+	return 1+op_len;
+}

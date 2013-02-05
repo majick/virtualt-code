@@ -1459,6 +1459,7 @@ int main(int argc, char **argv)
 	init_throttle_timer();		/* Initialize the throttle timer */
 	init_remote();				/* Initialize the remote control */
 	init_lpt();					/* Initialize the printer subsystem */
+	init_other_windows();		/* Initialize other windows that were opened (memedit, regs, etc. */
 	get_model_time();			/* Load the emulated time for current model */
 
 	/* Perform Emulation */

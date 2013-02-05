@@ -36,6 +36,9 @@
 #include "FLU/Flu_Combo_List.h"
 #include "FLU/Flu_Return_Button.h"
 #include "FLU/Flu_Button.h"
+#include "FLU/Flu_Tree_Browser.h"
+#include "FLU/flu_pixmaps.h"
+#include "FLU/Flu_File_Chooser.h"
 
 #include "MString.h"
 #include "vtobj.h"
