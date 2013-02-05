@@ -214,6 +214,7 @@ public:
 	int					m_x, m_y, m_h, m_w;
 	int					m_lastH;
 	int					m_fontSize, m_fontHeight;
+	int					m_inverseHilight;
 };
 
 #endif
