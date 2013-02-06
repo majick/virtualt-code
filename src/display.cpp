@@ -4812,6 +4812,10 @@ void init_other_windows(void)
 	if (cpuregs_was_open && (gcpuw == NULL))
 		cb_CpuRegs(NULL, NULL);
 
+	// If the IDE window was opened previously, then re-open it
+	if (ide_was_open && gpIde == NULL)
+		cb_Ide(NULL, NULL);
+
 	// Give the focus back to the main VirtualT window
 	MainWin->show();
 }
