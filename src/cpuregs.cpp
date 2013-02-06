@@ -1049,7 +1049,8 @@ void debug_cpuregs_cb (int reason)
 			return;
 	}
 
-	gDebugCount = 0;
+	if (gDebugCount >= gDebugMonitorFreq + 64)
+		gDebugCount = 0;
 
 	// Update PC edit box
 	sprintf(str, gcpuw->m_sPCfmt, PC);
