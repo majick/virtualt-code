@@ -20,6 +20,10 @@
 
   -----
     $Log$
+    Revision 1.2  2013/02/06 17:10:33  kpettit1
+    Added method to MString to extract the filename portion of the string.  This
+    will cause a search for '/' or '\' and return only the filename segment.
+
     Revision 1.1  2007/03/31 22:09:17  kpettit1
     Fixed issue with Read from HD in normal memory mode.  Added many files for IDE & Assember.  This is a work in progress and not complete yet.
 
@@ -1532,6 +1536,26 @@ MString MString::SpanExcluding(char* string) const {
 		tmp = tmp->MLink_Forward;
 	}
 	return tmpStr;
+}
+
+MString MString::Filename(void) const {  //100%
+
+	MString tmp;
+	int  idx = ReverseFind('/');
+
+	if (idx == -1)
+		idx = ReverseFind('\\');
+
+	if (idx == -1)
+		return *this;	
+
+	int length = GetLength();
+	tmp = Right(length - idx - 1);
+	return tmp;
+
+//	MString tmp;
+//	MakeRightChain(headMNode, nCount, tmp.headMNode);
+
 }
 
 char* MString::ToChar(int nStart,int nCount) {
