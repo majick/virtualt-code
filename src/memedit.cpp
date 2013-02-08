@@ -946,7 +946,7 @@ void T100_MemEditor::SetRegionOptions(void)
 	{
 		if (gRex)
 		{
-			if (gModel == MODEL_T200)
+			if (gModel == MODEL_T200 || gModel == MODEL_PC8201)
 			{
 				memedit_ctrl.pRegion->add("RAM 1");
 				memedit_ctrl.pRegion->add("RAM 2");
@@ -1023,7 +1023,7 @@ void T100_MemEditor::SetScrollSize(void)
 		if (gRex)
 		{
 			region = memedit_ctrl.pRegion->value();
-			if (gModel == MODEL_T200)
+			if (gModel == MODEL_T200 || gModel == MODEL_PC8201)
 			{
 				switch (region)
 				{

@@ -1179,6 +1179,22 @@ std::string cmd_load(ServerSocket& sock, std::string& args)
 
 /*
 =======================================================
+Kill command:  Kills a file within the target
+=======================================================
+*/
+std::string cmd_kill(ServerSocket& sock, std::string& args)
+{
+	if (!delete_file(args.c_str()))
+	{
+		std::string ret = "Kill Error" + gLineTerm + gOk;
+		return ret;
+	}
+
+	return gOk;
+}
+
+/*
+=======================================================
 Load command:  Loads a target file from the host
 =======================================================
 */
@@ -2876,6 +2892,9 @@ std::string process_command(ServerSocket& sock, char *sockdata, int len)
 
 	else if (cmd_word == "load")
 		ret = cmd_load(sock, args);
+
+	else if (cmd_word == "kill")
+		ret = cmd_kill(sock, args);
 
 	else if ((cmd_word == "read_mem") || (cmd_word == "rm"))
 		ret = cmd_read_mem(sock, args);

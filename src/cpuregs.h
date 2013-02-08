@@ -71,6 +71,7 @@ typedef struct cpu_trace_colors
 	Fl_Color			foreground;
 	Fl_Color			background;
 	Fl_Color			hilight;
+	Fl_Color			select;
 } cpu_trace_colors_t;
 
 #define	CPUREGS_TRACE_COUNT		1024
@@ -235,6 +236,9 @@ public:
 	int					m_inverseHilight;
 	int					m_showAs16Bit;
 	int					m_colorSyntaxHilight;
+	int					m_selStart;
+	int					m_selEnd;
+	int					m_haveMouse;
 };
 
 #endif
