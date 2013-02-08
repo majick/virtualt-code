@@ -544,7 +544,6 @@ void get_emulation_path(char* emu, int model)
 		strcat(emu, "PC8300/");
 		break;
 	}
-	//printf("emu_path:%s\n",emu);
 }
 
 /*
@@ -557,7 +556,6 @@ get_rom_path:	This function returns the path of the ROM file for the
 void get_rom_path(char* file, int model)
 {
 	strcpy(file, path);			/* Copy VirtualT path */
-	//printf("Path:%s\n",path);
 	
 	switch (model)
 	{
@@ -583,7 +581,6 @@ void get_rom_path(char* file, int model)
 		strcat(file, "PC8300/PC8300rom.bin");
 		break;
 	}
-	//printf("Rom_path:%s\n",file);
 }
 
 /*
