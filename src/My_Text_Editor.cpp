@@ -443,7 +443,7 @@ int My_Text_Editor::handle_key() {
 	char *line = new char[strlen(buffer()->line_text(insert_position()))+1];
 	strcpy(line, buffer()->line_text(insert_position()));
 	for(unsigned int i = 0; i < strlen(line); i++) {
-		if(line[i]!=' ' && line[i]!='\t' || i >= max) line[i]='\0';
+		if(line[i]!=' ' && line[i]!='\t' || i >= (unsigned int) max) line[i]='\0';
 	}
 	kf_enter(c,this);
   	insert(line); 

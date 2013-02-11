@@ -455,7 +455,7 @@ void cb_remote_debug(int reason)
 	char			str[40];
 
 	// Test if callback is for an interrupt
-	if (reason == DEBUG_INTERRUPT)
+	if (reason == DEBUG_INTERRUPT || reason == DEBUG_CPU_STEP)
 	{
 		return;
 	}

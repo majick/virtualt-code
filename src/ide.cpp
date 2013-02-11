@@ -2881,10 +2881,20 @@ int VT_Ide::ParsePrjFile(const char *name)
 			if (value != 0)
 				m_ActivePrj->m_AutoLoad = atoi(value);
 		}
+		else if (strcmp(sPtr, "LOADERFILENAME") == 0)
+		{
+			if (value != 0)
+				m_ActivePrj->m_LoaderFilename = value;
+		}
 		else if (strcmp(sPtr, "UPDATEHIMEM") == 0)
 		{
 			if (value != 0)
 				m_ActivePrj->m_UpdateHIMEM = atoi(value);
+		}
+		else if (strcmp(sPtr, "CREATELOADER") == 0)
+		{
+			if (value != 0)
+				m_ActivePrj->m_CreateLoader = atoi(value);
 		}
 		else if (strcmp(sPtr, "TYPE") == 0)
 		{
@@ -3689,6 +3699,10 @@ void VT_Ide::BuildProject(void)
 		linkerFiles = linkerFiles + (char *) "," + m_ActivePrj->m_LinkLibs;
 		linker.SetObjFiles(linkerFiles);
 		linker.SetStdoutFunction(this, ideStdoutProc);
+		if (m_ActivePrj->m_CreateLoader)
+		{
+			linker.SetLoaderFilename(m_ActivePrj->m_LoaderFilename);
+		}
 		
 		// Now finally perform the link operation
 		linker.Link();

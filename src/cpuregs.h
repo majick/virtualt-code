@@ -135,6 +135,7 @@ public:
 	Fl_Check_Button*	m_pBreakDisable4;
 
 	Fl_Check_Button*	m_pDebugInts;
+	Fl_Box*				m_pRamBank;
 
 	Fl_Check_Button*	m_pSFlag;
 	Fl_Check_Button*	m_pZFlag;

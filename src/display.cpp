@@ -684,7 +684,7 @@ void cb_coldBoot (Fl_Widget* w, void*)
 	if (gReMem)
 	{
 		if (w != NULL)
-			a = fl_choice("Reload OpSys ROM?", "Cancel", "Yes", "No", NULL);
+			a = fl_choice("Cold Boot.  Reload System ROM too?", "Cancel", "Yes", "No", NULL);
 		else
 			a = 2;
 		if (a == 1)
@@ -705,11 +705,19 @@ void cb_coldBoot (Fl_Widget* w, void*)
 
 		show_remem_mode();
 
+		// Reset the main window
 		if (gpDisp != NULL)
 			gpDisp->Reset();
+
+		// Reset any debug monitor windows
 		if (gpDebugMonitor != 0)
 			gpDebugMonitor->Reset();
 		fileview_model_changed();
+
+		// Refresh the memory editor if it is opened
+		if (gmew != NULL)
+			gmew->redraw();
+
 	}
 }
 

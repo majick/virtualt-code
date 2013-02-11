@@ -70,6 +70,7 @@ extern peripheral_setup_t setup;
 typedef struct memory_setup
 {
 	int		mem_mode;					// Mode for Memory emulation
+	int		mem_installed;				// Amount of memory installed
 	int		remem_override;				// Override setting for ReMem's Rampac
 	char	remem_file[256];			// Filename for ReMem storage
 	char	rampac_file[256];			// Filename for RamPac storage
