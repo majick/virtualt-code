@@ -30,6 +30,8 @@
 #ifndef MEMEDIT_H
 #define MEMEDIT_H
 
+#include <FL/Fl_Scrollbar.H>
+
 #include "vtobj.h"
 #include "MString.h"
 #include "watchtable.h"
