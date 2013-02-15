@@ -28,17 +28,9 @@
  */
 
 #include <FL/Fl.H>
-#include <FL/fl_draw.H>
-#include <FL/Fl_Window.H>
-#include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Menu_Bar.H>
-#include <FL/Fl_Menu_Window.H>
-#include <FL/Fl_Tile.H>
-#include <FL/Fl_Box.H>
-#include <FL/Fl_Tabs.H>
 #include <FL/Fl_Text_Editor.H>
 #include <FL/Fl_Text_Buffer.H>
-#include <FL/Fl_Check_Button.H>
 #include "FLU/Flu_Tree_Browser.h"
 #include "FLU/flu_pixmaps.h"
 #include "FLU/Flu_File_Chooser.h"
@@ -48,7 +40,6 @@
 #include <ctype.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <errno.h>
 #ifdef _WIN32
 #include <direct.h>
 #endif
