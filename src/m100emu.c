@@ -1142,6 +1142,8 @@ void emulate(void)
 				}
 
 				/* Instruction emulation contained in header file */
+				#undef NO_REMEM
+				#include "cpu.h"
 				#include "do_instruct.h"
 
 				// Check if next inst is SIM
@@ -1182,6 +1184,12 @@ void emulate(void)
 						nxtmaint=gMaintCount;
 					lock_remote();
 				}
+#if 0
+				exec_remem_instruction();
+
+					if (gExitLoop) 
+						break;
+#endif
 			}
 
 		if (!gReMem)

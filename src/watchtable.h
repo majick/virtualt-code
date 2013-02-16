@@ -178,6 +178,7 @@ protected:
 	double					m_WidthPercentage[VT_WATCH_TABLE_COL_COUNT];
 	int						m_SelLine;
 	int						m_DblclkX, m_DblclkY;
+	int						m_MoveStartX, m_MoveStartY;
 	int						m_Height;				// Font height
 	int						m_PopupSelSave;
 	int						m_PopupInputField;
