@@ -49,6 +49,7 @@
 #include <time.h>
 
 #include "VirtualT.h"
+#include "m100emu.h"
 #include "lpt.h"
 #include "printer.h"
 #include "fileprint.h"
@@ -404,6 +405,10 @@ Initialize the printer subsystem
 */
 void init_lpt(void)
 {
+	// Test if we are in No-GUI mode
+	if (gNoGUI)
+		return;
+
 	// If the LPT object doesn't exist, create it
 	if (gLpt == NULL)
 	{

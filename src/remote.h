@@ -54,6 +54,7 @@ int		get_remote_enabled(void);
 void	set_remote_port(int port);
 void	set_remote_telnet(int telnet);
 void	load_remote_preferences();
+void	remote_process_console_input(void);
 
 #ifdef __cplusplus
 }
