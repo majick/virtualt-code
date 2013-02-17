@@ -366,38 +366,6 @@ void throttle(int cy)
 }
 
 /*
-========================================================================
-nonblock:	Set / disable non-blocking terminal mode
-========================================================================
-*/
-#ifdef __unix__
-void nonblock(int state)
-{
-	struct	termios	ttystate;
-
-	return;
-	/* Get the terminal state */
-	tcgetattr(STDIN_FILENO, &ttystate);
-
-	if (state == NB_ENABLE)
-	{
-		/* Turn off canonical mode */
-		ttystate.c_lflag &= ~ICANON;
-
-		/* Minimum input read size */
-		ttystate.c_cc[VMIN] = 1;
-	}
-	else if (state == NB_DISABLE)
-	{
-		ttystate.c_lflag |= ICANON;
-	}
-
-	/* Set the terminal attributes */
-	tcsetattr(STDIN_FILENO, TCSANOW, &ttystate);
-}
-#endif
-
-/*
 =============================================================================
 This routine bails from the app in case of a panic.
 =============================================================================
@@ -413,7 +381,6 @@ void bail(char *msg)
 	printf("Time: %f\n",((double)(endtime-starttime))/1000);
 	printf("MHz: %f\n",((UINT64)cycles/(((double)(endtime-starttime))/1000))/1000000);
 
-	nonblock(NB_DISABLE);
 	exit(1);
 }
 
@@ -1373,8 +1340,6 @@ void setup_unix_signals(void)
 	signal(SIGQUIT,handle_sig);
 	signal(SIGINT,handle_sig);
 
-	/* Enable non-blocking terminal mode */
-	nonblock(NB_ENABLE);
 #endif
 }
 
@@ -1538,10 +1503,6 @@ int main(int argc, char **argv)
 	deinit_throttle_timer();	/* Deinitialize the throttle timer */
 	deinit_display();			/* Deinitialze and free the main window */
 	free_mem();					/* Free memory used by ReMem and/or Rampac */
-
-#ifdef __unix__
-	nonblock(NB_DISABLE);
-#endif
 
 	return 0;
 }
