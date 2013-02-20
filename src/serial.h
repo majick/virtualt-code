@@ -73,6 +73,13 @@ enum {
 #define	SER_SIGNAL_DTR		0x04
 #define	SER_SIGNAL_RTS		0x08
 
+#ifndef WIN32
+#define	DTR_CONTROL_ENABLE	1
+#define	DTR_CONTROL_DISABLE	0
+#define	RTS_CONTROL_ENABLE	1
+#define RTS_CONTROL_DISABLE	0
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
