@@ -2251,7 +2251,7 @@ void VTTpddServer::SendDmeResponse(void)
 
 		// Now copy up to 6 bytes of the dir name
 		while (dir.GetLength() < 6 && c < len)
-			dir += m_curDir[c++];
+			dir += (char) toupper(m_curDir[c++]);
 		// Space pad to 6 characters
 		while (dir.GetLength() < 6)
 			dir += ' ';
