@@ -67,7 +67,6 @@
 #include "fileview.h"
 #include "romstrings.h"
 #include "remote.h"
-//#include "tpddclient.h"
 
 
 extern "C" {

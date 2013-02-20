@@ -55,7 +55,7 @@
 #include "MStringArray.h"
 
 extern "C" struct tm* mytime;
-extern "C" char path[255];
+
 /*
 ================================================================================
 VTFilePrint:	This is the class constructor for the FilePrint Printer.

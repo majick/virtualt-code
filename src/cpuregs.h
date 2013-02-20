@@ -38,6 +38,7 @@
 #include <FL/Fl_Input.H>
 #include <FL/Fl_Scrollbar.H>
 #include <FL/Fl_Double_Window.H>
+#include <FL/Fl_Menu_Bar.H>
 
 #include "MString.h"
 
