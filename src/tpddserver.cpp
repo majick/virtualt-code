@@ -1715,7 +1715,13 @@ void VTTpddServer::DirFindFile(const char* pFilename)
 	{
 		// Just save the reference and exit
 		m_dirRef = pFilename;
+#ifdef WIN32
 		dirent* pParent = (dirent *) "PARENT.<>";
+#else
+		dirent parent;
+		dirent* pParent = &parent;
+		strcpy(parent.d_name, "PARENT.<>");
+#endif
 		SendDirEntReturn(pParent, TRUE);
 		return;
 	}
@@ -1830,8 +1836,13 @@ void VTTpddServer::DirFindFirst(void)
 	if (m_curDir != "/")
 	{
 		// Send the "PARENT.<>" directory entry
-		dirent*	pParent;
-		pParent = (dirent *) "PARENT/";
+#ifdef WIN32
+		dirent* pParent = (dirent *) "PARENT.<>";
+#else
+		dirent parent;
+		dirent* pParent = &parent;
+		strcpy(parent.d_name, "PARENT.<>");
+#endif
 		SendDirEntReturn(pParent, TRUE);
 	}
 	else
