@@ -110,6 +110,8 @@ int ser_init(void)
 	// Initialize a TPDD client context
 	sp.pTpddContext = tpdd_alloc_context();
 	tpdd_load_prefs(sp.pTpddContext);
+	if (setup.com_mode == SETUP_COM_SIM_TPDD)
+		enable_tpdd_log_menu(TRUE);
 
 #ifdef WIN32
 	sp.tx_empty = TRUE;		// Indicate no active TX
