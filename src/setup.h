@@ -62,6 +62,7 @@ typedef struct peripheral_setup
 
 	// Sound emulation settings
 	int		sound_enable;				// Set TRUE when sound is enabled
+	double	sound_tone;					// Set the tone control for sound
 
 } peripheral_setup_t;
 

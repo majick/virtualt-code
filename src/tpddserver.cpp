@@ -2477,8 +2477,8 @@ void VTTpddServer::OpcodeRename(void)
 	old_filename = m_sRootDir + m_curDir + m_dirRef;
 
 #ifdef WIN32
-	ret = Rename((const char *) old_filename, (const char *) new_filename);
-	if (ret)
+	ret = rename((const char *) old_filename, (const char *) new_filename);
+	if (ret == 0)
 		SendNormalReturn(TPDD_ERR_NONE);
 	else
 	{

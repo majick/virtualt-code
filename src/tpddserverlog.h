@@ -83,7 +83,8 @@ public:
 	void				Server(VTTpddServer* pServer) { m_pServer = pServer; }
 	void				LogData(char data, int rxTx);
 	void				ResetContent(void);
-	void				CheckboxCallback(void);
+	void				DisableCallback(void);
+	void				AutoscrollCallback(void);
 
 	void				LoadPreferences(void);
 	void				SavePreferences(void);
@@ -120,6 +121,7 @@ private:
 	int					m_width;				// Width of each character
 	int					m_fontSize;				// Font size selection
 	int					m_bytesPerLine;			// Number of bytes drawn per line
+	int					m_autoScroll;			// Indicates if auto-scroll is on
 
 	// Define a structure for our colors
 	typedef struct log_colors
@@ -141,6 +143,7 @@ private:
 	Fl_Menu_Bar*		m_pMenu;				// Menu bar
 	Fl_Scrollbar*		m_pScroll;				// Pointer to our scrollbar
 	Fl_Check_Button*	m_pDisable;				// Pointer to disable checkbox
+	Fl_Check_Button*	m_pAutoScroll;			// Pointer to autoscroll box
 	Fl_Double_Window*	m_pLog;					// Window for the log items
 };
 

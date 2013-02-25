@@ -36,5 +36,7 @@ void	deinit_sound			(void);
 void	sound_start_tone		(int freq);
 void	sound_stop_tone			(void);
 void	sound_toggle_speaker	(int bitVal);
+void	sound_set_tone_control	(double tone);
+double	sound_get_tone_control	(void);
 
 #endif
