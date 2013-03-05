@@ -1521,7 +1521,7 @@ void VTDis::Disassemble()
 
 			// Determine length of this opcode
 			op_len = gLenTable[opcode] & 0x03;
-			tricked_out = FALSE;
+			tricked_out = 0;
 
 			// Print the address and opcode value to the temporary line buffer
 			if (oldSchool)

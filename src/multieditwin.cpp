@@ -299,7 +299,7 @@ void Fl_Multi_Edit_Window::SaveAs(const MString& rootpath)
 	m_tb->savefile((const char *) m_FileName);
 
 	MString title = fl_filename_name((const char *) m_FileName);
-	title = "Disassembler - " + title;
+	title = (char *) "Disassembler - " + title;
 	label((const char *) title);
 
 	delete fc;
