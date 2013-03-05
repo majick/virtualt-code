@@ -1099,6 +1099,20 @@ void cb_LoadFromHost(Fl_Widget* w, void* host_filename)
 		}
 	}
 
+	// Determine file location
+	if (file_type == TYPE_BA)
+	{
+		addr1 = get_memory16(gStdRomDesc->sFilePtrBA);
+	}
+	else if ((file_type == TYPE_CO) || (file_type == TYPE_HEX))
+	{
+		addr1 = get_memory16(gStdRomDesc->sBeginVar);
+	} 
+	else if (file_type == TYPE_DO)
+	{
+		addr1 = get_memory16(gStdRomDesc->sFilePtrDO);
+	}
+
 	// Determine if file will fit in memory
 	addr3 = get_memory16(gStdRomDesc->sBasicStrings);
 	addr2 = get_memory16(gStdRomDesc->sBeginVar);
@@ -1234,14 +1248,6 @@ int remote_load_from_host(const char *filename)
 Routines to save Model T files to the host
 =======================================================================
 */
-
-typedef struct model_t_files {
-	char	name[10];
-	unsigned short	address;
-	unsigned short	dir_address;
-	unsigned short	size;
-} model_t_files_t;
-
 Fl_Window	*gSaveToHost;
 int			gSave;
 

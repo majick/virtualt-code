@@ -115,10 +115,23 @@ void cb_multieditwin(Fl_Widget* w, void *args)
 //	delete mw;
 }
 
+void Fl_Multi_Edit_Window::buffer(Fl_Text_Buffer* buf)
+{
+	DisableHl();
+	if (m_pHlCtrl != NULL)
+		m_pHlCtrl->textbuf = buf;
+	My_Text_Editor::buffer(buf);
+	m_tb = buf;
+	if (!gDisableHl && m_pHlCtrl != NULL)
+		EnableHl();
+}
+
 Fl_Multi_Edit_Window::Fl_Multi_Edit_Window(int x, int y, int w, int h, const char* title)
  : My_Text_Editor(x, y, w, h, title)
 {
     /* Create window */
+	m_pHlCtrl = NULL;
+
     m_tb = new Fl_Text_Buffer();
 	buffer(m_tb);
 	m_tb->add_modify_callback(multiEditModCB, this);
@@ -284,6 +297,10 @@ void Fl_Multi_Edit_Window::SaveAs(const MString& rootpath)
 
 	m_FileName = fc->value();
 	m_tb->savefile((const char *) m_FileName);
+
+	MString title = fl_filename_name((const char *) m_FileName);
+	title = "Disassembler - " + title;
+	label((const char *) title);
 
 	delete fc;
 	m_Modified = 0;

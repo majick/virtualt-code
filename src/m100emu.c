@@ -768,7 +768,7 @@ void init_cpu(void)
 		horrible kludge, but it fixes the problem.
 	*/
 #ifdef WIN32
-	if (gModel == MODEL_PC8201)
+	if (gModel == MODEL_PC8201 || gModel == MODEL_PC8300)
 	{
 		lock_remote();
 		debug_set_monitor_callback(model_8201_bug_workaround);
@@ -823,7 +823,7 @@ void resetcpu(void)
 		horrible kludge, but it fixes the problem.
 	*/
 #ifdef WIN32
-	if (gModel == MODEL_PC8201)
+	if (gModel == MODEL_PC8201 || gModel == MODEL_PC8300)
 	{
 		lock_remote();
 		debug_set_monitor_callback(model_8201_bug_workaround);

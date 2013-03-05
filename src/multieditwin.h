@@ -35,6 +35,10 @@
 #include "My_Text_Editor.h"
 #include "highlight.h"
 
+#ifndef TRUE
+#define	TRUE 1
+#endif
+
 //class Fl_Multi_Edit_Window : public Fl_Multi_Window
 class Fl_Multi_Edit_Window : public My_Text_Editor, public VTObject
 {
@@ -62,6 +66,8 @@ public:
 	void			EnableHl(void);
 	int				ForwardSearch(const char *pFind, int caseSensitive = TRUE);
 	virtual void	show(void);
+    virtual void	buffer(Fl_Text_Buffer* buf);
+	Fl_Text_Buffer* buffer() { return My_Text_Display::buffer(); }
 
 //	Fl_Text_Editor*	m_te;
 protected:

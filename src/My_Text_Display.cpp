@@ -1820,7 +1820,7 @@ int My_Text_Display::position_style( int lineStartPos,
     style = ( unsigned char ) styleBuf->character( pos );
     if (style == mUnfinishedStyle) {
         /* encountered "unfinished" style, trigger parsing */
-        (mUnfinishedHighlightCB)( pos, mHighlightCBArg);
+        if (mUnfinishedHighlightCB) (mUnfinishedHighlightCB)( pos, mHighlightCBArg);
         style = (unsigned char) styleBuf->character( pos);
     }
   }

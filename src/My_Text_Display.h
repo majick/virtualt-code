@@ -77,7 +77,7 @@ class FL_EXPORT My_Text_Display: public Fl_Double_Window {
     ~My_Text_Display();
 
     virtual int handle(int e);
-    void buffer(Fl_Text_Buffer* buf);
+    virtual void buffer(Fl_Text_Buffer* buf);
     void buffer(Fl_Text_Buffer& buf) { buffer(&buf); }
     Fl_Text_Buffer* buffer() { return mBuffer; }
     void redisplay_range(int start, int end);

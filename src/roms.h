@@ -48,9 +48,12 @@ typedef struct Std_ROM_Table {
 /* Define structure for storing addresses and descriptions for */
 /* known subroutine calls and variable locations within the ROM	*/
 typedef struct Std_ROM_Strings {
+	const char*	pLabel;
 	int	        addr;
 	char*		desc;
 } Std_ROM_Strings_t;
+
+#define MTRM(x)  #x, x
 
 /* Define a structure to contain all information regarding a ROM */
 typedef struct RomDescription {

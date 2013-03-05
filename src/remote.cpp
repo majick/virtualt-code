@@ -56,13 +56,13 @@ using namespace std;
 #include "socket.h"
 #include "serversocket.h"
 #include "socketexception.h"
-#include "cpu.h"
 #include "memory.h"
 #include "io.h"
 #include "roms.h"
 #include "romstrings.h"
 #include "disassemble.h"
 #include "file.h"
+#include "cpu.h"
 
 #ifdef WIN32
 HANDLE				gRemoteThread;		// The remote control thread

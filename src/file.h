@@ -47,6 +47,13 @@ void	cb_SaveToHost(Fl_Widget* w, void*);
 int  	load_optrom_file(const char* filename);
 int		delete_file(const char* filename, unsigned short addr = 0);
 
+typedef struct model_t_files {
+	char	name[10];
+	unsigned short	address;
+	unsigned short	dir_address;
+	unsigned short	size;
+} model_t_files_t;
+
 #define	FILE_ERROR_INVALID_HEX			1
 #define FILE_ERROR_FILE_NOT_FOUND		2
 

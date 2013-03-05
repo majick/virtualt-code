@@ -54,6 +54,10 @@ void			handle_simkey(void);
 void			switch_model(int);
 void			init_other_windows(void);
 void			enable_tpdd_log_menu(int bEnabled);
+#ifdef __cplusplus
+void			collapse_window(Fl_Window* pWin);
+void			expand_window(Fl_Window* pWin, int newx, int newy, int neww, int newh);
+#endif
 
 typedef int 	(*get_key_t)(int);
 typedef int 	(*event_key_t)(void);
