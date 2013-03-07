@@ -960,8 +960,6 @@ void VTDis::Disassemble()
 	// Assign the RomDescription table for the model being emulated
 	gpDis->m_pRom = gStdRomDesc;
 
-	printf("sizeof VTObject = %d\n", sizeof(VTObject));
-
 	// Allocate a disassembly type array
 	m_pDisType = new DisType_t[65536];
 
