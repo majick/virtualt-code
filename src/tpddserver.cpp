@@ -632,6 +632,8 @@ int VTTpddServer::SerGetFlags(unsigned char *flags)
 	else
 		*flags &= ~SER_FLAG_TX_EMPTY;
 
+	*flags |= SER_FLAG_CTS | SER_FLAG_DSR;
+
 	return SER_NO_ERROR;
 }
 
