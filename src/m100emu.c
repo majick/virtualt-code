@@ -640,7 +640,7 @@ void check_installation(void)
 	errors[0] = 0;
 
 	/* Check each model */
-	for (model = MODEL_M100; model < MODEL_PC8300; model++)
+	for (model = MODEL_M100; model <= MODEL_PC8300; model++)
 	{
 		/* Check if ROM file exists for this model */
 		if (check_model_support(model))
