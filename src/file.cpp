@@ -1430,7 +1430,7 @@ void save_file(model_t_files_t *pFile)
 		}
 
 		// Write end of file marker (0x1a) to file
-		fwrite(&ch, 1, 1, fd);
+		//fwrite(&ch, 1, 1, fd);
 		break;
 
 	case TYPE_CO:
