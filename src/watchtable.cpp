@@ -1131,6 +1131,9 @@ void VT_Watch_Table::resize(int x, int y, int w, int h)
 		remaining -= m_ColWidth[c];
 	}
 
+	if (remaining < 10)
+		return;
+
 	// Now adjust cols 0 & 1 based on their percentage and remaining pixels
 	m_ColWidth[1] = (int) (m_WidthPercentage[1] * (double) remaining);
 	m_ColStart[1] = m_ColStart[2] - m_ColWidth[1];
