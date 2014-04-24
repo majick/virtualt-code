@@ -67,7 +67,7 @@ const char* ChooseWorkDir();
 #ifdef __cplusplus
 extern "C" {
 #endif
-extern char path[255];
+extern char path[512];
 #ifdef __cplusplus
 }
 #endif

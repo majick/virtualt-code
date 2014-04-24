@@ -51,6 +51,7 @@
 #include "clock.h"
 #include "cpu.h"
 #include "tpddserver.h"
+#include "file.h"
 
 extern	Fl_Preferences virtualt_prefs;
 void 	init_menus(void);

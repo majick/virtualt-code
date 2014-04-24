@@ -31,7 +31,7 @@
 #ifndef _DOINS_H_
 #define _DOINS_H_
 
-#if defined(WIN32)
+#if defined(WIN32) || defined(__APPLE__)
 void setflags(int regval, int sign, int zero, int auxcarry, int parity, int carry, int ov);
 #else
 __inline void setflags(unsigned char regval, char sign, char zero, char auxcarry, char parity, char carry, char ov);

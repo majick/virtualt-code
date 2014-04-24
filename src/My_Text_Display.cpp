@@ -33,6 +33,7 @@
 #include <FL/Fl_Text_Buffer.H>
 #include "My_Text_Display.h"
 #include <FL/Fl_Window.H>
+//#include <QuickdrawAPI.h>
 #include <FL/x.H>
 
 #undef min
