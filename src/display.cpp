@@ -290,9 +290,9 @@ void expand_window(Fl_Window* pWin, int newx, int newy, int neww, int newh)
 		pWin->resize(pWin->x()+dx, pWin->y()+dy, pWin->w()+dw, pWin->h()+dh);
 		Fl::check();
 	}
+#endif
 
 	pWin->resize(newx, newy, neww, newh);
-#endif
 }
 /*
 =======================================================
