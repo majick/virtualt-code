@@ -78,7 +78,7 @@ void cb_CloseCharGen(Fl_Widget* w, void *)
 
 	// Okay to close
 	gpCharGen->hide();
-	delete gpCharGen;
+//	delete gpCharGen;
 	gpCharGen = NULL;
 }
 
