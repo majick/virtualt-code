@@ -244,7 +244,7 @@ void get_hilight_color_prefs(void)
 {
 	int		pc;
 
-	virtualt_prefs.get("Ide_ColorText", pc, FL_BLACK);
+	virtualt_prefs.get("Ide_ColorText", pc, FL_WHITE);
 	hl_plain = (Fl_Color) pc;
 	virtualt_prefs.get("Ide_ColorLineComment", pc, 95);
 	hl_linecomment = (Fl_Color) pc;
