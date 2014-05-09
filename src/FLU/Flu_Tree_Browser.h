@@ -487,6 +487,10 @@ class FLU_EXPORT Flu_Tree_Browser : public Fl_Double_Window
   inline void shaded_entry_colors( Fl_Color even, Fl_Color odd )
     { rdata.shadedColors[0] = even; rdata.shadedColors[1] = odd; }
 
+  //! Override show to ensure Fl_Widget::show is called
+  void show(void)
+    { Fl_Double_Window::show(); Fl_Widget::show(); }
+    
   //! Set whether branch entries are visible. Default is \c true
   inline void show_branches( bool b )
     { rdata.showBranches = b; rdata.forceResize = true; }

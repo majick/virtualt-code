@@ -39,7 +39,6 @@
 #define	TRUE 1
 #endif
 
-//class Fl_Multi_Edit_Window : public Fl_Multi_Window
 class Fl_Multi_Edit_Window : public My_Text_Editor, public VTObject
 {
 public:
@@ -65,13 +64,13 @@ public:
 	void			DisableHl(void);
 	void			EnableHl(void);
 	int				ForwardSearch(const char *pFind, int caseSensitive = TRUE);
-	virtual void	show(void);
-    virtual void	buffer(Fl_Text_Buffer* buf);
-	Fl_Text_Buffer* buffer() { return My_Text_Display::buffer(); }
+	virtual void	show(void) { My_Text_Editor::show(); Fl_Widget::show(); }
+    virtual void	buffer(My_Text_Buffer* buf);
+	My_Text_Buffer* buffer() { return My_Text_Display::buffer(); }
 
-//	Fl_Text_Editor*	m_te;
+	My_Text_Editor*	m_te;
 protected:
-	Fl_Text_Buffer*	m_tb;
+	My_Text_Buffer*	m_tb;
 	HighlightCtrl_t	*m_pHlCtrl;
 	MString			m_FileName;
 	MString			m_Title;

@@ -47,8 +47,8 @@
 
 #include "VirtualT.h"
 #include "memory.h"
-#include "cpu.h"
 #include "watchtable.h"
+#include "cpu.h"
 
 int str_to_i(const char *pStr);
 

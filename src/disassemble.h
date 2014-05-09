@@ -40,6 +40,7 @@
 
 #include "display.h"
 #include "MString.h"
+#include "My_Text_Buffer.H"
 
 void disassembler_cb(Fl_Widget* w, void*);
 
@@ -122,8 +123,8 @@ public:
 	void					SaveFile(void);
 
 protected:
-	void					DisassembleAddLabel(Fl_Text_Buffer* tb, int addr);
-	void					DisassembleAsString(Fl_Text_Buffer* tb, int addr, int size);
+	void					DisassembleAddLabel(My_Text_Buffer* tb, int addr);
+	void					DisassembleAsString(My_Text_Buffer* tb, int addr, int size);
 	void					TestForStringArg(int address);
 	void					ScanForCodeBlocks(void);
 	void					ScanForStrings(void);

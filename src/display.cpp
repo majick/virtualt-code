@@ -408,7 +408,7 @@ resize_window:	This function resizes the main window and repositions
 				gModel, MultFact, DisplayMode
 =====================================================================
 */
-void resize_window()
+extern "C" void resize_window()
 {
 #ifdef WIN32
 	int		hiddenTaskBarAdjust = 0;
@@ -2340,6 +2340,8 @@ void init_display(void)
 	/* End the Window and show it */
 	MainWin->end();
 
+    resize_window();
+    
 	if (!gNoGUI)
 		MainWin->show();
 
