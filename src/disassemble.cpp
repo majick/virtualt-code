@@ -1251,6 +1251,11 @@ void VTDis::Disassemble()
 								strcat(line, arg);
 							}
 						}
+						if (line[0]) {
+							if (str_active)
+								strcat(line, "\"");
+							tb->append(line);
+						}
 					}
 					// A JUMP table is one that contains 16 bit address in a table
 					else if (m_pRom->pTables[x].type == TABLE_TYPE_JUMP)
