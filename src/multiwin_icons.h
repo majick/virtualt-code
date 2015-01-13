@@ -29,7 +29,7 @@
 
 
 #ifndef MULTIWIN_ICONS_H
-#define	MULTIIWN_ICONS_H
+#define	MULTIWIN_ICONS_H
 
 #include <FL/Fl.H>
 #include <FL/Fl_Pixmap.H>
