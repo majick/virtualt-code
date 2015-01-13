@@ -104,7 +104,7 @@ double hirestimer(void)
     return (double)pcount.QuadPart / (double)pcfreq.QuadPart;
 }
 #else
-__inline double hirestimer(void)
+inline double hirestimer(void)
 {
     struct timeval tv;
     gettimeofday(&tv, NULL);

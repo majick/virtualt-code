@@ -58,7 +58,7 @@
 	#if defined(__OpenBSD__) || defined(__NetBSD__)
 		#include <machine/spkr.h>
 	#elif defined(__FreeBSD__)
-		#include <machine/speaker.h>
+		#include <dev/speaker/speaker.h>
 	#endif
 #endif	/* __unix__ */
 

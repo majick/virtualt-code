@@ -1723,7 +1723,7 @@ drawpixel:	This routine is called by the system to draw a single
 =================================================================
 */
 // Draw the black pixels on the LCD
-__inline void T100_Disp::drawpixel(int x, int y, int color)
+inline void T100_Disp::drawpixel(int x, int y, int color)
 {
 #ifdef ZIPIT_Z2
 	if (color)

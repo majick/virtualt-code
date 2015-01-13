@@ -31,10 +31,43 @@
 #ifndef _DOINS_H_
 #define _DOINS_H_
 
-#if defined(WIN32) || defined(__APPLE__)
-void setflags(int regval, int sign, int zero, int auxcarry, int parity, int carry, int ov);
-#else
-__inline void setflags(unsigned char regval, char sign, char zero, char auxcarry, char parity, char carry, char ov);
-#endif
+extern char paritybits[256];
+
+static inline void setflags(unsigned char regval, char sign, char zero, char auxcarry, char parity, char carry, char ov)
+{
+	if (sign!=-2)
+	{
+		if(sign>=0)
+			F=(F&~SF_BIT)|(sign?SF_BIT:0);
+		else 
+			F=(F&~SF_BIT)|(regval&SF_BIT);
+	}
+
+	if (zero != -2)
+	{
+		if(zero>=0)
+			F=(F&~ZF_BIT)|(zero?ZF_BIT:0);
+		else
+			F=(F&~ZF_BIT)|(regval?0:ZF_BIT);
+	}
+
+	if(auxcarry>=0)
+		F=(F&~AC_BIT)|(auxcarry?AC_BIT:0);
+
+	if (parity != -2)
+	{
+		if(parity>=0)
+			F=(F&~PF_BIT)|paritybits[parity & 0xFF];
+		else
+			/* Table Lookup */
+			F=(F&~PF_BIT)|paritybits[regval & 0xFF];
+	}
+
+	if(carry>=0)
+		F=(F&~CF_BIT)|(carry?CF_BIT:0);
+
+	if (ov >= 0)
+		F=(F&~OV_BIT)|(ov?OV_BIT:0);
+}
 
 #endif

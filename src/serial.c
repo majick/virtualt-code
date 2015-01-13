@@ -43,7 +43,7 @@
 #include <termios.h>
 #include <stdio.h>
 #include <errno.h>   /* Error number definitions */
-#if !defined(__APPLE__)
+#ifdef __linux__
 #include <linux/serial.h>
 #endif
 

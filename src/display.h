@@ -145,7 +145,7 @@ protected:
 	virtual void	draw();
 	static int		sim_get_key(int key);
 	static int		sim_event_key(void);
-	__inline void	drawpixel(int x, int y, int color);
+	inline void	drawpixel(int x, int y, int color);
 	virtual void	draw_static();
 	static int		m_simKeys[32];
 	static int		m_simEventKey;
