@@ -127,6 +127,7 @@ public:
 	int				m_WheelKeyDown;
 	class Fl_Menu_Button*	m_CopyCut;
 	class Fl_Menu_Button*	m_LeftClick;
+	class Fl_Menu_Button*	m_LeftClickQuad;
 	char			m_SimulatedCtrl;
 	char			m_SelectComplete;
 	char			m_HaveMouse;
