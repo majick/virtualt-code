@@ -140,8 +140,8 @@ public:
 
 	const virtual	T100_Disp& operator=(const T100_Disp& srcDisp);
 
-protected:
 	virtual int		handle(int event);
+protected:
 	virtual void	draw();
 	static int		sim_get_key(int key);
 	static int		sim_event_key(void);

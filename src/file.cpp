@@ -696,7 +696,7 @@ int delete_file(const char* filename, unsigned short dir_addr)
 		file_type = TYPE_CO;
 
 		// Deleting a binary file
-		len = get_memory16(file_addr + 2);
+		len = get_memory16(file_addr + 2) + 6;
 	}
 	else
 	{
@@ -1095,7 +1095,7 @@ void cb_LoadFromHost(Fl_Widget* w, void* host_filename)
 			if (fc != NULL)
 				delete fc;
 			gLoadError = 1;
-			return;
+            return;
 		}
 	}
 

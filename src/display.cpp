@@ -4779,6 +4779,8 @@ void T200_Disp::draw()
 
 	fl_color(m_PixelColor);
 
+    window()->make_current();
+
 	/* Check if the driver is in "graphics" mode */
 	if (m_mcr & 0x02)
 	{

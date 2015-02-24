@@ -252,6 +252,17 @@ class  My_Text_Buffer {
                                    use it */
     char mCanUndo;		/* if this buffer is used for attributes, it must
 				   not do any undo calls */
+
+    /* KDP:  2/23/2015.   Undo variables moved within Buffer class so they
+                          are not global and apply only to this buffer. */
+
+    void undobuffersize(int n);
+    char* undobuffer;
+    int undobufferlength;
+    int undoat;	// points after insertion
+    int undocut;	// number of characters deleted there
+    int undoinsert;	// number of characters inserted
+    int undoyankcut;	// length of valid contents of buffer, even if undocut=0
 };
 
 #endif
