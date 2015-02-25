@@ -3526,7 +3526,7 @@ int VTAssembler::Assemble()
 						}
 					}
 					else
-					{						
+					{
 						// Equation does not evaluate.  Check if it is an extern
 						if (EquationIsExtern((CRpnEquation *) pInst->m_Group, size))
 						{
