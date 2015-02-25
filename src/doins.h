@@ -33,7 +33,11 @@
 
 extern char paritybits[256];
 
+#ifdef WIN32
+void setflags(unsigned char regval, char sign, char zero, char auxcarry, char parity, char carry, char ov)
+#else
 static inline void setflags(unsigned char regval, char sign, char zero, char auxcarry, char parity, char carry, char ov)
+#endif
 {
 	if (sign!=-2)
 	{

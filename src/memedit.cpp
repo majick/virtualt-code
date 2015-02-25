@@ -1265,7 +1265,15 @@ void T100_MemEditor::SetRegionOptions(void)
 			}
 			else
 			{
-				memedit_ctrl.pRegion->add("RAM");
+				if (gQuad)
+				{
+					memedit_ctrl.pRegion->add("RAM 1");
+					memedit_ctrl.pRegion->add("RAM 2");
+					memedit_ctrl.pRegion->add("RAM 3");
+					memedit_ctrl.pRegion->add("RAM 4");
+				}
+				else
+					memedit_ctrl.pRegion->add("RAM");
 			}
 			memedit_ctrl.pRegion->add("ROM");
 			if (gModel == MODEL_T200)
