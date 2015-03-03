@@ -55,6 +55,8 @@ void cb_Ide(Fl_Widget* w, void*) ;
 #define MENU_HEIGHT	32
 #endif
 
+class VTAssembler;
+
 class VT_IdeSource : public VTObject
 {
 	DECLARE_DYNCREATE(VT_IdeSource);
@@ -111,6 +113,9 @@ public:
 	Fl_Check_Button*	m_pWholeWord;
 	Flu_Button*			m_pNext;
 	Flu_Button*			m_pCancel;
+    Fl_Box*             m_pErrorMsg;
+
+    MString             m_ErrMsg;
 
 	class VT_Ide*		m_pParent;
 
@@ -158,6 +163,9 @@ public:
 	void			OpenTreeFile(Flu_Tree_Browser::Node* n);
 	void			AssembleTreeFile(Flu_Tree_Browser::Node* n);
 	void			TreeFileProperties(Flu_Tree_Browser::Node* n);
+	void			AssembleSourcesInGroup(VTAssembler& assembler, VT_IdeGroup* pGroup, 
+						int& totalErrors, int& linkerScriptFound, MString& linkerScript,
+						MString& linkerFiles);
 	void			BuildProject(void);
 	void			CleanProject(void);
 	void			SetColors(int fg, int bg);

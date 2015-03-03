@@ -227,7 +227,7 @@ void Fl_Multi_Edit_Window::OpenFile(const MString& filename)
         m_FileName = filename;
         ext = filename.Right(4);
         ext.MakeLower();
-        if (ext != ".asm" && ext != ".inc" && ext != ".lkr")
+        if (ext != ".asm" && ext != ".inc" && ext != ".lkr" && ext != ".lst")
             DisableHl();
     }
 

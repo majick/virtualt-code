@@ -1404,14 +1404,26 @@ void T100_MemEditor::SetScrollSize(void)
 			}
 			else
 			{
-				if (region == 0)
-					m_Max = RAMSIZE / 16;
-				else if (region == 1)
-					m_Max = ROMSIZE / 16;
-				else if (region == 2)
-					m_Max = 1024 * 1024 / 16;			
-				else if (region == 3)
-					m_Max = 128 * 1024 / 16;			
+                if (gQuad)
+                {
+                    if (region < 4)
+                        m_Max = RAMSIZE / 16;
+                    else if (region == 4)
+                        m_Max = ROMSIZE / 16;
+                    else
+                        m_Max = 1024 * 1024 / 16;			
+                }
+                else
+                {
+                    if (region == 0)
+                        m_Max = RAMSIZE / 16;
+                    else if (region == 1)
+                        m_Max = ROMSIZE / 16;
+                    else if (region == 2)
+                        m_Max = 1024 * 1024 / 16;			
+                    else if (region == 3)
+                        m_Max = 128 * 1024 / 16;			
+                }
 			}
 		}
 		else
