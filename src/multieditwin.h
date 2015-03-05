@@ -66,6 +66,7 @@ public:
 	int				ForwardSearch(const char *pFind, int caseSensitive = TRUE);
 	virtual void	show(void) { My_Text_Editor::show(); Fl_Widget::show(); }
     virtual void	buffer(My_Text_Buffer* buf);
+	void			tab_distance(int);
 	My_Text_Buffer* buffer() { return My_Text_Display::buffer(); }
 
 	My_Text_Editor*	m_te;
@@ -75,6 +76,7 @@ protected:
 	MString			m_FileName;
 	MString			m_Title;
 	int				m_Modified;
+	int				m_TabChange;
 	int virtual		OkToClose(void);
 };
 

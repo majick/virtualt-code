@@ -3073,6 +3073,7 @@ int T100_MemEditor::handle(int event)
 			break;
 			
 		}
+            redraw();
 		break;
 
 	case FL_MOUSEWHEEL:

@@ -5108,26 +5108,6 @@ void VTAssembler::ParseExternalDefines(void)
             m_Defines.Add(pMacro);
         }
 
-#if 0
-		// Now assign this define
-		CSymbol*	pSymbol = new CSymbol;
-		if (pSymbol != NULL)
-		{
-			pSymbol->m_Name = def;
-			pSymbol->m_Line = -1;
-			pSymbol->m_SymType = SYM_DEFINE;
-			pSymbol->m_pRange = NULL;
-			pSymbol->m_FileIndex = -1;
-			pSymbol->m_Value = value;
-			if (value != -1)
-				pSymbol->m_SymType |= SYM_HASVALUE;
-
-			// Assign symbol to active segment
-			const char *pStr = (const char *) pSymbol->m_Name;
-			(*m_Symbols)[pStr] = pSymbol;
-		}
-#endif
-
 		// Update startIndex
 		startIndex = endIndex + 1;
 		if (startIndex >= len)

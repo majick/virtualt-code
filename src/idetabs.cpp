@@ -47,7 +47,7 @@
 #include "multieditwin.h"
 
 #define BORDER 3
-#define EXTRASPACE 16
+#define EXTRASPACE 32
 #ifndef TAB_HEIGHT
 #define	TAB_HEIGHT 24
 #endif
