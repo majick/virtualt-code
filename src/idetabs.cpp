@@ -240,7 +240,7 @@ void Fl_Ide_Tabs::draw()
 
 			// Now move the selected tab such that is is at index i
 			pSel = child(selected);
-			remove(selected);
+			remove(pSel);
 			insert(*pSel, i);
 			value(pSel);
 			selected = tab_positions(p,wp);
