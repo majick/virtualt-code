@@ -424,6 +424,12 @@ int VTAssembler::MacroSubstitution(void)
 		pMacro = (CMacro *) m_Defines[c];
 		len = pMacro->m_Name.GetLength();
 
+        if (pMacro->m_ParamList == NULL && pMacro->m_DefList == NULL &&
+                pMacro->m_DefString.GetLength() == 0)
+        {
+            // Skip this macro ... it is an empty define
+            continue;
+        }
 		// Test if this macro name found in the current line
 		if ((pStr = strstr(m_pInLine, (const char *) pMacro->m_Name)) != NULL)
 		{
