@@ -1030,7 +1030,22 @@ int VTAssembler::Evaluate(class CRpnEquation* eq, double* value,
 			if (LookupSymbol(op.m_Variable, symbol))
 				stack[stk++] = 1.0;
 			else
-				stack[stk++] = 0.0;
+			{
+				int  def;
+
+				for (def = 0; def < m_Defines.GetSize(); def++)
+				{
+					if (((CMacro *) m_Defines[def])->m_Name == op.m_Variable)
+					{
+						stack[stk++] = 1.0;
+						break;
+					}
+				}
+
+				if (def == m_Defines.GetSize())
+					stack[stk++] = 0.0;
+			}
+
 			break;
 
 		case RPN_NOT:
