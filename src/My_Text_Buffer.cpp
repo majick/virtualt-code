@@ -957,6 +957,12 @@ int My_Text_Buffer::expand_character( char c, int indent, char *outStr, int tabD
     return nSpaces;
   }
 
+  if ( c == '\r' )
+  {
+      outStr[0] = '\0';
+      return 0;
+  }
+
   /* Convert control codes to readable character sequences */
   /*... is this safe with international character sets? */
   if ( ( ( unsigned char ) c ) <= 31 ) {
