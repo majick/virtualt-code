@@ -812,6 +812,8 @@ Disassembler Class Definition - empty constructor
 */
 VTDis::~VTDis()
 {
+	delete m_pTd;
+
 	// Delete the find dialog
 	if (m_pFindDlg != NULL)
 		delete m_pFindDlg;

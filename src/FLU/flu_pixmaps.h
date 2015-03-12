@@ -51,4 +51,26 @@ FLU_EXPORT extern const char* trash_xpm[];
 FLU_EXPORT extern const char* home_xpm[];
 FLU_EXPORT extern const char* reload_xpm[];
 
+FLU_EXPORT extern const char* arrow_execute_xpm[];
+
+FLU_EXPORT extern const char* edit_undo_xpm[];
+FLU_EXPORT extern const char* edit_paste_xpm[];
+FLU_EXPORT extern const char* edit_find_xpm[];
+FLU_EXPORT extern const char* edit_cut_xpm[];
+FLU_EXPORT extern const char* edit_copy_xpm[];
+FLU_EXPORT extern const char* check_xpm[];
+FLU_EXPORT extern const char* document_open_xpm[];
+FLU_EXPORT extern const char* document_save_xpm[];
+FLU_EXPORT extern const char* document_new_xpm[];
+FLU_EXPORT extern const char* toolbar_handle_xpm[];
+FLU_EXPORT extern const char* configure_xpm[];
+FLU_EXPORT extern const char* wizard_xpm[];
+FLU_EXPORT extern const char* printer_xpm[];
+FLU_EXPORT extern const char* log_viewer_xpm[];
+FLU_EXPORT extern const char* brick_add_xpm[];
+FLU_EXPORT extern const char* computer_xpm[];
+FLU_EXPORT extern const char* chip_xpm[];
+FLU_EXPORT extern const char* dollar_xpm[];
+FLU_EXPORT extern const char* checkmark_xpm[];
+
 #endif

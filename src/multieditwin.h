@@ -64,6 +64,7 @@ public:
 	void			DisableHl(void);
 	void			EnableHl(void);
 	int				ForwardSearch(const char *pFind, int caseSensitive = TRUE);
+	int				BackwardSearch(const char *pFind, int caseSensitive = TRUE);
 	virtual void	show(void) { My_Text_Editor::show(); Fl_Widget::show(); }
     virtual void	buffer(My_Text_Buffer* buf);
 	void			tab_distance(int);

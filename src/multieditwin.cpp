@@ -464,6 +464,23 @@ int Fl_Multi_Edit_Window::ForwardSearch(const char *pFind, int caseSensitive)
 	int found = m_tb->search_forward(pos, pFind, &pos, caseSensitive);
 	if (found)
 	{
+		take_focus();
+		insert_position(pos+strlen(pFind));
+		show_insert_position();
+		m_tb->select(pos, pos+strlen(pFind));
+	}
+	else
+		return FALSE;
+
+	return TRUE;
+}
+
+int Fl_Multi_Edit_Window::BackwardSearch(const char *pFind, int caseSensitive)
+{
+	int pos = insert_position()-1;
+	int found = m_tb->search_backward(pos, pFind, &pos, caseSensitive);
+	if (found)
+	{
 		insert_position(pos+strlen(pFind));
 		show_insert_position();
 		take_focus();
