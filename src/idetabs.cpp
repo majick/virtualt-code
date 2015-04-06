@@ -109,6 +109,7 @@ void cb_idetabs(Fl_Widget* w, void *args)
 Fl_Ide_Tabs::Fl_Ide_Tabs(int x, int y, int w, int h, const char* title)
 : Fl_Group(x, y, w, h, title)
 {
+	m_prevInMoveRect = FALSE;
 	m_prevInRect = FALSE;
 	m_pushInRect = FALSE;
 	m_hasCloseButton = 0;

@@ -20,6 +20,9 @@
 
   -----
     $Log$
+    Revision 1.5  2015/04/06 21:15:05  kpettit1
+    Updates for Toolabar quick find and #ifdef processing.
+
     Revision 1.4  2015/03/03 01:51:44  kpettit1
     *** empty log message ***
 
@@ -159,7 +162,7 @@ void MString::deallocate(MNode* p)
 		tmp = NULL;
 	}
    if (pcStr) {
-      delete pcStr;
+      delete[] pcStr;
       pcStr = NULL;
       bModified = true;
 //    iBufferInUse = 0;
@@ -265,7 +268,7 @@ MString::~MString() {
 	tailMNode = NULL;
 	if (pcStr)
 	{
-		delete pcStr;
+		delete[] pcStr;
 		pcStr = NULL;
 	}
 }
@@ -1945,7 +1948,7 @@ void MString::Format( const char * sFormat, ...)
 	vsnprintf(s, 2000, sFormat, arglist);
 	va_end(arglist);
 	*this = s;
-	delete s;
+	delete[] s;
    s = NULL;
 }
 // End additions by Bruce Riggins 11/14/00
@@ -2189,7 +2192,7 @@ char * MString::GetBuffer(int nMinBufLength) {
    {
 	   if (pcStr) {
 		   // if buffer is in existence already, simply delete it and start over
-		   delete pcStr;	
+		   delete[] pcStr;	
          pcStr = NULL;
 	   }
 	   

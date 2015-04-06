@@ -2008,6 +2008,7 @@ void VT_Ide::FindNext(void)
 	if (mw == NULL)
 		return;
 
+    Fl::focus(mw);
     m_pFindDlg->m_pErrorMsg->hide();
 
 	if (m_LastFind == LAST_FIND_TOOLBAR)
@@ -2054,11 +2055,7 @@ void VT_Ide::FindNext(void)
 
 	// Hide the dialog box
 	m_pFindDlg->m_pFindDlg->hide();
-	Fl::check();
-	if (m_LastFind == LAST_FIND_TOOLBAR)
-		m_pToolbarFind->take_focus();
-	else
-		mw->take_focus();
+		//mw->take_focus();
 }
 
 /*
