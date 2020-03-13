@@ -340,7 +340,7 @@ void style_parse(const char *text, char *style, int length)
 			{
 				current = 'C';
 				*style++ = current;
-				*style--;
+				style--;
 			} 
 
 			else if (strncmp(text, "\\\"", 2) == 0) 
@@ -483,11 +483,6 @@ void style_parse(const char *text, char *style, int length)
 
    		// Copy style info...
    		if (current == 'A' && (*text == '{' || *text == '}')) *style++ = 'G';
-   		/*else if(current == 'E' && strncmp(text, "/*", 2) == 0) {
-   			*style++ = 'C';
-   			*style++ = 'C';
-   			//*style--;
-   		}*/
    		else if(current == 'E' && strncmp(text, "/*", 2) == 0)
    		{
    			*style++ = 'C';      			
