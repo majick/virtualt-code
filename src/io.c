@@ -29,7 +29,7 @@
 
 
 #include <time.h>
-#ifdef __APPLE__
+#ifndef _WIN32
 #include <sys/time.h>
 #endif
 #include <stdio.h>
