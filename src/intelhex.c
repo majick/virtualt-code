@@ -155,7 +155,8 @@ int load_hex_file(char *filename, char *buffer, unsigned short *start_addr)
 				*start_addr = minaddr;
 				return n;
 			}
-			if (status == 2) ;  /* begin of file */
+			if (status == 2)
+				;  /* begin of file */
 		} else {
 			fclose(fin);
 			return 0;
