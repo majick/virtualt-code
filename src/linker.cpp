@@ -3929,7 +3929,7 @@ int VTLinker::GenerateOutputFile()
 		fclose(fd);
 
 		// Delete the ROM memory
-		delete pRom;
+		delete[] pRom;
 	}
 
 	// We don't support Library output yet, but soon...

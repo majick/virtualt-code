@@ -640,7 +640,7 @@ void VTDisWhat::CbOkay(void)
 		gpDis->CopyIntoMem(pBuf, size, addr);
 		gpDis->m_StartAddress = addr;
 		gpDis->m_EndAddress = addr+size-1;
-		delete pBuf;
+		delete[] pBuf;
 
 		// Now copy the standard ROM into the lower memory space
 		gpDis->CopyIntoMem(gSysROM, ROMSIZE);

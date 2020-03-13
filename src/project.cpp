@@ -615,7 +615,7 @@ void VT_ProjectSettings::ProjTypeChanged(void)
 		*pOldExt = '\0';
 	m_pProject->m_OutputName = pNewName + newExt;
 	m_pOutputName->value(m_pProject->m_OutputName);
-	delete pNewName;
+	delete[] pNewName;
 }
 
 void VT_ProjectSettings::show(void)

@@ -456,7 +456,7 @@ int My_Text_Editor::handle_key() {
   		insert_position(inspos);
   		insert("\t");
   	}
-	delete line;
+	delete[] line;
   	autobrace = false;
 	return 1;
   }
@@ -469,7 +469,7 @@ int My_Text_Editor::handle_key() {
 	for(unsigned int i = 0; i < strlen(line); i++) {
 		if(line[i]!=' ' && line[i]!='\t') { pos = i; break; }
 	}
-	delete line;
+	delete[] line;
 	int old = insert_position();
 	insert_position(buffer()->line_start(insert_position()) + pos);
 	if(state == FL_SHIFT) 
