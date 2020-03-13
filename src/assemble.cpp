@@ -5207,7 +5207,7 @@ void VTAssembler::Parse(MString filename)
 	ParseExternalDefines();
 
 	// Try to assemble the file
-	if (success = ParseASMFile(filename, this))
+	if ((success = ParseASMFile(filename, this)))
 	{
 		// Test if #ifdef stack is zero (mis-matched if / else / end
 		if (m_IfDepth != 0)
@@ -5222,7 +5222,7 @@ void VTAssembler::Parse(MString filename)
 		}
 
 		// No parse errors!  Try to assemble
-		else if (success = Assemble())
+		else if ((success = Assemble()))
 		{
 			// Get Output filename
 			temp = filename.Right(4);

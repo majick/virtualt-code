@@ -3551,7 +3551,7 @@ int T100_Disp::handle(int event)
 					}
 				}
 				// Test if we are in the menu
-				if (whichMenu = IsInMenu())
+				if ((whichMenu = IsInMenu()))
 				{
 					m_Select = FALSE;
 					// Test if mouse is in FKey area
