@@ -1269,7 +1269,7 @@ int inport(uchar port)
 					{
 						/* Check if this driver is enabled */
 						if (lcdbits & (1 << c))
-							if (lcdTime[c]+.000014 > hirestimer())
+							if (lcdTime[c]+.000003 > hirestimer())
 			                    return (0x80);
 					}
 					return 64;
