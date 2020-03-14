@@ -30,6 +30,8 @@
 #ifndef TPDDSERVER_H
 #define TPDDSERVER_H
 
+#include "vtserver.h"
+
 /*
 ============================================================================
 Define call routines to hook to serial port functionality.
@@ -184,7 +186,7 @@ Define the TPDD Server class.  This will be passed around in C land
 as a void* context.
 =====================================================================
 */
-class VTTpddServer 
+class VTTpddServer : public VTServer
 {
 public: 
 	VTTpddServer();
@@ -212,7 +214,7 @@ public:
 																	 m_logEnabled = TRUE; }
 	void			UnregisterServerLog(VTTpddServerLog* pServerLog) { m_logEnabled = FALSE;
 																	   m_pServerLog = NULL; }
-	int				IsCmdlineState(void);
+	virtual int		IsCmdlineState(void);
 
 private:
 	void			StateCmdline(char data);// Process data while in Cmdline state

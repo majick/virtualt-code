@@ -64,6 +64,8 @@ public:
 	char*		m_pData;			// Pointer to the data
 };
 
+class VTServer;
+
 /*
 =====================================================================
 Define the TPDD Server Log class.
@@ -80,8 +82,9 @@ public:
 	int					handle(int event);
 	void				resize(int x, int y, int w, int h);
 
-	void				Server(VTTpddServer* pServer) { m_pServer = pServer; }
+	void				Server(VTServer* pServer) { m_pServer = pServer; }
 	void				LogData(char data, int rxTx);
+    void                LogBreak() { m_lastWasRx = !m_lastWasRx; }
 	void				ResetContent(void);
 	void				DisableCallback(void);
 	void				AutoscrollCallback(void);
@@ -101,15 +104,15 @@ private:
 	void				SetScrollSizes(void);
 
 	// TPDD Server interface
-	VTTpddServer*		m_pServer;				// Pointer to the TpddServer we are logging
+	VTServer*		    m_pServer;				// Pointer to the TpddServer we are logging
 	int					m_enabled;				// Indicates if the log is enabled
 
 	// RX and TX buffer control
 	int					m_lastWasRx;			// Indicates if last logged data was RX
 	int					m_rxCount;				// Count of data in rx buffer
 	int					m_txCount;				// Count of data in tx buffer
-	char				m_rxBuffer[256];		// RX accumulation buffer
-	char				m_txBuffer[256];		// TX accumulation buffer
+	char				m_rxBuffer[32768];		// RX accumulation buffer
+	char				m_txBuffer[32768];		// TX accumulation buffer
 
 	// The actual log
 	VTObArray			m_log;					// Array of log entries
