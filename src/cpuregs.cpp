@@ -661,7 +661,7 @@ int build_trace_line(int line, char* lineStr)
 	else
 		sprintf(str, "A:%02X %s  B:%02X C:%02X D:%02X E:%02X H:%02X L:%02X SP:%02X",
 			pTrace->af >> 8, flags, pTrace->bc >> 8, pTrace->bc & 0xFF, pTrace->de >> 8, 
-			pTrace->de & 0xFF, pTrace->hl >> 8, pTrace->de & 0xFF, pTrace->sp);
+			pTrace->de & 0xFF, pTrace->hl >> 8, pTrace->hl & 0xFF, pTrace->sp);
 	strcat(lineStr, str);
 
 	return last_pc;
