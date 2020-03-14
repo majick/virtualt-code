@@ -1119,7 +1119,7 @@ void VTPSPaper::WriteHeader(void)
 	fprintf(m_pFd, "%%!PS-Adobe-3.0\n");
 	fprintf(m_pFd, "%%%%Pages: (atend)\n");
 	fprintf(m_pFd, "%%%%Creator:  VirtualT %s\n", VERSION);
-	fprintf(m_pFd, "%%%%Title:  FX-80 Emulation Print\n", VERSION);
+	fprintf(m_pFd, "%%%%Title:  FX-80 Emulation Print\n");
 	fprintf(m_pFd, "%%%%DocumentData: Clean7Bit\n");
 	fprintf(m_pFd, "%%%%LanguageLevel: 2\n");
 	fprintf(m_pFd, "%%%%EndComments\n");
