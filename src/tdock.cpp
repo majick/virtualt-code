@@ -1,6 +1,6 @@
 /* tdock.cpp */
 
-/* $Id$ */
+/* $Id: tdock.cpp,v 1.1 2015/02/24 20:19:17 kpettit1 Exp $ */
 
 /*
  * Copyright 2015 Ken Pettit
@@ -88,6 +88,19 @@ static Fl_Menu_Item menuitems[] = {
 };
 
 
+void close_tdock_cb(Fl_Widget* w, void*)
+{
+    /* Save the window preferences here! */
+
+    /* Delete the window */
+    delete gpExtWin;
+
+    /* NULL out the pointers so we know we have no window */
+    gpExtWin = NULL;
+    gpDisp = NULL;
+    gpExtMenu = NULL;
+}
+
 /*
 ============================================================================
 TDock C init routine
@@ -95,7 +108,14 @@ TDock C init routine
 */
 void tdock_init (void)
 {
-	gpExtWin = new Fl_Window((480)*MultFact+10, 200*MultFact+MENU_HEIGHT+10, "VirtualT's TDock VGA Emulation");
+    int multfact;
+
+    /* Limit display size */
+    multfact = MultFact;
+    if (multfact > 3)
+        multfact = 3;
+
+	gpExtWin = new Fl_Window((480)*multfact+10, 200*multfact+MENU_HEIGHT+10, "VirtualT's TDock VGA Emulation");
 
     /* Create a Menu bar in the window */
 	gpExtMenu = new Fl_Menu_Bar(0, 0, gpExtWin->w(), MENU_HEIGHT-2);
@@ -103,6 +123,8 @@ void tdock_init (void)
 
     /* Crate a TDock Video window */
     gpDisp = new VTTDockVid(0, MENU_HEIGHT, gpExtWin->w(), gpExtWin->h() - MENU_HEIGHT);
+    gpDisp->SetMultFact(multfact);
+    gpExtWin->callback(close_tdock_cb);
 
     gpExtWin->end();
     gpExtWin->show();

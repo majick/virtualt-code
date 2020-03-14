@@ -1,6 +1,6 @@
 /* tdock.h */
 
-/* $Id$ */
+/* $Id: tdock.h,v 1.1 2015/02/24 20:19:17 kpettit1 Exp $ */
 
 /*
 * Copyright 2015 Ken Pettit

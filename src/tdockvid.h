@@ -57,8 +57,8 @@
 #define ESC_END_REVERSE         0x71    /* q */
 #define ESC_CURSOR_ON           0x50    /* P */
 #define ESC_CURSOR_OFF          0x51    /* Q */
-#define ESC_SET_SYS_LINE        0x54    /* T */
-#define ESC_RESET_SYS_LINE      0x55    /* U */
+#define ESC_LOCK_SYS_LINE       0x54    /* T */
+#define ESC_UNLOCK_SYS_LINE     0x55    /* U */
 #define ESC_LOCK_DISPLAY        0x56    /* V */
 #define ESC_UNLOCK_DISPLAY      0x57    /* W */
 #define ESC_WIDTH_40            0x63    /* c */
@@ -74,44 +74,46 @@
 class VTTDockVid : public Fl_Widget
 {
 public:
-	VTTDockVid(int x, int y, int w, int h);
-	~VTTDockVid();
+    VTTDockVid(int x, int y, int w, int h);
+    ~VTTDockVid();
 
-	virtual void	WriteData(unsigned char data);
+    virtual void	WriteData(unsigned char data);
 
-	virtual void	Clear(void);
+    virtual void	Clear(void);
+    virtual void  SetMultFact(int multfact);
 
-	int				MultFact;
-	int				DisplayMode;
-	int				SolidChars;
-	int				DispHeight;
+    int				MultFact;
+    int				DisplayMode;
+    int				SolidChars;
+    int				DispHeight;
 
-	int				gRectsize;
-	int				gXoffset;
-	int				gYoffset;
-	int				m_BezelTop;
-	int				m_BezelLeft;
-	int				m_BezelBottom;
-	int				m_BezelRight;
-	int				m_BezelTopH;
-	int				m_BezelBottomH;
-	int				m_BezelLeftW;
-	int				m_BezelRightW;
-	int				m_HasTopChassis;
-	int				m_HasBottomChassis;
-	int				m_HasLeftChassis;
-	int				m_HasRightChassis;
+    int				gRectsize;
+    int				gXoffset;
+    int				gYoffset;
+    int				m_BezelTop;
+    int				m_BezelLeft;
+    int				m_BezelBottom;
+    int				m_BezelRight;
+    int				m_BezelTopH;
+    int				m_BezelBottomH;
+    int				m_BezelLeftW;
+    int				m_BezelRightW;
+    int				m_HasTopChassis;
+    int				m_HasBottomChassis;
+    int				m_HasLeftChassis;
+    int				m_HasRightChassis;
+    int       m_LabelLocked;
 
-	int				m_FrameColor;
-	int				m_DetailColor;
-	int				m_BackgroundColor;
-	int				m_PixelColor;
-	int				m_LabelColor;
+    int				m_FrameColor;
+    int				m_DetailColor;
+    int				m_BackgroundColor;
+    int				m_PixelColor;
+    int				m_LabelColor;
 
-	char			m_HaveMouse;
+    char			m_HaveMouse;
 
 protected:
-	virtual void	draw();
+    virtual void	  draw();
     void            draw_pixels();
     void            SetByte(int line, int col, uchar value);
     void            CalcScreenCoords(void);
@@ -119,12 +121,12 @@ protected:
     void            XorCursor(void);
     void            Help(void);
     void            Scroll(void);
-	__inline void	drawpixel(int x, int y, int color);
-	virtual void	draw_static();
+    __inline void	  drawpixel(int x, int y, int color);
+    virtual void	  draw_static();
     virtual int     handle(int event);
 
-	int				m_MyFocus;
-	uchar			pixdata[200][480];
+    int				      m_MyFocus;
+    uchar			      pixdata[200][480];
 
     int             m_CurX, m_CurY;
     int             m_Cursor;

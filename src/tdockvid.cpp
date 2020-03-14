@@ -134,18 +134,19 @@ T100:Disp:	This is the class construcor
 VTTDockVid::VTTDockVid(int x, int y, int w, int h) :
   Fl_Widget(x, y, w, h)
 {
-	int c, red, green, blue;
+    int c, red, green, blue;
 
-	m_FrameColor = gFrameColor;
-	m_DetailColor = gDetailColor;
-	m_BackgroundColor = gBackgroundColor;
-	m_PixelColor = gPixelColor;
-	m_LabelColor = gLabelColor;
-	m_HaveMouse = FALSE;
+    m_FrameColor = gFrameColor;
+    m_DetailColor = gDetailColor;
+    m_BackgroundColor = gBackgroundColor;
+    m_PixelColor = gPixelColor;
+    m_LabelColor = gLabelColor;
+    m_HaveMouse = FALSE;
+    m_LabelLocked = FALSE;
 
     memset(pixdata, 0, 200*480);
 
-	m_MyFocus = 0;
+    m_MyFocus = 0;
     m_CurX = 0;
     m_CurY = 0;
     m_EscSeq = 0;
@@ -191,14 +192,14 @@ VTTDockVid::VTTDockVid(int x, int y, int w, int h) :
     m_Colors[0] = gBackgroundColor;
     m_Colors[255] = gPixelColor;
 
-	MultFact = 2;
-	DisplayMode = 1;
-	SolidChars = 0;
-	DispHeight = 64;
-	gRectsize = 2;
+    MultFact = 2;
+    DisplayMode = 1;
+    SolidChars = 0;
+    DispHeight = 64;
+    gRectsize = 2;
 
-	m_BezelTop = m_BezelLeft = m_BezelBottom = m_BezelRight = 0;
-	m_BezelTopH = m_BezelLeftW = m_BezelBottomH = m_BezelRightW = 0;
+    m_BezelTop = m_BezelLeft = m_BezelBottom = m_BezelRight = 0;
+    m_BezelTopH = m_BezelLeftW = m_BezelBottomH = m_BezelRightW = 0;
 
     CalcScreenCoords();
 }
@@ -214,11 +215,17 @@ Clear:	This routine clears the "LCD"
 */
 void VTTDockVid::Clear(void)
 {
-  memset(pixdata, 0, 200*480);
+    int bottom;
 
-  m_CurX = m_CurY = 0;
-  redraw();
-  Fl::check();
+    if (m_LabelLocked)
+        bottom = 200-8;
+    else
+        bottom = 200;
+    memset(pixdata, 0, bottom*480);
+
+    m_CurX = m_CurY = 0;
+    redraw();
+    Fl::check();
 }
 
 /*
@@ -230,12 +237,24 @@ drawpixel:	This routine is called by the system to draw a single
 // Draw the black pixels on the LCD
 __inline void VTTDockVid::drawpixel(int x, int y, int color)
 {
-	// Check if the pixel color is black and draw if it is
-	if (color)
+    // Check if the pixel color is black and draw if it is
+    if (color)
     {
-		fl_rectf(x*MultFact + gXoffset,y*MultFact + gYoffset,
-		    gRectsize, gRectsize);
+        fl_rectf(x*MultFact + gXoffset,y*MultFact + gYoffset,
+            gRectsize, gRectsize);
     }
+}
+
+/*
+=======================================================
+Set the screen size multiplication factor
+=======================================================
+*/
+void VTTDockVid::SetMultFact(int multfact)
+{
+    MultFact = multfact;
+    ::MultFact = multfact;
+    gRectsize = multfact;
 }
 
 /*
@@ -245,102 +264,101 @@ Calculate the xoffset, yoffset, border locations, etc.
 */
 void VTTDockVid::CalcScreenCoords(void)
 {
-	// Calculatet the pixel rectangle size
-	::gRectsize = MultFact;
-	if (::gRectsize == 0)
-		::gRectsize = 1;
+    // Calculatet the pixel rectangle size
+    ::gRectsize = MultFact;
+    if (::gRectsize == 0)
+        ::gRectsize = 1;
 
-	// Calculate xoffset and yoffset
-	if (Fullscreen)
-	{
-		::gXoffset = parent()->w() / 2 - 240 * MultFact;
-		::gYoffset = (parent()->h() - MENU_HEIGHT - 20 - 200 * MultFact) / 3 + MENU_HEIGHT+1;
-	}
-	else
-	{
-		::gXoffset = 5;
-		::gYoffset = MENU_HEIGHT+5;
-	}
+    // Calculate xoffset and yoffset
+    if (Fullscreen)
+    {
+        ::gXoffset = parent()->w() / 2 - 240 * MultFact;
+        ::gYoffset = (parent()->h() - MENU_HEIGHT - 20 - 200 * MultFact) / 3 + MENU_HEIGHT+1;
+    }
+    else
+    {
+        ::gXoffset = 5;
+        ::gYoffset = MENU_HEIGHT+5;
+    }
 
-	gRectsize = ::gRectsize;
-	gXoffset = ::gXoffset;
-	gYoffset = ::gYoffset;
+    gRectsize = ::gRectsize;
+    gXoffset = ::gXoffset;
+    gYoffset = ::gYoffset;
 
-	// If the display is framed, then calculate the frame coords
-    
-	if (DisplayMode && 0)
-	{
-		// Calculate the Bezel location
-		int		wantedH = 20;
-		int		wantedW = 40;
-//		int		topH, bottomH, leftW, rightW;
-		int		bottomSpace;
-		int		rightSpace;
+    // If the display is framed, then calculate the frame coords
+    if (DisplayMode && 0)
+    {
+        // Calculate the Bezel location
+        int		wantedH = 20;
+        int		wantedW = 40;
+    //		int		topH, bottomH, leftW, rightW;
+        int		bottomSpace;
+        int		rightSpace;
 
-		// Calculate the top height of the Bezel
-		m_HasTopChassis = TRUE;
-		if (gYoffset-1 - MENU_HEIGHT-1 >= wantedH + 5)
-			m_BezelTopH = wantedH;
-		else
-		{
-			// Test if there's room for both Bezel and chassis detail
-			if (gYoffset > 6)
-				m_BezelTopH = gYoffset - MENU_HEIGHT - 1 - 6;
-			else
-			{
-				m_BezelTopH = gYoffset - MENU_HEIGHT - 1 - 1;
-				m_HasTopChassis = FALSE;
-			}
-		}
-		m_BezelTop = gYoffset - m_BezelTopH - 1;
+        // Calculate the top height of the Bezel
+        m_HasTopChassis = TRUE;
+        if (gYoffset-1 - MENU_HEIGHT-1 >= wantedH + 5)
+            m_BezelTopH = wantedH;
+        else
+        {
+            // Test if there's room for both Bezel and chassis detail
+            if (gYoffset > 6)
+                m_BezelTopH = gYoffset - MENU_HEIGHT - 1 - 6;
+            else
+            {
+                m_BezelTopH = gYoffset - MENU_HEIGHT - 1 - 1;
+                m_HasTopChassis = FALSE;
+            }
+        }
+        m_BezelTop = gYoffset - m_BezelTopH - 1;
 
-		// Calculate the bottom height of the Bezel
-		m_BezelBottom = gYoffset + 200 * MultFact + 1;
-		bottomSpace = parent()->h() - m_BezelBottom - 20;
-		m_HasBottomChassis = TRUE;
-		if (bottomSpace >= wantedH + 5)
-			m_BezelBottomH = wantedH;
-		else
-		{
-			m_BezelBottomH = bottomSpace;
-			m_HasBottomChassis = FALSE;
-		}
+        // Calculate the bottom height of the Bezel
+        m_BezelBottom = gYoffset + 200 * MultFact + 1;
+        bottomSpace = parent()->h() - m_BezelBottom - 20;
+        m_HasBottomChassis = TRUE;
+        if (bottomSpace >= wantedH + 5)
+            m_BezelBottomH = wantedH;
+        else
+        {
+            m_BezelBottomH = bottomSpace;
+            m_HasBottomChassis = FALSE;
+        }
 
-		// Calculate the left Bezel border width
-		m_HasLeftChassis = TRUE;
-		if (gXoffset-1 >= wantedW + 5)
-			m_BezelLeftW = wantedW;
-		else
-		{
-			// Test if there's room for Bezel plus chassis
-			if (gXoffset > 6)
-				m_BezelLeftW = gXoffset - 6;
-			else
-			{
-				m_BezelLeftW = gXoffset - 1;
-				m_HasLeftChassis = FALSE;
-			}
-		}
-		m_BezelLeft = gXoffset - m_BezelLeftW - 1;
+        // Calculate the left Bezel border width
+        m_HasLeftChassis = TRUE;
+        if (gXoffset-1 >= wantedW + 5)
+            m_BezelLeftW = wantedW;
+        else
+        {
+            // Test if there's room for Bezel plus chassis
+            if (gXoffset > 6)
+                m_BezelLeftW = gXoffset - 6;
+            else
+            {
+                m_BezelLeftW = gXoffset - 1;
+                m_HasLeftChassis = FALSE;
+            }
+        }
+        m_BezelLeft = gXoffset - m_BezelLeftW - 1;
 
-		// Calculate the Bezel right width
-		m_BezelRight = gXoffset + 240 * MultFact + 1;
-		rightSpace = w() - m_BezelRight;
-		m_HasRightChassis = TRUE;
-		if (rightSpace >= wantedW + 5)
-			m_BezelRightW = wantedW;
-		else
-		{
-			// Test if there's room for Bezel plus chassis
-			if (rightSpace > 5)
-				m_BezelRightW = rightSpace - 5;
-			else
-			{
-				m_BezelRightW = rightSpace;
-				m_HasRightChassis = FALSE;
-			}
-		}
-	}
+        // Calculate the Bezel right width
+        m_BezelRight = gXoffset + 240 * MultFact + 1;
+        rightSpace = w() - m_BezelRight;
+        m_HasRightChassis = TRUE;
+        if (rightSpace >= wantedW + 5)
+            m_BezelRightW = wantedW;
+        else
+        {
+            // Test if there's room for Bezel plus chassis
+            if (rightSpace > 5)
+                m_BezelRightW = rightSpace - 5;
+            else
+            {
+                m_BezelRightW = rightSpace;
+                m_HasRightChassis = FALSE;
+            }
+        }
+    }
 }
 
 /*
@@ -352,102 +370,101 @@ draw_static:	This routine draws the static portions of the LCD,
 */
 void VTTDockVid::draw_static()
 {
-	int c;
-	int width;
-	int x_pos, inc, start, y_pos;
-	int xl_start, xl_end, xr_start, xr_end;
-	int	num_labels;
+    int c;
+    int width;
+    int x_pos, inc, start, y_pos;
+    int xl_start, xl_end, xr_start, xr_end;
+    int	num_labels;
 
-	// Draw gray "screen"
+    // Draw gray "screen"
     fl_color(m_BackgroundColor);
     fl_rectf(x(),y(),w(),h());
 
     return;
 
-	/* Check if the user wants the display "framed" */
-	if (DisplayMode == 1)
-	{
-		// Color for outer border
-		fl_color(m_DetailColor);
+    /* Check if the user wants the display "framed" */
+    if (DisplayMode == 1)
+    {
+        // Color for outer border
+        fl_color(m_DetailColor);
 
-		// Draw border along the top
-		if (m_HasTopChassis)
-			fl_rectf(x(),y(),w(),m_BezelTop - MENU_HEIGHT - 1);
+        // Draw border along the top
+        if (m_HasTopChassis)
+            fl_rectf(x(),y(),w(),m_BezelTop - MENU_HEIGHT - 1);
 
-		// Draw border along the bottom
-		if (m_HasBottomChassis)
-			fl_rectf(x(),m_BezelBottom + m_BezelBottomH,w(),parent()->h() - m_BezelBottom - m_BezelBottomH - 20);
+        // Draw border along the bottom
+        if (m_HasBottomChassis)
+            fl_rectf(x(),m_BezelBottom + m_BezelBottomH,w(),parent()->h() - m_BezelBottom - m_BezelBottomH - 20);
 
-		// Draw border along the left
-		if (m_HasLeftChassis)
-			fl_rectf(x(),y(),m_BezelLeft,h());
+        // Draw border along the left
+        if (m_HasLeftChassis)
+            fl_rectf(x(),y(),m_BezelLeft,h());
 
-		// Draw border along the right
-		if (m_HasRightChassis)
-			fl_rectf(m_BezelRight + m_BezelRightW,y(),w()-m_BezelRight,h());
+        // Draw border along the right
+        if (m_HasRightChassis)
+            fl_rectf(m_BezelRight + m_BezelRightW,y(),w()-m_BezelRight,h());
 
+        // Color for inner border
+        fl_color(m_FrameColor);
+                                
+        // Draw border along the top
+        if (m_BezelTopH > 0)
+            fl_rectf(m_BezelLeft,m_BezelTop,m_BezelRight - m_BezelLeft + m_BezelRightW,m_BezelTopH);
 
-		// Color for inner border
-		fl_color(m_FrameColor);
-												    
-		// Draw border along the top
-		if (m_BezelTopH > 0)
-			fl_rectf(m_BezelLeft,m_BezelTop,m_BezelRight - m_BezelLeft + m_BezelRightW,m_BezelTopH);
+        // Draw border along the bottom
+        if (m_BezelBottomH > 0)
+            fl_rectf(m_BezelLeft,m_BezelBottom,m_BezelRight - m_BezelLeft + m_BezelRightW,m_BezelBottomH);
 
-		// Draw border along the bottom
-		if (m_BezelBottomH > 0)
-			fl_rectf(m_BezelLeft,m_BezelBottom,m_BezelRight - m_BezelLeft + m_BezelRightW,m_BezelBottomH);
+        // Draw border along the left
+        if (m_BezelLeftW > 0)
+            fl_rectf(m_BezelLeft, m_BezelTop, m_BezelLeftW, m_BezelBottom - m_BezelTop + m_BezelBottomH);
 
-		// Draw border along the left
-		if (m_BezelLeftW > 0)
-			fl_rectf(m_BezelLeft, m_BezelTop, m_BezelLeftW, m_BezelBottom - m_BezelTop + m_BezelBottomH);
-
-		// Draw border along the right
-		if (m_BezelRightW > 0)
-			fl_rectf(m_BezelRight,m_BezelTop, m_BezelRightW, m_BezelBottom - m_BezelTop + m_BezelBottomH);
+        // Draw border along the right
+        if (m_BezelRightW > 0)
+            fl_rectf(m_BezelRight,m_BezelTop, m_BezelRightW, m_BezelBottom - m_BezelTop + m_BezelBottomH);
 
 
 #ifdef ZIPIT_Z2
-		width = 320;
+        width = 320;
 #else
-		width = 240 * MultFact;
+        width = 240 * MultFact;
 #endif
-		num_labels = gModel == MODEL_PC8201 ? 5 : 8;
-		inc = width / num_labels;
-		start = gXoffset + width/16 - 2 * (5- (MultFact > 5? 5 : MultFact));
-		fl_color(m_LabelColor);
-		fl_font(FL_COURIER,12);
-		char  text[3] = "F1";
-//		y_pos = h()+20;
-		y_pos = m_BezelBottom + 13; //y()+DispHeight*MultFact+40;
-		xl_start = 2*MultFact;
-		xl_end = 7*MultFact;
+        num_labels = gModel == MODEL_PC8201 ? 5 : 8;
+        inc = width / num_labels;
+        start = gXoffset + width/16 - 2 * (5- (MultFact > 5? 5 : MultFact));
+        fl_color(m_LabelColor);
+        fl_font(FL_COURIER,12);
+        char  text[3] = "F1";
+        //y_pos = h()+20;
+        y_pos = m_BezelBottom + 13; //y()+DispHeight*MultFact+40;
+        xl_start = 2*MultFact;
+        xl_end = 7*MultFact;
 
-		xr_start = 12 + 2*MultFact;
-		xr_end = 12 + 7*MultFact;
+        xr_start = 12 + 2*MultFact;
+        xr_end = 12 + 7*MultFact;
 
-		// Draw function key labels
-		for (c = 0; c < num_labels; c++)
-		{
-			// Draw text
-			x_pos = start + inc*c;
-			text[1] = c + '1';
-			fl_draw(text, x_pos, y_pos);
+        // Draw function key labels
+        for (c = 0; c < num_labels; c++)
+        {
+            // Draw text
+            x_pos = start + inc*c;
+            text[1] = c + '1';
+            fl_draw(text, x_pos, y_pos);
 
-			if (MultFact != 1)
-			{
-				// Draw lines to left
-				fl_line(x_pos - xl_start, y_pos-2, x_pos - xl_end, y_pos-2);
-				fl_line(x_pos - xl_start, y_pos-7, x_pos - xl_end, y_pos-7);
-				fl_line(x_pos - xl_end, y_pos-2, x_pos - xl_end, y_pos-7);
+            if (MultFact != 1)
+            {
+                // Draw lines to left
+                fl_line(x_pos - xl_start, y_pos-2, x_pos - xl_end, y_pos-2);
+                fl_line(x_pos - xl_start, y_pos-7, x_pos - xl_end, y_pos-7);
+                fl_line(x_pos - xl_end, y_pos-2, x_pos - xl_end, y_pos-7);
 
-				// Draw lines to right
-				fl_line(x_pos + xr_start, y_pos-2, x_pos + xr_end, y_pos-2);
-				fl_line(x_pos + xr_start, y_pos-7, x_pos + xr_end, y_pos-7);
-				fl_line(x_pos + xr_end, y_pos-2, x_pos + xr_end, y_pos-7);
-			}
-		}
-	}
+                // Draw lines to right
+                fl_line(x_pos + xr_start, y_pos-2, x_pos + xr_end, y_pos-2);
+                fl_line(x_pos + xr_start, y_pos-7, x_pos + xr_end, y_pos-7);
+                fl_line(x_pos + xr_end, y_pos-2, x_pos + xr_end, y_pos-7);
+            }
+        }
+    }
 }
 
 /*
@@ -458,8 +475,8 @@ draw:	This routine draws the entire LCD.  This is a member
 */
 void VTTDockVid::draw()
 {
-	/* Draw static background stuff */
-	draw_static();
+    /* Draw static background stuff */
+    draw_static();
 
     /* Draw the pixels */
     draw_pixels();
@@ -472,17 +489,17 @@ draw_pixels:	This routine draws the pixels on the display.
 */
 void VTTDockVid::draw_pixels()
 {
-	int x=0;
-	int y=0;
-	int line;
-	uchar value;
+    int x=0;
+    int y=0;
+    int line;
+    uchar value;
     int  lastColor = -1;
     int  color;
 
     window()->make_current();
 
-	for (line = 0; line < 200; line++)
-	{
+    for (line = 0; line < 200; line++)
+    {
         for (x = 0; x < 480; x++)
         {
             value = pixdata[line][x];
@@ -521,7 +538,7 @@ SetByte:	Updates the LCD with a byte of data as written from the I/O
 */
 void VTTDockVid::SetByte(int line, int col, uchar value)
 {
-	int y;
+    int y;
 
     if (line > 24 || col > 479)
         return;
@@ -573,7 +590,7 @@ WriteData:	Routine that receives data from the VDock interface when the
 void VTTDockVid::WriteData(uchar data)
 {
     int     line, col, y;
-    int     color;
+    int     color, bottom;
 
 #if 0
     if (m_EscSeq)
@@ -591,6 +608,12 @@ void VTTDockVid::WriteData(uchar data)
 #endif
 
     window()->make_current();
+
+    /* Calculate bottom pixel value based on m_LabelLocked */
+    if (m_LabelLocked)
+        bottom = 200-8;
+    else
+        bottom = 200;
 
     /* Test if we are processing an ESC Sequence */
     if (m_EscSeq)
@@ -669,7 +692,7 @@ void VTTDockVid::WriteData(uchar data)
 
                 /* Turn cursor on */
                 m_Cursor = 1;
-                if (m_CurY >= 200)
+                if (m_CurY >= bottom)
                     Scroll();
                 XorCursor();
                 break;
@@ -707,6 +730,14 @@ void VTTDockVid::WriteData(uchar data)
                     SetByte(line, col, 0);
                 break;
 
+            case ESC_LOCK_SYS_LINE:
+                m_LabelLocked = TRUE;
+                break;
+
+            case ESC_UNLOCK_SYS_LINE:
+                m_LabelLocked = FALSE;
+                break;
+
             case ESC_INS_LINE:
                 for (y = 199; y > m_CurY+8; y--)
                 //for (line = 24; line > (m_CurY >> 3); line--)
@@ -725,7 +756,7 @@ void VTTDockVid::WriteData(uchar data)
                 break;
 
             case ESC_DEL_LINE:
-                for (y = m_CurY; y < 200-8; y++)
+                for (y = m_CurY; y < bottom-8; y++)
                 //for (line = m_CurY >> 3; line < 24; line++)
                 {
                     for (col = 0; col < 480; col++)
@@ -800,7 +831,7 @@ void VTTDockVid::WriteData(uchar data)
                 break;
 
             default:
-                printf("ESC %02x\n", m_EscData[0]);
+                printf("ESC 0x%02x\n", m_EscData[0]);
                 break;
             }
 
@@ -883,7 +914,7 @@ void VTTDockVid::WriteData(uchar data)
     {
         int addr, line, c, mem_index, column, lastcolor = -1;
 
-        if (m_CurY >= 200)
+        if (m_CurY >= bottom)
             Scroll();
 
         addr = gStdRomDesc->sCharTable;
@@ -1006,12 +1037,18 @@ void VTTDockVid::XorCursor(void)
 void VTTDockVid::Scroll(void)
 {
     int  y, col, color, lastcolor = -1;
+    int  bottom;
+
+    if (m_LabelLocked)
+        bottom = 200 - 8;
+    else
+        bottom = 200;
 
     /* Test if at bottom of display */
-    if (m_CurY >= 200)
+    if (m_CurY >= bottom)
     {
         /* We need to perform a scroll */
-        for (y = 8; y < 200; y++)
+        for (y = 8; y < bottom; y++)
         //for (line = 1; line < 25; line++)
         {
             for (col = 0; col < 480; col++)
@@ -1035,7 +1072,10 @@ void VTTDockVid::Scroll(void)
         /* Now zero out the bottom line */
         for (col = 0; col < 480; col++)
         {
-            SetByte(24,col,0);
+            if (m_LabelLocked)
+                SetByte(23,col,0);
+            else
+                SetByte(24,col,0);
         }
 
         m_CurY -= 8;
