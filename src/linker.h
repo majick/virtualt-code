@@ -402,6 +402,7 @@ private:
 public:
 // Public Access functions
 	int					Link();
+	int					CreateByteArray(unsigned char *buf, int count);
 	unsigned short		GetEntryAddress(void);
 	unsigned short		GetStartAddress(void);
 	void				SetLinkOptions(const MString& options);

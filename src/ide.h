@@ -47,6 +47,7 @@
 #include "project.h"
 #include "My_Text_Editor.h"
 #include "idetabs.h"
+#include "linker.h"
 
 void cb_Ide(Fl_Widget* w, void*) ;
 
@@ -214,6 +215,7 @@ public:
 						int& totalErrors, int& linkerScriptFound, MString& linkerScript,
 						MString& linkerFiles);
 	void			BuildProject(void);
+	void			LoadRomToRex(VTLinker* plinker);
 	void			CleanProject(void);
 	void			SetColors(int fg, int bg);
 	void			ShowProjectSettings(void);

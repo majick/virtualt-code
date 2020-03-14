@@ -3836,7 +3836,7 @@ void VT_Ide::Stdout(const char *msg)
 
 /*
 =============================================================================
-BuildProjet:  This routine is the reason for all this mess!  Try to assemble
+BuildProject:  This routine is the reason for all this mess!  Try to assemble
 				each file in the project and then link if no errors.
 =============================================================================
 */
@@ -3937,6 +3937,105 @@ void VT_Ide::AssembleSourcesInGroup(VTAssembler& assembler, VT_IdeGroup* pGroup,
 			linkerScriptFound = true;
 		}
 	}
+}
+
+/*
+=============================================================================
+LoadRomToRex: This routine load the built OptROM data to the REX flash
+		        in the active ROM image area.
+=============================================================================
+*/
+void VT_Ide::LoadRomToRex(VTLinker *pLinker)
+{
+    long            address, blockaddr;
+    unsigned char   sEntry[7];
+    int             x, actblk = 0;
+    unsigned char   status;
+    MString         temp;
+    unsigned char   buf[32768];
+
+    // First find the location of the directory
+    address = 0xC400;
+    get_memory8_ext(REGION_REX_FLASH, address+1, 6, sEntry);
+    sEntry[6] = '\0';
+    
+    // Test for "SYSTEM"
+    if (strcmp((char *) sEntry, (char *) "SYSTEM") != 0)
+    {
+        // Not found.  Try 0xE000
+        address = 0xE400;
+        get_memory8_ext(REGION_REX_FLASH, address+1, 6, sEntry);
+        if (strcmp((char *) sEntry, (char *) "SYSTEM") != 0)
+        {
+            // Don't know where REX is!
+            return;
+        }
+    }
+
+#if 0
+    // Address found.  Determine active block
+    for (x = 0; x < 0x3FF; x++)
+    {
+        get_memory8_ext(REGION_REX_FLASH, address-0x400+x, 1, &status);
+        if ((status & 0xE0) == 0x40)
+        {
+            actblk = status & 0x1F;
+            break;
+        }
+    }
+
+    // Validate active block found
+    if (actblk == 0)
+        return;
+
+    // Find the active block in the directory
+    for (x = 0; x < 0x3ff; x++)
+    {
+        get_memory8_ext(REGION_REX_FLASH, address+x*16, 1, &status);
+        if (status == (0xC0 | actblk))
+        {
+            break;
+        }
+    }
+
+    // Test if block found above
+    if (x == 0x3ff)
+    {
+        // Active block not found!
+        return;
+    }
+
+    // Block found.  Get the image name
+    get_memory8_ext(REGION_REX_FLASH, address+x*16+1, 6, sEntry);
+#endif
+
+    temp = m_ActivePrj->m_Name;
+    temp.MakeUpper();
+
+    // Find the project name in the dir list
+    for (x = 0; x < 0x3FF; x++)
+    {
+        unsigned char dent[7];
+
+        get_memory8_ext(REGION_REX_FLASH, address+x*16+1, 6, dent);
+        dent[6] = '\0';
+
+        // Validate the block name
+        if (strncmp((char *) dent, (const char *) temp, 6) == 0)
+        {
+            unsigned char blk;
+            get_memory8_ext(REGION_REX_FLASH, address+x*16, 1, &blk);
+
+            // Match!  Copy data to this block location
+            blk &= 0x1F;
+            address = (long) (blk) << 15;
+
+            // Do the memcpy
+            pLinker->CreateByteArray(buf, sizeof(buf));
+            set_memory8_ext(REGION_REX_FLASH, address, 32768, buf);
+        }
+    }
+    
 }
 
 /*
@@ -4076,8 +4175,19 @@ void VT_Ide::BuildProject(void)
 						break;
 
 					case VT_PROJ_TYPE_ROM:
-                        /* Re-load the OPT ROM */
-                        load_opt_rom();
+                        /* Test if REX is enabled.  If it is, then we must copy the
+                           new ROM image into the active image area, validating the 
+                           name in the process.
+                         */
+                        if (gRex)
+                        {
+                            LoadRomToRex(linker);
+                        }
+                        else
+                        {
+                            /* Re-load the OPT ROM */
+                            load_opt_rom();
+                        }
 						break;
 
 					case VT_PROJ_TYPE_LIB:

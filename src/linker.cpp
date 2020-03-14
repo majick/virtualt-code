@@ -4139,6 +4139,36 @@ int VTLinker::GenerateLoaderFile(int startAddr, int endAddr, int entryAddr)
 
 /*
 ============================================================================
+Generates a linear byte array of program bytes.
+============================================================================
+*/
+int VTLinker::CreateByteArray(unsigned char *buf, int size)
+{
+	int			c, x;
+
+	// Loop for all data
+	for (c = 0; c < size; )
+	{
+		// Write the next block of bytes
+		CObjFileSection *pSect = m_SegMap[c];
+		for (x = 0; x < pSect->m_Size; x++)
+		{
+            buf[c++] = pSect->m_pProgBytes[x];
+		}
+
+		while ((m_SegMap[c] == NULL || m_SegMap[c]->m_Name == ".bss") &&
+			c <= size)
+		{
+            buf[c] = 0;
+			c++;
+		}
+	}
+
+	return 1;
+}
+
+/*
+============================================================================
 Generates a map file if one was requested and no errors exist during the
 assemble / link.
 ============================================================================
