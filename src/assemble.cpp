@@ -2966,14 +2966,28 @@ void VTAssembler::preproc_ifdef(const char* name, int negate)
 		m_IfStat[m_IfDepth] = IF_STAT_DONT_ASSEMBLE;
 		strName = name;
         // Test if it is a CMacro
-        if (LookupMacro(strName, pMacro))
-        {
-            if (!negate)
-                m_IfStat[m_IfDepth] = IF_STAT_ASSEMBLE;
-        }
-        else
+    //    if (LookupMacro(strName, pMacro))
+    //    {
+    //        if (!negate)
+    //            m_IfStat[m_IfDepth] = IF_STAT_ASSEMBLE;
+    //    }
+    //    else
         {
             defined = LookupSymbol(strName, dummy);
+            if (!defined)
+            {
+               int  def;
+
+               for (def = 0; def < m_Defines.GetSize(); def++)
+               {
+                  if (((CMacro *) m_Defines[def])->m_Name == strName)
+                  {
+                     defined = 1;
+                     break;
+                  }
+               }
+            }
+
             if ((defined && !negate) || (!defined && negate))
                 m_IfStat[m_IfDepth] = IF_STAT_ASSEMBLE;
         }
