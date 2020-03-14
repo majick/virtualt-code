@@ -755,7 +755,8 @@ void cb_coldBoot (Fl_Widget* w, void*)
 	if (gReMem)
 	{
 		if (w != NULL)
-			a = fl_choice("Cold Boot.  Reload System ROM too?", "Cancel", "Yes", "No", NULL);
+			//a = fl_choice("Cold Boot.  Reload System ROM too?", "Cancel", "Yes", "No", NULL);
+			a = fl_choice("Cold Boot.  Reload System ROM too?", "Cancel", "Yes", "No");
 		else
 			a = 2;
 		if (a == 1)
