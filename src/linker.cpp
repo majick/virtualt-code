@@ -1436,8 +1436,8 @@ void VTLinker::NewLinkRegion(int type, int lineNo, int startAddr,
 		while (pThisRange != NULL)
 		{
 			// Test if this region overlaps with new region
-			if (((startAddr >= pThisRange->startAddr) && (
-				(startAddr <= pThisRange->endAddr)) ||
+			if ((((startAddr >= pThisRange->startAddr) && (
+				(startAddr <= pThisRange->endAddr))) ||
 				((endAddr >= pThisRange->startAddr) && 
 				(endAddr <= pThisRange->endAddr)) ||
 				((startAddr <= pThisRange->startAddr) &&

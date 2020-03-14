@@ -1675,7 +1675,7 @@ void T100_ComMon::SaveLog(void)
 			cle = &clb->entries[index];
 
 			// Test if this entry's rx/tx marker is different from current packet
-			if ((rxtx != 0) && ((cle->flags & 0x80) && (rxtx == CLE_RX) || (!(cle->flags & 0x80) && (rxtx == CLE_TX))))
+			if ((rxtx != 0) && (((cle->flags & 0x80) && (rxtx == CLE_RX)) || (!(cle->flags & 0x80) && (rxtx == CLE_TX))))
 			{
 				// This byte doesn't match the current line!  Terminate the current line and start a new one
 				fill = 0;

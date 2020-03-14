@@ -823,7 +823,7 @@ void My_Text_Buffer::add_predelete_callback(My_Text_Predelete_Cb bufPreDeleteCB,
     	newPreDeleteProcs[i + 1] = mPredeleteProcs[i];
     	newCBArgs[i + 1] = mPredeleteCbArgs[i];
     }
-    if (! mNPredeleteProcs != 0) {
+    if (mNPredeleteProcs == 0) {
 		 delete [] mPredeleteProcs;
 		 delete [] mPredeleteCbArgs;
     }

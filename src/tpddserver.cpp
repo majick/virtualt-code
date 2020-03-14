@@ -1610,7 +1610,7 @@ int VTTpddServer::SerWriteByte(char data)
 		}
 
 		// Test for command line characters
-		if (data >= 'a' && data <= 'z' || m_backgroundCmd)
+		if ((data >= 'a' && data <= 'z') || m_backgroundCmd)
 		{
 			// Add the byte to our RX buffer
 			m_rxBuffer[m_rxIn++] = data;

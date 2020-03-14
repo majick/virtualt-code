@@ -1088,7 +1088,7 @@ int VTAssembler::GetValue(MString & string, int & value)
 
 	// First check if string is a numeric value
 	for (c = 0; c < len; c++)
-		if ((string[c] > '9') || (string[c] < '0') && string[c] != '-')
+		if ((string[c] > '9') || ((string[c] < '0') && string[c] != '-'))
 		{
 			numericVal = 0;
 			break;
@@ -3208,13 +3208,13 @@ int VTAssembler::preproc_macro()
 						if (pos != 0)
 						{
 							char ch = replace[pos-1];	// Get char before the find
-							if ((ch >= 'A') && (ch <= 'z') || (ch == '_') || (ch == '$') || (ch == '&'))
+							if (((ch >= 'A') && (ch <= 'z')) || (ch == '_') || (ch == '$') || (ch == '&'))
 								wholeMatch = FALSE;
 						}
 						if (pos + len != replace.GetLength()-1)
 						{
 							char ch = replace[pos + len +1 ];
-							if ((ch >= 'A') && (ch <= 'z') || (ch == '_') || (ch == '$') || (ch == '&'))
+							if (((ch >= 'A') && (ch <= 'z')) || (ch == '_') || (ch == '$') || (ch == '&'))
 								wholeMatch = FALSE;
 						}
 
@@ -3667,7 +3667,7 @@ int VTAssembler::Assemble()
 				// Test for relative branch instruction
 				else if ((pInst->m_ID >= OPCODE_BR) && (pInst->m_ID <= OPCODE_RCALL))
 				{
-					if ((pInst->m_ID >= OPCODE_BRA) && (pInst->m_ID <= OPCODE_BPE) ||
+					if (((pInst->m_ID >= OPCODE_BRA) && (pInst->m_ID <= OPCODE_BPE)) ||
 						(pInst->m_ID == OPCODE_RCALL))
 							size = 3;
 					
