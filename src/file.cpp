@@ -1378,8 +1378,27 @@ void save_file(model_t_files_t *pFile)
 					// Get next byte
 					ch = get_memory8(addr1++);
 					
+					if (ch == '"')
+					{
+						// Write the quote
+						fwrite(&ch, 1, 1, fd);
+						ch = get_memory8(addr1);
+
+						// Loop to end of the quote, writing bytes directly
+						while (ch != '"')
+						{
+							fwrite(&ch, 1, 1, fd);
+							addr1++;
+							ch = get_memory8(addr1);
+						}
+
+						// Write the final ending quote
+						fwrite(&ch, 1, 1, fd);
+            addr1++;
+					}
+
 					// Check if byte is ':'
-					if (ch == ':')
+          else if (ch == ':')
 					{
 						// Get next character
 						ch = get_memory8(addr1);
@@ -1403,6 +1422,8 @@ void save_file(model_t_files_t *pFile)
 						ch = ':';
 						fwrite(&ch, 1, 1, fd);
 					}
+
+          // Check for keyword expansion
 					else if (ch > 0x7F)
 					{
 						fprintf(fd, "%s", gKeywordTable[ch & 0x7F]);
