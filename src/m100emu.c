@@ -720,7 +720,8 @@ void check_installation(void)
 
 	if (strlen(errors) > 0)
 	{
-		sprintf(errors, "No ROM file for %s", localpath);
+		strcat(errors, "\nNo ROM file for ");
+		strcat(errors, localpath);
 		show_error(errors);
 	}
 }
