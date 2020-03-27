@@ -1634,13 +1634,11 @@ std::string cmd_list_break(ServerSocket& sock, std::string& args)
 
 void key_delay(void)
 {
-	//Fl::wait(0.01);
 	while (gSimKey != 0)
 		Fl::wait(0.001);
 
 	while (gDelayUpdateKeys)
 		Fl::wait(0.001);
-	//Fl::wait(0.01);
 }
 /*
 =======================================================

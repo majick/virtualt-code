@@ -634,7 +634,7 @@ check_installation:	This routine checks that VirtualT is properly installed
 void check_installation(void)
 {
 	int 	model, len;
-	char	localpath[257];
+	char	localpath[2049];
 	char	roms_path[513];
 	char	errors[1025];
 	FILE	*fd, *fd2;
@@ -720,9 +720,8 @@ void check_installation(void)
 
 	if (strlen(errors) > 0)
 	{
-		strcat(errors, "\nNo ROM file for ");
-		strcat(errors, localpath);
-		show_error(errors);
+		sprintf(localpath, "No ROM file for %s", errors);
+		show_error(localpath);
 	}
 }
 
