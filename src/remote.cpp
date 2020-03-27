@@ -144,7 +144,6 @@ void remote_set_speed(int speed);
 int	str_to_i(const char *pStr);
 void remote_switch_model(int model);
 extern int fullspeed;
-extern int fl_wait(double);
 extern void simulate_keydown(int key);
 extern void simulate_keyup(int key);
 extern	Fl_Preferences virtualt_prefs;
@@ -741,7 +740,7 @@ std::string cmd_step(ServerSocket& sock, std::string& args)
 		unlock_remote();
 
 		while (gSingleStep)
-			fl_wait(0.001);
+			Fl::wait(0.001);
 	}
 	
 	return gOk;
@@ -825,7 +824,7 @@ std::string cmd_step_over(ServerSocket& sock, std::string& args)
 
 			// Wait for the processor to stop again
 			while (!gStopped)
-				fl_wait(0.001);
+				Fl::wait(0.001);
 
 //			gRemoteBreak[addr] = saveBrk;
 			gStepOverBreak = 0;
@@ -839,7 +838,7 @@ std::string cmd_step_over(ServerSocket& sock, std::string& args)
 
 			// Wait for single step to complete
 			while (gSingleStep)
-				fl_wait(0.001);
+				Fl::wait(0.001);
 		}
 	}
 	
@@ -1635,13 +1634,13 @@ std::string cmd_list_break(ServerSocket& sock, std::string& args)
 
 void key_delay(void)
 {
-	//fl_wait(0.01);
+	//Fl::wait(0.01);
 	while (gSimKey != 0)
-		fl_wait(0.001);
+		Fl::wait(0.001);
 
 	while (gDelayUpdateKeys)
-		fl_wait(0.001);
-	//fl_wait(0.01);
+		Fl::wait(0.001);
+	//Fl::wait(0.01);
 }
 /*
 =======================================================
@@ -1997,7 +1996,7 @@ std::string cmd_model(ServerSocket& sock, std::string& args)
 	else
 		return gParamError;
 
-	fl_wait(0.25);
+	Fl::wait(0.25);
 	return gOk;
 }
 
