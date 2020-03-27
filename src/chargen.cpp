@@ -726,7 +726,8 @@ void VTCharacterGen::Load(void)
 			data[0] = 0x80;
 		else
 			data[0] = 0;  */
-		m_pCharTable->PutCharData(index, data);
+    if (readlen > 0)
+      m_pCharTable->PutCharData(index, data);
 	}
 	
 	// Close the file
@@ -742,7 +743,7 @@ Save data to a file
 */
 void VTCharacterGen::Save(int format)
 {
-	Flu_File_Chooser*	fc;
+	Flu_File_Chooser*	fc = NULL;
 	unsigned char		data[12];
 	int					index, len, c;
 	char				ch;
@@ -781,7 +782,7 @@ void VTCharacterGen::Save(int format)
 	}
 
 	// Loop until a file selected or cancel
-	while (TRUE)
+	while (fc)
 	{
 		// Show the file dialog
 		fc->show();
@@ -826,6 +827,7 @@ void VTCharacterGen::Save(int format)
 	// Test if filename has an extension
 	filename = fc->value();
 	len = filename.GetLength();
+  ch = 0;
 	for (c = len - 1; c >= 0; c--)
 	{	
 		ch = filename[c];
@@ -925,7 +927,7 @@ void VTCharacterGen::UpdatePicaView(void)
 	char	byte;
 	
 	// Clear the pixelData map
-	for (c = 0; c < sizeof(m_PicaPixelData); c++)
+	for (c = 0; c < (int) sizeof(m_PicaPixelData); c++)
 		m_PicaPixelData[c] = 0;
 
 	// Fill in pixel
@@ -954,7 +956,7 @@ void VTCharacterGen::UpdateExpandView(void)
 	char	byte;
 	
 	// Clear the pixelData map
-	for (c = 0; c < sizeof(m_ExpandPixelData); c++)
+	for (c = 0; c < (int) sizeof(m_ExpandPixelData); c++)
 		m_ExpandPixelData[c] = 0;
 
 	// Fill in pixel
@@ -983,7 +985,7 @@ void VTCharacterGen::UpdateEnhanceView(void)
 	char	byte;
 	
 	// Clear the pixelData map
-	for (c = 0; c < sizeof(m_EnhancePixelData); c++)
+	for (c = 0; c < (int) sizeof(m_EnhancePixelData); c++)
 		m_EnhancePixelData[c] = 0;
 
 	// Fill in pixel
@@ -1018,7 +1020,7 @@ void VTCharacterGen::UpdateDblStrikeView(void)
 	char	byte;
 	
 	// Clear the pixelData map
-	for (c = 0; c < sizeof(m_DblStrikePixelData); c++)
+	for (c = 0; c < (int) sizeof(m_DblStrikePixelData); c++)
 		m_DblStrikePixelData[c] = 0;
 
 	// Fill in pixel
@@ -1048,7 +1050,7 @@ void VTCharacterGen::UpdateDblEnhanceView(void)
 	char	byte;
 	
 	// Clear the pixelData map
-	for (c = 0; c < sizeof(m_DblEnhancePixelData); c++)
+	for (c = 0; c < (int) sizeof(m_DblEnhancePixelData); c++)
 		m_DblEnhancePixelData[c] = 0;
 
 	// Fill in pixel
@@ -1097,9 +1099,7 @@ VTCharTable::VTCharTable(int x, int y, int w, int h, const char *title)
 	: Fl_Box(FL_FRAME_BOX, x, y, w, h, title) 
 {
 	int		c, i;
-	int		j;
 
-	j = 0;
 	for (c = 0; c < 256; c++)
 		for (i = 0; i < 12; i++)
 			m_Data[c][i] = 0;
