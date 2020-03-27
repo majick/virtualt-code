@@ -64,7 +64,7 @@ LIBFILES	=	-lstdc++ $(FLTKLIB) -lm -lc -lX11 -lpthread -ldl -ljpeg -lpng -lXft -
 # =============================
 # Defines for MacOSX builds
 # =============================
-MACLDFLAGS	=	$(shell $(FLTKCONFIG) --use-images --ldflags) -arch i386 -arch ppc
+MACLDFLAGS	=	$(shell $(FLTKCONFIG) --use-images --ldflags)
 MACLIBFILES	=	-lstdc++ `$(FLTKCONFIG) --use-images --ldstaticflags --use-images` --lm -lpthread
 
 # ====================================
@@ -129,7 +129,7 @@ else
 	if test -f /Developer/Tools/Rez; then \
 		g++ $(MACLDFLAGS) $(OBJECTS) $(MACLIBFILES) -o $@ ; \
 	else \
-		$(CC) $(LDFLAGS) $(OBJECTS) $(LIBFILES) -o $@ ; \
+		$(CC) $(OBJECTS) $(LDFLAGS) $(LIBFILES) -o $@ ; \
 	fi;
 	cd ..
 

@@ -1,5 +1,5 @@
-CFLAGS		+=	-D__unix__ -I/usr/include/malloc/ -arch i386 -arch ppc
-CPPFLAGS	+=	-D__unix__ -I/usr/include/malloc/ -arch i386 -arch ppc
+CFLAGS		+=	-D__unix__ -I/usr/include/malloc/
+CPPFLAGS	+=	-D__unix__ -I/usr/include/malloc/
 FLTKDIR	    ?=	/usr/local/bin
 
 #post:
