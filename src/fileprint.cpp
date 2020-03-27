@@ -386,7 +386,7 @@ MString VTFilePrint::GenFilename()
 	int			len, c;
 	int			seq = 0;
 	int			seqFound = FALSE;
-	char		page[10];
+	char		page[11];
 	FILE*		fd;
 
 	// Build the filename by parsing the format & looking for % modifiers

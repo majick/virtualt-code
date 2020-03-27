@@ -1064,7 +1064,7 @@ void save_remem_ram(void)
 	/* Print error if unable to open the file */
 	if (fd == NULL)
 	{
-		char  msg[100];
+		char  msg[513];
 		sprintf(msg, "Could not save Remem file %s", mem_setup.remem_file);
 		show_error(msg);
 		return;
@@ -1104,7 +1104,7 @@ void save_rampac_ram(void)
 	/* Print error if unable to open the file */
 	if (fd == NULL)
 	{
-		char  msg[100];
+		char  msg[513];
 		sprintf(msg, "Could not save Rampac file %s", mem_setup.rampac_file);
 		show_error(msg);
 		return;
@@ -1143,7 +1143,7 @@ void save_rex2_ram(void)
 	/* Print error if unable to open the file */
 	if (fd == NULL)
 	{
-		char  msg[100];
+		char  msg[513];
 		sprintf(msg, "Could not save REX2 RAM file %s", mem_setup.rex2_ram_file);
 		show_error(msg);
 		return;
@@ -1179,7 +1179,7 @@ void save_rex_flash(void)
 	/* Print error if unable to open the file */
 	if (fd == NULL)
 	{
-		char  msg[100];
+		char  msg[513];
 		sprintf(msg, "Could not save REX file %s", mem_setup.rex_flash_file);
 		show_error(msg);
 		return;
@@ -1325,7 +1325,7 @@ void load_remem_ram(void)
 	/* Print error if unable to open the file */
 	if (fd == NULL)
 	{
-		char  msg[100];
+		char  msg[513];
 		sprintf(msg, "Could not open Remem file %s", mem_setup.remem_file);
 		show_error(msg);
 		return;
@@ -1400,7 +1400,7 @@ void load_rampac_ram(void)
 	/* Print error if unable to open the file */
 	if (fd == NULL)
 	{
-		char  msg[100];
+		char  msg[513];
 		sprintf(msg, "Could not open Rampac file %s", mem_setup.rampac_file);
 		show_error(msg);
 		return;
@@ -1437,7 +1437,7 @@ void load_rex_flash(void)
 	/* Print error if unable to open the file */
 	if (fd == NULL)
 	{
-		char  msg[100];
+		char  msg[513];
 		sprintf(msg, "Could not open REX file %s", mem_setup.rex_flash_file);
 		show_error(msg);
 		return;
@@ -1477,7 +1477,7 @@ void load_rex2_ram(void)
 	/* Print error if unable to open the file */
 	if (fd == NULL)
 	{
-		char  msg[100];
+		char  msg[513];
 		sprintf(msg, "Could not open REX2 RAM file %s", mem_setup.rex2_ram_file);
 		show_error(msg);
 		return;

@@ -70,7 +70,7 @@ MString VTAutoFile::GenFilename()
 	int			len, c;
 	int			seq = 0;
 	int			seqFound = FALSE;
-	char		page[10];
+	char		page[11];
 	FILE*		fd;
 	const char*		formatCode;
 

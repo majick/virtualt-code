@@ -173,8 +173,8 @@ protected:
 	watchtable_color_t		m_colors;
 
 	int						m_FontSize;
-	int						m_ColStart[VT_WATCH_TABLE_COL_COUNT];
-	int						m_ColWidth[VT_WATCH_TABLE_COL_COUNT];
+	int						m_ColStart[VT_WATCH_TABLE_COL_COUNT+1];
+	int						m_ColWidth[VT_WATCH_TABLE_COL_COUNT+1];
 	double					m_WidthPercentage[VT_WATCH_TABLE_COL_COUNT];
 	int						m_SelLine;
 	int						m_DblclkX, m_DblclkY;

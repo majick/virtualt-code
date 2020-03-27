@@ -634,9 +634,9 @@ check_installation:	This routine checks that VirtualT is properly installed
 void check_installation(void)
 {
 	int 	model, len;
-	char	localpath[256];
-	char	roms_path[512];
-	char	errors[256];
+	char	localpath[257];
+	char	roms_path[513];
+	char	errors[1025];
 	FILE	*fd, *fd2;
 
 	/* Test if Mac OSX and no path specified */
@@ -720,8 +720,8 @@ void check_installation(void)
 
 	if (strlen(errors) > 0)
 	{
-		sprintf(localpath, "No ROM file for %s", errors);
-		show_error(localpath);
+		sprintf(errors, "No ROM file for %s", localpath);
+		show_error(errors);
 	}
 }
 
