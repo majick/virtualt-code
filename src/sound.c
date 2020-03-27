@@ -51,7 +51,9 @@
 #include "sound.h"
 #include "m100emu.h"
 
+#ifdef _WIN32
 #pragma comment(lib, "winmm.lib")
+#endif
 
 #define				BLOCK_SIZE				1024
 #define				BLOCK_COUNT				10
@@ -84,17 +86,21 @@ static int				gReqOut = 0;
 
 unsigned short			gToneBuf[BLOCK_SIZE >> 1] ;          /* input buffer */
 unsigned short			gpOneHertz[SAMPLING_RATE];
+
+#ifdef _WIN32
 static int				gPlayTone = TONE_STOPPED;
 static int				gToneFreq = 0;
+static int				gOneHzPtr = 0;
+static double			gDecayLevel = DECAY_MAX_LEVEL;
+static int				gLastToneFreq = 0;
+static UINT64			gPlayCycle = 0;
+#endif
+
 static int				gExit = 0;
 static int				gBeepOn = 0;
-static int				gOneHzPtr = 0;
 static double			gToneDivisor = 1.0;
-static double			gDecayLevel = DECAY_MAX_LEVEL;
 static double			gDecayStep = 0.008;
-static int				gLastToneFreq = 0;
 static	UINT64			spkr_cycle = 0;
-static	UINT64			gPlayCycle = 0;
 int						sound_enable = 1;
 
 #ifdef _WIN32
