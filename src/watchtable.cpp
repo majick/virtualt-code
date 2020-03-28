@@ -490,15 +490,13 @@ Draw the specified watch variable on the specified line
 */
 void VT_Watch_Table::DrawWatch(CWatchDef* pVar, int line)
 {
-	int			wx, wy, ww, wh;
+	int			wy, wh;
 	int			xOffset, yOffset;
 	int			fontHeight, lines, topLine;
 	char		str[256];
 
 	// Get our dimensions
-	wx = m_pVarWindow->x();
 	wy = m_pVarWindow->y();
-	ww = m_pVarWindow->w();
 	wh = m_pVarWindow->h();
 	fontHeight = fl_height();
 	lines = wh / fontHeight;
@@ -1209,7 +1207,6 @@ Adds a new watch to the widget.
 int VT_Watch_Table::AddWatch(MString& name, MString& addr, int type, 
 							  int region, int need_redraw)
 {
-	int			index;
 	CWatchDef*	pWatch;
 	
 	// Create a new watch definition
@@ -1224,7 +1221,7 @@ int VT_Watch_Table::AddWatch(MString& name, MString& addr, int type,
 		pWatch->m_Region = region;
 
 		// Add the watch to the list
-		index = m_WatchVars.Add(pWatch);
+		m_WatchVars.Add(pWatch);
 
 		// Now draw the new item if needed
 		SetScrollSizes();

@@ -61,7 +61,6 @@ VTTpddServerLog*			gpLog = NULL;
 
 static void cb_load_log(Fl_Widget* w, void* pOpaque);
 static void cb_save_log(Fl_Widget* w, void* pOpaque);
-static void cb_setup_log(Fl_Widget* w, void* pOpaque);
 
 void cb_CpuRegs(Fl_Widget* w, void* pOpaque);
 void cb_Ide(Fl_Widget* w, void* pOpaque);
@@ -73,7 +72,6 @@ static Fl_Menu_Item gServerLog_menuitems[] = {
   { "&File",              		0, 0, 0, FL_SUBMENU },
 	{ "Load from File...",      0, cb_load_log, 0 },
 	{ "Save to File...",      	0, cb_save_log, 0, 0 /*FL_MENU_DIVIDER*/ },
-//	{ "Setup...",      			0, cb_setup_log, 0},
 	{ 0 },
 
   { "&Tools", 0, 0, 0, FL_SUBMENU },
@@ -197,15 +195,6 @@ static void cb_load_log(Fl_Widget* w, void* pOpaque)
 	pLog->LoadFile((const char *) filePath);
 
 	delete fc;
-}
-
-/*
-============================================================================
-Callback for setup dialog
-============================================================================
-*/
-static void cb_setup_log(Fl_Widget* w, void* pOpaque)
-{
 }
 
 /*
@@ -645,20 +634,17 @@ void VTTpddServerLog::LogData(char data, int rxTx)
 					AddNewEntry(TPDD_LOG_TX, m_txCount, m_txBuffer);
 				m_txCount = 0;
 				m_rxCount = 0;
-				//printf("\nRX:  ");
 			}
 			m_lastWasRx = TRUE;
 			m_rxBuffer[m_rxCount++] = data;
 			
 			// Test if the rxBuffer is full
-			if (m_rxCount == sizeof(m_rxBuffer))
+			if (m_rxCount == (int) sizeof(m_rxBuffer))
 			{
 				// Need to dump this packet and start a new one
 				AddNewEntry(TPDD_LOG_RX, m_rxCount, m_rxBuffer);
 				m_rxCount = 0;
 			}
-
-			//printf("%02X ", (unsigned char) data);
 		}
 		else
 		{
@@ -672,7 +658,6 @@ void VTTpddServerLog::LogData(char data, int rxTx)
 				if (m_txCount > 0)
 					AddNewEntry(TPDD_LOG_TX, m_txCount, m_txBuffer);
 				m_txCount = m_rxCount = 0;
-				//printf("\nTX:  ");
 			}
 			m_lastWasRx = FALSE;
 
@@ -680,7 +665,7 @@ void VTTpddServerLog::LogData(char data, int rxTx)
 			m_txBuffer[m_txCount++] = data;
 
 			// Test if the TX buffer is full
-			if (m_txCount == sizeof(m_txBuffer))
+			if (m_txCount == (int) sizeof(m_txBuffer))
 			{
 				// Need to dump this packet and start a new one
 				AddNewEntry(TPDD_LOG_TX, m_txCount, m_txBuffer);
@@ -988,9 +973,7 @@ Loads the log data from a file.
 int VTTpddServerLog::LoadFile(MString filename)
 {
 	FILE*			fd;
-	int				c, lineNo, rxTx;
-	//VTTpddLogEntry*	pEntry;
-	//MString			fmt, hexFmt;
+	int				c, lineNo, rxTx = 0;
 	char			line[256];
 	char			*ptr;
 
@@ -1026,7 +1009,7 @@ int VTTpddServerLog::LoadFile(MString filename)
 
 	// Loop for all data in the file
 	lineNo = 0;
-	while (fgets(line, sizeof(line), fd) != NULL)
+	while (fgets(line, (int) sizeof(line), fd) != NULL)
 	{
 		// Start at beginning of line
 		ptr = line;
@@ -1061,7 +1044,7 @@ int VTTpddServerLog::LoadFile(MString filename)
 			m_rxCount = 0;
 
 			// Skip past the reference and find the ':'
-			while (*ptr != ':' && c < sizeof(line))
+			while (*ptr != ':' && c < (int) sizeof(line))
 			{
 				// Increment pointer and index
 				ptr++;
@@ -1069,7 +1052,7 @@ int VTTpddServerLog::LoadFile(MString filename)
 			}
 
 			// Test if ':' found
-			if (c >= sizeof(line) || *ptr != ':')
+			if (c >= (int) sizeof(line) || *ptr != ':')
 			{
 				// Not a trace file!!
 				fl_message("This does not appear to be a valid file on line %d", lineNo);
@@ -1099,7 +1082,7 @@ int VTTpddServerLog::LoadFile(MString filename)
 
 		// Now we are pointing at the HEX data.  Read all data from this line into
 		// either the m_rxBuffer or m_txBuffer
-		while (*ptr != ' ' && *ptr != '\0' && c < sizeof(line))
+		while (*ptr != ' ' && *ptr != '\0' && c < (int) sizeof(line))
 		{
 			unsigned char val;
 
@@ -1113,7 +1096,7 @@ int VTTpddServerLog::LoadFile(MString filename)
 			if (rxTx)
 			{
 				m_txBuffer[m_txCount++] = val;
-				if (m_txCount >= sizeof(m_txBuffer))
+				if (m_txCount >= (int) sizeof(m_txBuffer))
 				{
 					AddNewEntry(TPDD_LOG_TX, m_txCount, m_txBuffer);
 					m_txCount = 0;
@@ -1122,7 +1105,7 @@ int VTTpddServerLog::LoadFile(MString filename)
 			else
 			{
 				m_rxBuffer[m_rxCount++] = val;
-				if (m_rxCount >= sizeof(m_rxBuffer))
+				if (m_rxCount >= (int) sizeof(m_rxBuffer))
 				{
 					AddNewEntry(TPDD_LOG_RX, m_rxCount, m_rxBuffer);
 					m_rxCount = 0;
