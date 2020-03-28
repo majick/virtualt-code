@@ -627,7 +627,7 @@ Sets the simulated port flags
 int VTTpddServer::SerGetFlags(unsigned char *flags)
 {
 	// Test if we can receive more data
-	if (m_rxCount + 1 < sizeof(m_rxBuffer))
+	if (m_rxCount + 1 < (int) sizeof(m_rxBuffer))
 		*flags = SER_FLAG_TX_EMPTY;
 	else
 		*flags &= ~SER_FLAG_TX_EMPTY;
@@ -673,7 +673,7 @@ int VTTpddServer::SerReadByte(char *data)
 
 	// "Read" the next byte from the TX buffer
 	*data = m_txBuffer[m_txOut++];
-	if (m_txOut >= sizeof(m_txBuffer))
+	if (m_txOut >= (int) sizeof(m_txBuffer))
 		m_txOut = 0;
 
 	LogData(*data, TPDD_LOG_TX);
@@ -734,7 +734,7 @@ Sends a single character to the host
 void VTTpddServer::SendToHost(char data)
 {
 	// Validate the TX buffer isn't full
-	if (m_txCount + 1 >= sizeof(m_txBuffer))
+	if (m_txCount + 1 >= (int) sizeof(m_txBuffer))
 	{
 		m_txOverflow = TRUE;
 		return;
@@ -742,7 +742,7 @@ void VTTpddServer::SendToHost(char data)
 
 	// Add the byte
 	m_txBuffer[m_txIn++] = data;
-	if (m_txIn >= sizeof(m_txBuffer))
+	if (m_txIn >= (int) sizeof(m_txBuffer))
 		m_txIn = 0;
 	m_txCount++;
 }
@@ -807,7 +807,7 @@ void VTTpddServer::StateCmdline(char data)
 
 	// We have received part of a command line and we are looking for a CR,
 	// but must look for a 'Z' or 'M' after a timeout also
-	if (m_rxCount + 1 >= sizeof(m_rxBuffer))
+	if (m_rxCount + 1 >= (int) sizeof(m_rxBuffer))
 	{
 		// Buffer overflow!!!  Go to idle state
 		m_rxIn = m_rxCount = 0;
@@ -954,7 +954,6 @@ int VTTpddServer::CmdlineDir(int background)
 {
 	int			i, printed, col;
 	MString		file_path;
-	int			wide = FALSE;
 	MString		fmt;
 	int			len, isDir;
 
@@ -1898,7 +1897,7 @@ void VTTpddServer::DirFindFile(const char* pFilename)
 	// read the directory
 	dirent**	e;
 	char*		name;
-	int			i, num, len, dir_search = FALSE, dir_entry;
+	int			i, num, len, dir_entry;
 	MString		file_path;
 	char		find_name[16];
 
@@ -1930,7 +1929,6 @@ void VTTpddServer::DirFindFile(const char* pFilename)
 	if (len > 3 && pFilename[len-1] == '>' && pFilename[len-2] == '<')
 	{
 		// Indicate we are doing a directory search
-		dir_search = TRUE;
 		m_refIsDirectory = TRUE;
 
 		// Terminate the filename at the '.'
@@ -2805,7 +2803,6 @@ Change directory to the directory specified
 int VTTpddServer::ChangeDirectory(MString& sDir)
 {
 	MString		dirName;
-	int			idx = 0;
 	int			len = sDir.GetLength();
 	
 	// Strip any trailing ".<>"
@@ -2920,3 +2917,4 @@ int VTTpddServer::IsCmdlineState(void)
 	return m_state == TPDD_STATE_CMDLINE;
 }
 
+// vim: noet ts=4 sw=4

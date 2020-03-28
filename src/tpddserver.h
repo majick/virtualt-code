@@ -190,7 +190,7 @@ class VTTpddServer : public VTServer
 {
 public: 
 	VTTpddServer();
-	~VTTpddServer();
+	virtual ~VTTpddServer();
 
 	// Methods
 	int				SerOpenPort(void);
