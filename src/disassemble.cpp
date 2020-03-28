@@ -958,7 +958,7 @@ void VTDis::Disassemble()
 	int		c, x, table;
 	char	line[200];
 	char	arg[60];
-	int		addr, generate;
+	int		addr = 0, generate;
 	int		rst7 = 0;
 	int		rst1 = 0;
 	int		oldSchool = m_oldSchool;		// Indicates Old school style disassembly
@@ -1529,7 +1529,7 @@ void VTDis::Disassemble()
 
 			// Test if this opcode refers to an address which will need a label
 			int j;
-			for (j = 0; j < sizeof(gLabelOpcodes); j++)
+			for (j = 0; j < (int) sizeof(gLabelOpcodes); j++)
 			{
 				// Test for label reference
 				if (opcode == gLabelOpcodes[j])
@@ -2019,7 +2019,7 @@ void VTDis::CopyIntoMem(unsigned char *ptr, int len, int startAddr)
 
 	for (c = 0; c < len; c++)
 	{
-		if (c + startAddr < sizeof(m_memory))
+		if (c + startAddr < (int) sizeof(m_memory))
 			m_memory[c + startAddr] = ptr[c];
 	}
 }
@@ -2430,6 +2430,8 @@ static void cb_setupdlg_OK(Fl_Widget* w, void* pOpaque)
 		if (fontSize < 6)
 			fontSize = 6;
 	}
+  else
+    fontSize = 12;
 
 	// Get Inverse Highlight selection
 	blackBackground = p->pInverseHilight->value();
