@@ -79,7 +79,7 @@ Handles the events sent to the action_icon
 */
 int Fl_Action_Icon::handle(int event)
 {
-	int		button, xp, yp;
+	int		button;
 
 	switch (event)
 	{
@@ -89,9 +89,6 @@ int Fl_Action_Icon::handle(int event)
 		{
 		case FL_LEFT_MOUSE:
 			// Create a pop-up menu
-			xp = Fl::event_x();
-			yp = Fl::event_y();
-
 			m_pPopup->menu(m_pMenu);	
 			m_pPopup->popup();
 		}
@@ -126,7 +123,7 @@ void Fl_Action_Icon::draw(void)
 
 	// Draw the label
 	window()->make_current();
-	fl_color(FL_BLACK);
+	fl_color(labelcolor());
 	fl_draw(label(),tx, ty );
 	fl_pop_clip();
 }
