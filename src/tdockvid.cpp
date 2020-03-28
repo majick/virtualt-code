@@ -490,10 +490,8 @@ draw_pixels:	This routine draws the pixels on the display.
 void VTTDockVid::draw_pixels()
 {
     int x=0;
-    int y=0;
     int line;
     uchar value;
-    int  lastColor = -1;
     int  color;
 
     window()->make_current();
@@ -503,7 +501,6 @@ void VTTDockVid::draw_pixels()
         for (x = 0; x < 480; x++)
         {
             value = pixdata[line][x];
-            //y = line << 3;
 
             // Erase line so it is grey, then fill in with black where needed
             if ((line & 0x07) == 0)
@@ -515,19 +512,12 @@ void VTTDockVid::draw_pixels()
             if (value == 0)
                 continue;
 
-            // Draw the black pixels
-            //if (value)
-            {
-                color = m_Colors[value];
-                //if (color != lastColor)
-                {
-                    fl_color(color);
-                    lastColor = color;
-                }
-                drawpixel(x,line,1);
-            }
+            // Draw the pixels
+            color = m_Colors[value];
+            fl_color(color);
+            drawpixel(x,line,1);
         }
-	}
+	  }
 }
 
 /*
@@ -912,7 +902,7 @@ void VTTDockVid::WriteData(uchar data)
     /* Draw the received byte */
     else //if (data >= ' ');
     {
-        int addr, line, c, mem_index, column, lastcolor = -1;
+        int addr, line, c, mem_index, column;
 
         if (m_CurY >= bottom)
             Scroll();
@@ -1008,7 +998,6 @@ void VTTDockVid::WriteData(uchar data)
 
 void VTTDockVid::XorCursor(void)
 {
-    int  line = m_CurY >> 3;
     int  col = m_CurX;
     int  num, x,y;
 
@@ -1049,7 +1038,6 @@ void VTTDockVid::Scroll(void)
     {
         /* We need to perform a scroll */
         for (y = 8; y < bottom; y++)
-        //for (line = 1; line < 25; line++)
         {
             for (col = 0; col < 480; col++)
             {
@@ -1064,8 +1052,6 @@ void VTTDockVid::Scroll(void)
                     }
                     drawpixel(col,y-8,1);
                 }
-                //if (pixdata[line][col] != 0 || pixdata[line-1][col] != 0)
-                //    SetByte(line-1, col, pixdata[line][col]);
             }
         }
 

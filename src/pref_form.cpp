@@ -182,7 +182,7 @@ Fl_Double_Window* make_pref_form() {
           text_size_choice->add("6");text_size_choice->add("8");text_size_choice->add("10");text_size_choice->add("12");text_size_choice->add("14");text_size_choice->add("16");text_size_choice->add("18");text_size_choice->add("20");
           text_size_choice->value(3);
         }
-        { Fl_Input* i = tab_size_choice = new Fl_Input(240, 45, 40, 25, "Tab Size");
+        { tab_size_choice = new Fl_Input(240, 45, 40, 25, "Tab Size");
           sprintf(stab, "%d", tab_size);
           tab_size_choice->value(stab);
         }

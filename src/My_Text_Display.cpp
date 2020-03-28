@@ -25,15 +25,12 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-//#include <FL/flstring.H>
 #include <string.h>
 #include <limits.h>
 #include <ctype.h>
 #include <FL/Fl.H>
-//#include <FL/My_Text_Buffer.H>
 #include "My_Text_Display.h"
 #include <FL/Fl_Window.H>
-//#include <QuickdrawAPI.h>
 #include <FL/x.H>
 
 #undef min
@@ -424,8 +421,8 @@ void My_Text_Display::resize(int X, int Y, int W, int H)
     mMaxsize = max(mMaxsize, fl_height(mStyleTable[i].font, mStyleTable[i].size));
 
   // did we have scrollbars initially?
-  int hscrollbarvisible = mHScrollBar->visible();
-  int vscrollbarvisible = mVScrollBar->visible();
+  unsigned int hscrollbarvisible = mHScrollBar->visible();
+  unsigned int vscrollbarvisible = mVScrollBar->visible();
 
   // try without scrollbars first
   mVScrollBar->clear_visible();
@@ -545,7 +542,7 @@ void My_Text_Display::resize(int X, int Y, int W, int H)
   display_insert_position_hint = 0;
 
   if (mContinuousWrap ||
-		hscrollbarvisible != mHScrollBar->visible() ||
+      hscrollbarvisible != mHScrollBar->visible() ||
       vscrollbarvisible != mVScrollBar->visible())
     redraw();
 
@@ -902,7 +899,6 @@ int My_Text_Display::in_selection( int X, int Y ) {
   xy_to_rowcol( X, Y, &row, &column, CHARACTER_POS );
   if (range_touches_selection(buf->primary_selection(), mFirstChar, mLastChar))
     column = wrapped_column(row, column);
-//    return buf->primary_selection()->includes(pos, buf->line_start( pos ), column);
   return buf->primary_selection()->includes(pos, buf->line_start( pos ), column);
 }
 
@@ -2548,7 +2544,7 @@ void My_Text_Display::measure_deleted_lines(int pos, int nDeleted) {
     int nVisLines = mNVisibleLines;
     int *lineStarts = mLineStarts;
     int countFrom, lineStart;
-    int visLineNum = 0, nLines = 0, i;
+    int nLines = 0, i;
     /*
     ** Determine where to begin searching: either the previous newline, or
     ** if possible, limit to the start of the (original) previous displayed
@@ -2560,7 +2556,6 @@ void My_Text_Display::measure_deleted_lines(int pos, int nDeleted) {
     		break;
     	if (i > 0) {
     	    countFrom = lineStarts[i-1];
-    	    visLineNum = i-1;
     	} else
     	    countFrom = buf->line_start(pos);
     } else
@@ -3060,7 +3055,7 @@ void fl_text_drag_me(int pos, My_Text_Display* d) {
 
 int My_Text_Display::handle(int event) 
 {
-	int		line, ret;
+	int		line;
 
 	if (!buffer()) return 0;
 
@@ -3068,7 +3063,7 @@ int My_Text_Display::handle(int event)
 	if (!Fl::event_inside(text_area.x, text_area.y, text_area.w, text_area.h) &&
 		!dragging && event != FL_LEAVE && event != FL_ENTER && event != FL_MOVE) 
 	{	
-		ret = Fl_Group::handle(event);
+		Fl_Group::handle(event);
 		position_to_linecol(insert_position(), &line, &mCurrentCol);
 	}
 
@@ -3134,8 +3129,10 @@ int My_Text_Display::handle(int event)
 			  int errLine = atoi(buffer()->text_range(errNumPos, errNumEndPos));
 			  int fileNameStart = errNumEndPos + 1;
 			  int foundPos;
-			  int fileNameEnd = buffer()->search_forward(fileNameStart, ")", &foundPos, 0);
-			  char *pFile = buffer()->text_range(fileNameStart, foundPos);
+			  char *pFile;
+
+			  buffer()->search_forward(fileNameStart, ")", &foundPos, 0);
+			  pFile = buffer()->text_range(fileNameStart, foundPos);
 
 			  // Now call the IDE with the filename and line number instructing it to display the errored line
 			  if (m_pErrorFunc != NULL)
@@ -3197,18 +3194,6 @@ int My_Text_Display::handle(int event)
 
     case FL_MOUSEWHEEL:
       return mVScrollBar->handle(event);
-
-/*    case FL_FOCUS:
-      if (buffer()->primary_selection()->start() !=
-          buffer()->primary_selection()->end()) redraw(); // Redraw selections...
-      color(FL_BACKGROUND2_COLOR, FL_SELECTION_COLOR);
-
-	  break;
-    case FL_UNFOCUS:
-      if (buffer()->primary_selection()->start() !=
-          buffer()->primary_selection()->end()) redraw(); // Redraw selections...
-		color(FL_INACTIVE_COLOR, FL_BLACK);
-      break; */
   }
 
   return Fl_Double_Window::handle(event);
@@ -3218,3 +3203,4 @@ int My_Text_Display::handle(int event)
 //
 // End of "$Id$".
 //
+// vim: noet sw=4 ts=4

@@ -549,7 +549,7 @@ void cb_revert_map (Fl_Widget* w, void*)
 
 void create_default_map(int map)
 {
-	int 		c, mapdata;
+	unsigned int 		c, mapdata;
 
 	// First zero all map memory
 	for (c = 0; c < sizeof(gMapData); c++)

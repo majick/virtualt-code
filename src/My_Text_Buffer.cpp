@@ -1343,7 +1343,7 @@ static void subsChars( char *string, int length, char fromChar, char toChar ) {
 */
 static char chooseNullSubsChar( char hist[ 256 ] ) {
 #define N_REPLACEMENTS 25
-  static char replacements[ N_REPLACEMENTS ] = {1, 2, 3, 4, 5, 6, 14, 15, 16, 17, 18, 19,
+  static unsigned char replacements[ N_REPLACEMENTS ] = {1, 2, 3, 4, 5, 6, 14, 15, 16, 17, 18, 19,
       20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31, 11, 7};
   int i;
   for ( i = 0; i < N_REPLACEMENTS; i++ )
