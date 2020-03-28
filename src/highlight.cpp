@@ -22,19 +22,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "multieditwin.h"
 
 //Editor colors
-#if 0
-Fl_Color hl_plain = FL_BLACK;
-Fl_Color hl_linecomment = FL_DARK_GREEN;
-Fl_Color hl_blockcomment = FL_DARK_GREEN;
-Fl_Color hl_string = FL_BLUE;
-Fl_Color hl_directive = FL_DARK_MAGENTA;
-Fl_Color hl_type = FL_DARK_RED;
-Fl_Color hl_keyword = FL_BLUE;
-Fl_Color hl_character = FL_DARK_RED;
-Fl_Color hl_label = FL_DARK_BLUE;
-Fl_Color background_color = FL_WHITE;
-#endif
-
 Fl_Color hl_plain = FL_WHITE;
 Fl_Color hl_linecomment = (Fl_Color) 95;
 Fl_Color hl_blockcomment = (Fl_Color) 93;
@@ -315,12 +302,9 @@ void style_parse(const char *text, char *style, int length)
 
     for (current = *style, last = 0; length > 0; length --, text ++) 
 	{
-		//if ((current != 'C') && (current != 'D') && (current != 'E')) current = 'A';
-		//if ((current == 'B')) current = 'A';
-	  
 		if (current == 'A') 
 		{
-		  // Check for directives, comments, strings, and keywords...
+			// Check for directives, comments, strings, and keywords...
       		if (*text == '#') 
 			{
         		// Set style to directive
@@ -353,7 +337,7 @@ void style_parse(const char *text, char *style, int length)
 				continue;
       		} 
 
-			else if (*text == '\"' /*| *text == '\''*/) 
+			else if (*text == '\"') 
 			{
         		current = 'D';
       		} 
@@ -363,48 +347,44 @@ void style_parse(const char *text, char *style, int length)
         		current = 'H';
       		} 
 
-			else if (!last && /*islower(*text) && */ *text > 0)// && 
-//				!(isalnum(*(text-1)) || *(text-1)=='_')) 
+			else if (!last && *text > 0)
 			{
         		// Might be a keyword...
 				for (temp = text, bufptr = buf; ((*temp > 0) && (isalnum(*temp) || *temp=='_')) && 
 					bufptr < (buf + sizeof(buf) - 1); *bufptr++ = tolower(*temp++));
 				{
-					//if (!islower(*temp)) 
+					*bufptr = '\0';
+					bufptr = buf;
+
+					if (bsearch(&bufptr, asm_code_types, sizeof(asm_code_types) / 
+						sizeof(asm_code_types[0]), sizeof(asm_code_types[0]), compare_keywords)) 
 					{
-						*bufptr = '\0';
-						bufptr = buf;
-
-						if (bsearch(&bufptr, asm_code_types, sizeof(asm_code_types) / 
-							sizeof(asm_code_types[0]), sizeof(asm_code_types[0]), compare_keywords)) 
+						while (text < temp) 
 						{
-							while (text < temp) 
-							{
-					  			*style++ = 'F';
-								text ++;
-			      				length --;
-							}
-	    					text --;
-	    					length ++;
-	    					last = 1;
-	    					continue;
+							*style++ = 'F';
+							text ++;
+							length --;
+						}
+						text --;
+						length ++;
+						last = 1;
+						continue;
 
-		  				} 
-						else if (bsearch(&bufptr, asm_code_keywords, sizeof(asm_code_keywords) / 
-							sizeof(asm_code_keywords[0]), sizeof(asm_code_keywords[0]), compare_keywords)) 
+					} 
+					else if (bsearch(&bufptr, asm_code_keywords, sizeof(asm_code_keywords) / 
+						sizeof(asm_code_keywords[0]), sizeof(asm_code_keywords[0]), compare_keywords)) 
+					{
+						while (text < temp) 
 						{
-		   					while (text < temp) 
-							{
-		     					*style++ = 'G';
-		     					text ++;
-		     					length --;
-		   					}
-			
-							text --;
-							length ++;
-							last = 1;
-							continue;
-		  				}
+							*style++ = 'G';
+							text ++;
+							length --;
+						}
+		
+						text --;
+						length ++;
+						last = 1;
+						continue;
 					}
 				}
 
@@ -414,8 +394,6 @@ void style_parse(const char *text, char *style, int length)
 					current = 'I';
 				}
     		}
-
-
  		} 
 		else if (current == 'C' && strncmp(text, "*/", 2) == 0) 
 		{
@@ -450,14 +428,17 @@ void style_parse(const char *text, char *style, int length)
 		else if (current == 'H') 
 		{
    			// Continuing in char...
-   			if (strncmp(text, "\\\'", 2) == 0) {
+   			if (strncmp(text, "\\\'", 2) == 0)
+			{
       			// Quoted end quote...
 				*style++ = current; 
 				*style++ = current;
 				text ++;
 				length --;
 				continue;
-   			} else if (*text == '\'') {
+   			}
+			else if (*text == '\'')
+			{
      			// End quote...
 				*style++ = current;
 				current = 'A';
@@ -480,9 +461,9 @@ void style_parse(const char *text, char *style, int length)
 			continue;
 		}
 
-
    		// Copy style info...
-   		if (current == 'A' && (*text == '{' || *text == '}')) *style++ = 'G';
+   		if (current == 'A' && (*text == '{' || *text == '}'))
+			*style++ = 'G';
    		else if(current == 'E' && strncmp(text, "/*", 2) == 0)
    		{
    			*style++ = 'C';      			
@@ -507,7 +488,8 @@ void style_parse(const char *text, char *style, int length)
    		if (*text == '\n') 
 		{
      		// Reset column and possibly reset the style
-     			if (current != 'D' && current != 'C') current = 'A';
+			if (current != 'D' && current != 'C')
+				current = 'A';
 			col = 0;
    		}
 	} //for
@@ -556,107 +538,11 @@ void style_unfinished_cb(int, void*)
 }
 
 
-//
-// 'style_update()' - Update the style buffer...
-//
-
-void
-old_style_update(	int        pos,		// I - Position of update
-             	int        nInserted,	// I - Number of inserted chars
-	     		int        nDeleted,	// I - Number of deleted chars
-             	int        /*nRestyled*/,	// I - Number of restyled chars
-	     		const char * /*deletedText*/,// I - Text that was deleted
-             	void       *cbArg) {	// I - Callback data
-/*  int	start,				// Start of text
-	end;				// End of text
-  char	last,				// Last style on line
-	stringdeleted=0;
-  char *style,				// Style data
-	*text;				// Text data
-*/
 /*
-  // If this is just a selection change, just unselect the style buffer...
-  if (nInserted == 0 && nDeleted == 0) {
-    stylebuf->unselect();
-    return;
-  }
-
-  // Track changes in the text buffer...
-  if (nInserted > 0) {
-    // Insert characters into the style buffer...
-    style = (char*)malloc(nInserted + 1);
-    memset(style, 'A', nInserted);
-    style[nInserted] = '\0'; 
-
-    stylebuf->replace(pos, pos + nDeleted, style);
-    free(style);
-  } else {
-    // Just delete characters in the style buffer...
-    if((stylebuf->character(pos) == 'D') || (stylebuf->character(pos) == 'C')) stringdeleted = 1;
-    
-    stylebuf->remove(pos, pos + nDeleted);
-    if(pos < 2) style_init();
-  }
-
-	 
-	
-  // Select the area that was just updated to avoid unnecessary
-  // callbacks...
-  stylebuf->select(pos, pos + nInserted - nDeleted);
-
-  // Re-parse the changed region; we do this by parsing from the
-  // beginning of the line of the changed region to the end of
-  // the line of the changed region...  Then we check the last
-  // style character and keep updating if we have a multi-line
-  // comment character...
-  start = textbuf->line_start(pos);
-  end   = textbuf->line_end(pos + nInserted);
-  text  = textbuf->text_range(start, end);
-  style = stylebuf->text_range(start, end);
-  last  = style[end - start - 1];
-
-
-  style_parse(text, style, end - start);
-
-
-  stylebuf->replace(start, end, style);
-  ((Fl_Text_Editor_ext *)cbArg)->redisplay_range(start, end);
-
-  if ((last != style[end - start - 1]) || nDeleted || style[end - start - 1] == 'D') 
-  if (last == 'C' || last == 'D') 
-  //if(update_count > 10)
-  {
-    // The last character on the line changed styles, so reparse the
-    // remainder of the buffer...
-    free(text);
-    free(style);
-
-    start = 0;
-    end   = textbuf->length();
-    text  = textbuf->text_range(start, end);
-    style = stylebuf->text_range(start, end);
-
-    style_parse(text, style, end - start);
-    
-  	//if(update_count > 10)
-  	{
-  		update_count = 0;
-  		if(browser_nav_grp->visible()) navigator_update(text,style,end - start);
-  	} 
-
-    stylebuf->replace(start, end, style);
-    //((Fl_Text_Editor *)cbArg)->redisplay_range(start, end);
-    
-	te->redraw();
-  }
-  update_count+= nInserted > nDeleted ? nInserted : nDeleted;
-
-  free(text);
-  free(style);
+==========================================================================
+style_update() - Update the style buffer...
+==========================================================================
 */
-}
-
-
 void
 style_update(	int        pos,		// I - Position of update
              	int        nInserted,	// I - Number of inserted chars
@@ -667,8 +553,6 @@ style_update(	int        pos,		// I - Position of update
 {
 	int		start,				// Start of text
 			end;				// End of text
-	char	last,				// Last style on line
-			stringdeleted=0;
 	char	*style,				// Style data
 			*text;				// Text data
 
@@ -704,36 +588,30 @@ style_update(	int        pos,		// I - Position of update
 	else 
 	{
 	    // Just delete characters in the style buffer...
-	    if((pHlCtrl->stylebuf->character(pos) == 'D') || (pHlCtrl->stylebuf->character(pos) == 'C')) stringdeleted = 1;
-    
 	    pHlCtrl->stylebuf->remove(pos, pos + nDeleted);
 	    if(pos < 2) 
 			style_init(pHlCtrl);
 	}
 
-  // Select the area that was just updated to avoid unnecessary
-  // callbacks...
-  pHlCtrl->stylebuf->select(pos, pos + nInserted - nDeleted);
+	// Select the area that was just updated to avoid unnecessary
+	// callbacks...
+	pHlCtrl->stylebuf->select(pos, pos + nInserted - nDeleted);
 
-  // Re-parse the changed region; we do this by parsing from the
-  // beginning of the line of the changed region to the end of
-  // the line of the changed region...  Then we check the last
-  // style character and keep updating if we have a multi-line
-  // comment character...
-  start = pHlCtrl->textbuf->line_start(pos);
-  end   = pHlCtrl->textbuf->line_end(pos + nInserted);
-  text  = pHlCtrl->textbuf->text_range(start, end);
-  style = pHlCtrl->stylebuf->text_range(start, end);
-  last  = style[end - start - 1];
+	// Re-parse the changed region; we do this by parsing from the
+	// beginning of the line of the changed region to the end of
+	// the line of the changed region...  Then we check the last
+	// style character and keep updating if we have a multi-line
+	// comment character...
+	start = pHlCtrl->textbuf->line_start(pos);
+	end   = pHlCtrl->textbuf->line_end(pos + nInserted);
+	text  = pHlCtrl->textbuf->text_range(start, end);
+	style = pHlCtrl->stylebuf->text_range(start, end);
 
-  style_parse(text, style, end - start);
+	style_parse(text, style, end - start);
 
-  pHlCtrl->stylebuf->replace(start, end, style);
-  pHlCtrl->te->redisplay_range(start, end);
+	pHlCtrl->stylebuf->replace(start, end, style);
+	pHlCtrl->te->redisplay_range(start, end);
 
-  //if ((last != style[end - start - 1]) || nDeleted || style[end - start - 1] == 'D') 
-  //if(update_count > 10)
-  {
     // The last character on the line changed styles, so reparse the
     // remainder of the buffer...
     free(text);
@@ -746,24 +624,13 @@ style_update(	int        pos,		// I - Position of update
 
     style_parse(text, style, end - start);
     
-//	add_nav_timeout_handler();
-  	//if(update_count > 10)
-  	{
-  		//update_count = 0;
-  		//if(browser_nav_grp->visible()) navigator_update(text,style,end - start);
-  	} 
-
     pHlCtrl->stylebuf->replace(start, end, style);
-    //((Fl_Text_Editor *)cbArg)->redisplay_range(start, end);
     
 	pHlCtrl->te->redraw();
-  }
-  //update_count+= nInserted > nDeleted ? nInserted : nDeleted;
 
-  free(text);
-  free(style);
+	free(text);
+	free(style);
 }
 
-
-
+// vim: noet sw=4 ts=4
 

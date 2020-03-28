@@ -98,117 +98,116 @@ int main ( int argc, char* argv[] )
 	std::cout << "Return data reported according to specified radix\n";
 	std::cout << "Type 'help' or 'quit' to exit\n";
 
-  try
-    {
-	  if (hostArg == NULL)
-		  hostArg = (char *) "localhost";
-
-      ClientSocket client_socket ( hostArg , atoi(portArg) );
-
-      std::string reply;
-	  std::string cmd;
-	  std::string outfile;
-	  size_t			pos,c;
-	  std::cout << "Ok> ";
-
-	while (true)
+	try
 	{
-		getline(std::cin, cmd);
+		if (hostArg == NULL)
+			hostArg = (char *) "localhost";
 
-		outfile = "stdout";
-		// Search for '>' in the command
-		if ((pos = cmd.find('>')) != -1)
+		ClientSocket client_socket ( hostArg , atoi(portArg) );
+
+		std::string reply;
+		std::string cmd;
+		std::string outfile;
+		size_t			pos,c;
+		std::cout << "Ok> ";
+
+		while (true)
 		{
-			for (c = pos+1; c < cmd.length(); c++)
+			getline(std::cin, cmd);
+
+			outfile = "stdout";
+			// Search for '>' in the command
+			if ((pos = cmd.find('>')) != string::npos)
 			{
-				if (cmd[c] != ' ')
-					break;
+				for (c = pos+1; c < cmd.length(); c++)
+				{
+					if (cmd[c] != ' ')
+						break;
+				}
+
+				outfile = cmd.substr(c, cmd.length()-c);
+				cmd = cmd.substr(0, pos);
+				while (cmd[cmd.length()-1] == ' ')
+					cmd = cmd.substr(0, cmd.length()-1);
 			}
 
-			outfile = cmd.substr(c, cmd.length()-c);
-			cmd = cmd.substr(0, pos);
-			while (cmd[cmd.length()-1] == ' ')
-				cmd = cmd.substr(0, cmd.length()-1);
-		}
-
-		if (cmd == "quit")
-			break;
-		if (cmd == "")
-		{
-			std::cout << "Ok> ";
-			continue;
-		}
-	
-      	try
-		{
-	  		client_socket << cmd;
-		}
-      	catch ( SocketException& ) 
-			{}
-
-		// Get response(s)
-		if (outfile != "stdout")
-			filestr.open(outfile.c_str(), fstream::out);
-		reply = "";
-		int retry = 0;				// Only wait so long for "Ok"
-		while (reply != "Ok")
-		{
-			// Get response
-      		try
+			if (cmd == "quit")
+				break;
+			if (cmd == "")
 			{
-	  			client_socket >> reply;
+				std::cout << "Ok> ";
+				continue;
 			}
-      		catch ( SocketException& e) 
+		
+			try
 			{
-				std::cout << "Exception - " << e.description() << "\n";
+				client_socket << cmd;
 			}
+			catch ( SocketException& ) 
+				{}
 
-			// Check if response is "Ok" or contains "Ok" at the end
-			size_t len = reply.length();
-			if ((reply[len-1] == 'k') && (reply[len-2] == 'O'))
+			// Get response(s)
+			if (outfile != "stdout")
+				filestr.open(outfile.c_str(), fstream::out);
+			reply = "";
+
+			while (reply != "Ok")
 			{
-				// Check if output goes to a file
-				if (outfile == "stdout")
-      				std::cout << reply << "> ";
+				// Get response
+				try
+				{
+					client_socket >> reply;
+				}
+				catch ( SocketException& e) 
+				{
+					std::cout << "Exception - " << e.description() << "\n";
+				}
+
+				// Check if response is "Ok" or contains "Ok" at the end
+				size_t len = reply.length();
+				if ((reply[len-1] == 'k') && (reply[len-2] == 'O'))
+				{
+					// Check if output goes to a file
+					if (outfile == "stdout")
+						std::cout << reply << "> ";
+					else
+					{
+						reply = reply.substr(0, reply.length()-2);
+						filestr << reply;
+						std::cout << "Ok> ";
+					}
+					reply = "Ok";
+				}
 				else
 				{
-					reply = reply.substr(0, reply.length()-2);
-					filestr << reply;
-					std::cout << "Ok> ";
+					if (outfile == "stdout")	
+						std::cout << reply;
+					else
+					{
+						filestr << reply;
+					}
 				}
-				reply = "Ok";
-			}
-			else
-			{
-				if (outfile == "stdout")	
-					std::cout << reply;
-				else
+
+				// Check if response is "Syntax error"
+				if (reply == "Syntax error")
 				{
-					filestr << reply;
+					reply = "Ok";
+					std::cout << "\nOk> ";
 				}
 			}
+			if (outfile != "stdout")
+				filestr.close();
 
-			// Check if response is "Syntax error"
-			if (reply == "Syntax error")
-			{
-				reply = "Ok";
-				std::cout << "\nOk> ";
-			}
+			if (cmd == "terminate")
+				break;
 		}
-		if (outfile != "stdout")
-			filestr.close();
-
-		if (cmd == "terminate")
-			break;
+    }
+	catch ( SocketException& e )
+	{
+		std::cout << "Exception was caught:" << e.description() << "\n";
 	}
-
-    }
-  catch ( SocketException& e )
-    {
-      std::cout << "Exception was caught:" << e.description() << "\n";
-    }
 
 	std::cout << "\n";
 
-  return 0;
+	return 0;
 }
