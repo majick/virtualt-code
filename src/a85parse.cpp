@@ -67,7 +67,7 @@ char					ss[32][256];			// String Stack;
 CMacro*					gMacroStack[32];		// Macro Stack;
 int						ms_idx = 0;				// Macro Stack Index
 char					integer[64];			// Integer storage space
-char					int_len = 0;			// Integer string length
+unsigned char	int_len = 0;			// Integer string length
 int						ss_idx = 0;				// String Stack Index
 int						ss_len = 0;				// SS string length 
 int						ss_addr = 0;			// Address at start of literal name
@@ -318,9 +318,6 @@ void syntax_error(const char *token_name)
 #define GET_INPUT {(PCB).input_code = (gAsm->m_fd != 0 && !gAbort) ? \
 	gAsm->preprocessor() : 0; }
 	
-//	fgetc(gAsm->m_fd) : 0; if ((PCB).input_code == 13) (PCB).input_code = fgetc(gAsm->m_fd);\
-//	}
-
 #define SYNTAX_ERROR { syntax_error(TOKEN_NAMES[(PCB).error_frame_token]); }
 
 /*
@@ -2061,7 +2058,7 @@ static int ag_look_ahead(void) {
 static void ag_get_key_word(int ag_k) {
   int save_index = (PCB).rx;
   const  unsigned char *sp;
-  int ag_ch;
+  int ag_ch=0;
   while (1) {
     switch (ag_key_act[ag_k]) {
     case ag_cf_end_key:

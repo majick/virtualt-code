@@ -208,6 +208,7 @@ int VTAssembler::PerformSubstitution(CMacro* pMacro, const char *pLoc)
 	// Find all arguments in the macro invocation.  First skip white space
 	len = paren = quote = 0;
 	ptr = pEndName;
+  quoteChar = 0;
 	while (*ptr == ' ' || *ptr == '\t')
 		ptr++;
 	if (*ptr == '(')
@@ -2932,7 +2933,6 @@ void VTAssembler::preproc_ifdef(const char* name, int negate)
 {
 	MString		err, strName;
 	CSymbol*	dummy;
-    CMacro*     pMacro;
 	int			defined;
 
 	// Update line number
@@ -2954,7 +2954,7 @@ void VTAssembler::preproc_ifdef(const char* name, int negate)
 		m_IfStat[++m_IfDepth] = IF_STAT_EVAL_ERROR;
 
 	// Ensure our #ifdef stack depth hasn't overflowed
-	if (m_IfDepth >= sizeof(m_IfStat))
+	if (m_IfDepth >= (int) sizeof(m_IfStat))
 	{
 		m_IfDepth--;
 		err.Format("Error in line %d(%s):  Too many nested ifs", m_Line, 
@@ -2965,32 +2965,23 @@ void VTAssembler::preproc_ifdef(const char* name, int negate)
 	{
 		m_IfStat[m_IfDepth] = IF_STAT_DONT_ASSEMBLE;
 		strName = name;
-        // Test if it is a CMacro
-    //    if (LookupMacro(strName, pMacro))
-    //    {
-    //        if (!negate)
-    //            m_IfStat[m_IfDepth] = IF_STAT_ASSEMBLE;
-    //    }
-    //    else
-        {
-            defined = LookupSymbol(strName, dummy);
-            if (!defined)
-            {
-               int  def;
+		defined = LookupSymbol(strName, dummy);
+		if (!defined)
+		{
+		   int  def;
 
-               for (def = 0; def < m_Defines.GetSize(); def++)
-               {
-                  if (((CMacro *) m_Defines[def])->m_Name == strName)
-                  {
-                     defined = 1;
-                     break;
-                  }
-               }
-            }
+		   for (def = 0; def < m_Defines.GetSize(); def++)
+		   {
+			  if (((CMacro *) m_Defines[def])->m_Name == strName)
+			  {
+				 defined = 1;
+				 break;
+			  }
+		   }
+		}
 
-            if ((defined && !negate) || (!defined && negate))
-                m_IfStat[m_IfDepth] = IF_STAT_ASSEMBLE;
-        }
+		if ((defined && !negate) || (!defined && negate))
+			m_IfStat[m_IfDepth] = IF_STAT_ASSEMBLE;
 	}
 }
 
@@ -3223,6 +3214,7 @@ int VTAssembler::preproc_macro()
 						replace.Insert(pos, (char *) (const char *) arg);
 						pos += arg.GetLength();
 					}
+          (void) wholeMatch;
 				}
 			}
 		}
@@ -3265,7 +3257,7 @@ void VTAssembler::directive_if(int inst)
 		else
 			m_IfStat[++m_IfDepth] = IF_STAT_EVAL_ERROR;
 
-		if (m_IfDepth >= sizeof(m_IfStat))
+		if (m_IfDepth >= (int) sizeof(m_IfStat))
 		{
 			m_IfDepth--;
 			err.Format("Error in line %d(%s):  Too many nested ifs", m_Line, 
@@ -3429,10 +3421,10 @@ int VTAssembler::Assemble()
 {
 	MString			err;
 	int				c, count, len, x;
-	int				size;
+	int				size = 0;
 	CInstruction*	pInst;
 	CRelocation*	pRel;
-	CExtern	*		pExt;
+	CExtern	*		pExt = NULL;
 	CExpression*	pExp;
 	VTObArray*		pExpList;
 	MStringArray*	pNameList;
@@ -3878,6 +3870,7 @@ int VTAssembler::Assemble()
 						valid = 1;
 						rel_mask = 0;
 						extern_label = 0;
+            size = 0;
 						if (Evaluate(pExp->m_Equation, &value, 1))
 						{
 							// Equation evaluated to a value.  Check if it is 
@@ -4008,11 +4001,14 @@ int VTAssembler::Assemble()
 						int y, str_len;
 						if (pInst->m_ID == INST_DW)
 						{	
-							str_len = pExt->m_Name.GetLength();
-							for (y = 0; y < str_len; y++)
-								m_ActiveSeg->m_AsmBytes[m_Address++] = pExt->m_Name[y];
-							if (str_len & 1)
-								m_ActiveSeg->m_AsmBytes[m_Address++] = 0;
+              if (pExt)
+							{
+								str_len = pExt->m_Name.GetLength();
+								for (y = 0; y < str_len; y++)
+									m_ActiveSeg->m_AsmBytes[m_Address++] = pExt->m_Name[y];
+								if (str_len & 1)
+									m_ActiveSeg->m_AsmBytes[m_Address++] = 0;
+							}
 						}
 						else
 						{
@@ -4152,7 +4148,7 @@ int VTAssembler::CreateObjFile(const char *filename, const char *sourcefile)
 	const int		aseg_off = 19;
 	const int		cseg_off = 25;
 	const int		dseg_off = 31;
-    int             eqtab_off;
+    int             eqtab_off = 0;
 	int				len, strtab_start;
 	int				first_aseg_idx, first_cseg_idx, first_dseg_idx;
 	int				shidx, type, bind;
@@ -5124,7 +5120,7 @@ void VTAssembler::ParseExternalDefines(void)
 	int			startIndex, endIndex;
 	MString		def, sval;
 	int			valIdx, len;
-	int			value = -1;
+	//int			value = -1;
 
 	// If zero length then we're done
 	if ((len = m_ExtDefines.GetLength()) == 0)
@@ -5896,7 +5892,7 @@ CSegment::CSegment(const char *name, int type, CModule* initialMod)
 	m_UsedAddr->pNext = NULL;
 
 	m_Index = m_Count = 0;
-	for (x = 0; x < sizeof(m_AsmBytes); x++)
+	for (x = 0; x < (int) sizeof(m_AsmBytes); x++)
 		m_AsmBytes[x] = 0;
 
 	// Initialize the active Addr range to the first in the list
