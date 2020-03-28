@@ -145,6 +145,7 @@ void display_file(int index)
 	case TYPE_BA:
 		// Get first BASIC line pointer
 		addr1 = pfile->address;
+		addr2 = addr1;
 
 		// Calculate the maximum linenumber length
 		while (get_memory16(addr1) != 0)
@@ -373,7 +374,7 @@ Callback routine when a file is selected
 */
 void cb_FileSelect(Fl_Widget* w, void*)
 {
-	int					index, x, usage, lowram;
+	int					index, x, usage = 0, lowram;
 	file_view_files_t	*pfile;
 	
 	lowram = get_memory16(gStdRomDesc->sLowRam);
@@ -395,6 +396,8 @@ void cb_FileSelect(Fl_Widget* w, void*)
 		case TYPE_CO:
 			usage = FV_CO_FILE_COLOR;
 			break;
+		default:
+			return;
 		}
 		gFvCtrl.pRAM->AddUsageEvent(pfile->address - lowram, pfile->address +
 			pfile->size - lowram, usage);
