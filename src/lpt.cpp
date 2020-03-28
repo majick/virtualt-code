@@ -1011,7 +1011,7 @@ void VTLpt::HandleTimeouts(unsigned long time)
 		}
 	}
 	// Check if we need to cancel activity animation
-	if ((m_PortStatus == LPT_STATUS_ACTIVITY) && (m_PortActivity + 1 <= time))
+	if ((m_PortStatus == LPT_STATUS_ACTIVITY) && (m_PortActivity + 1 <= (time_t) time))
 	{
 		// Change the port status to READY.  Animation will stop automatically
 		m_PortStatus = LPT_STATUS_READY;

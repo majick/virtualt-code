@@ -2444,7 +2444,7 @@ MString CFileString::FirstSubDir()
 	m_SubDirIndex = 0;
 
 	char* ptr = dir.GetBuffer(dir.GetLength() + 1);
-	char* token;
+	char* token = NULL;
 
 	// Now find the m_SubDirIndex'th item in the path
 	for (int c = 0; c <= m_SubDirIndex; c++)
@@ -2470,7 +2470,7 @@ MString CFileString::NextSubDir()
 	MString		dir = Directory();
 
 	char* ptr = dir.GetBuffer(dir.GetLength() + 1);
-	char* token;
+	char* token = NULL;
 
 	// Now find the m_SubDirIndex'th item in the path
 	for (int c = 0; c <= m_SubDirIndex; c++)

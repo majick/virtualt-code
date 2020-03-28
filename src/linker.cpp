@@ -55,7 +55,7 @@ Construtor / destructor for the linker
 */
 VTLinker::VTLinker()
 {
-	int		x;
+	unsigned int		x;
 
 	m_Hex = 0;
 	m_FileIndex = -1;
@@ -1352,7 +1352,7 @@ void VTLinker::ProcScriptField5(const char *pStr, int lineNo, int& prot, int& at
 {
 	MString		err;
 	const char	*pToken, *ptr;
-	int			tokLen;
+	unsigned int			tokLen;
 
 	// Initialize startAddr in case error or ORDER command
 	prot = FALSE;
@@ -2200,7 +2200,8 @@ CObjFile object provided.
 int VTLinker::ReadSectionData(FILE* fd, CObjFile* pObjFile, 
 	CObjFileSection* pFileSection)
 {
-	int					bytes = 0, count, c, size, idx;
+	unsigned int		bytes = 0;
+    int					count, c, size, idx;
 	MString				err, sourcefile;
 	Elf32_Shdr*			pHdr = &pFileSection->m_ElfHeader;
 	Elf32_Sym*			pSym;
@@ -2244,7 +2245,7 @@ int VTLinker::ReadSectionData(FILE* fd, CObjFile* pObjFile,
 		}
 
 		// Test if the section link points to itself
-		if (pFileSection->m_Index == pHdr->sh_link)
+		if (pFileSection->m_Index == (int) pHdr->sh_link)
 		{
 			if (strcmp(&pFileSection->m_pStrTab[pHdr->sh_name], ".shstrtab") == 0)
 				if (pObjFile->m_pShStrTab == NULL)
@@ -2479,7 +2480,6 @@ int VTLinker::AssignSectionNames()
 	CObjFile*			pObjFile;
 	int					count, c;
 	CObjFileSection*	pFileSection;
-	bool				segmentFound = false;
 	char *				pName;
 	POSITION			pos;
 	MString				fileName;
@@ -2637,7 +2637,6 @@ int VTLinker::LocateSegmentIntoRegion(MString& region, CObjFileSection* pFileSec
 	CLinkRgn*			pLinkRgn;
 	MString				err;
 	int					c, locateAddr, segSize;
-	bool				segmentFound = false;
 	MString				fileName;
 	LinkAddrRange*		pAddrRange;
 	static const char*	sSegType[] = { "ASEG", "CSEG", "DSEG" };
@@ -2973,7 +2972,8 @@ int VTLinker::LocateNondependantSegments()
 			if (m_LinkRegions.Lookup((const char *) pFileSect->m_Name, (VTObject *&) pLinkRgn))
 			{
 				// Locate the segment into the region with the same name
-				LocateSegmentIntoRegion(pLinkRgn->m_Name, pFileSect);
+				if (!LocateSegmentIntoRegion(pLinkRgn->m_Name, pFileSect))
+					success = FALSE;
 			}
 
 			// Test if segment is ASEG
@@ -2981,7 +2981,8 @@ int VTLinker::LocateNondependantSegments()
 				(pFileSect->m_ElfHeader.sh_type == SHT_PROGBITS))
 			{
 				// Locate ASEGs into the .aseg linker region
-				LocateSegmentIntoRegion(aseg, pFileSect);
+				if (!LocateSegmentIntoRegion(aseg, pFileSect))
+					success = FALSE;
 			}
 
 			// Test if segment is CSEG
@@ -2989,7 +2990,8 @@ int VTLinker::LocateNondependantSegments()
 				SHF_WRITE)) == (SHF_ALLOC | SHF_EXECINSTR))
 			{
 				// Locate CSEGs into the .text linker region
-				LocateSegmentIntoRegion(text, pFileSect);
+				if (!LocateSegmentIntoRegion(text, pFileSect))
+					success = FALSE;
 			}
 
 			// Test if segment is DSEG
@@ -2997,7 +2999,8 @@ int VTLinker::LocateNondependantSegments()
 				SHF_WRITE)) == SHF_WRITE)
 			{
 				// Locate DSEGs into the .data linker region
-				LocateSegmentIntoRegion(data, pFileSect);
+				if (!LocateSegmentIntoRegion(data, pFileSect))
+					success = FALSE;
 			}
 
 			// Unknown segment type
@@ -3010,7 +3013,7 @@ int VTLinker::LocateNondependantSegments()
 		}
 	}
 
-	return TRUE;
+	return success;
 }
 
 /*
@@ -3388,7 +3391,7 @@ int VTLinker::Evaluate(class CRpnEquation* eq, double* value,
 	double				stack[200];
 	int					stk = 0;
 	const char*			pStr;
-	int					c, local;
+	int					c;
 	VTObject*			dummy;
 
 	// Get count of number of operations in equation and initalize stack
@@ -3406,7 +3409,6 @@ int VTLinker::Evaluate(class CRpnEquation* eq, double* value,
 		case RPN_VARIABLE:
 			// Try to find variable in equate array
 			temp = op.m_Variable;
-			local = 0;
 
 			// Lookup symbol in active module
 			pStr = (const char *) temp;
@@ -4416,7 +4418,7 @@ int VTLinker::BackAnnotateListingFiles(void)
 	CObjFile*			pOpenFile;
 	CObjFileSection*	pFileSection;
 	MString				err, filename;
-	FILE*				fd;
+	FILE*				fd = NULL;
 	char*				pRead;
 	char				lineBuf[512];
 	char				str[6];
@@ -4665,7 +4667,6 @@ void VTLinker::ParseExternalDefines(void)
 	int			startIndex, endIndex;
 	MString		def, sval;
 	int			valIdx, len;
-	int			value = -1;
 
 	// If zero length then we're done
 	if ((len = m_ExtDefines.GetLength()) == 0)
@@ -4892,3 +4893,4 @@ void VTLinker::SetDefines(const MString& defines)
 	m_ExtDefines = defines;
 }
 
+// vim: noet sw=4 ts=4
