@@ -1338,7 +1338,6 @@ VT_Ide::VT_Ide(int x, int y, int w, int h, const char *title)
 	Fl_Pixmap* new_file = new Fl_Pixmap(document_new_xpm);
 	Fl_Pixmap* open_file =  new Fl_Pixmap(document_open_xpm);
 	Fl_Pixmap* save_file =  new Fl_Pixmap(document_save_xpm);
-	Fl_Pixmap* print_file =  new Fl_Pixmap(printer_xpm);
 
 	Fl_Pixmap* cut_icon =  new Fl_Pixmap(edit_cut_xpm);
 	Fl_Pixmap* copy_icon =  new Fl_Pixmap(edit_copy_xpm);
@@ -1347,7 +1346,6 @@ VT_Ide::VT_Ide(int x, int y, int w, int h, const char *title)
 	Fl_Pixmap* find_icon =  new Fl_Pixmap(edit_find_xpm);
 	Fl_Pixmap* configure_icon =  new Fl_Pixmap(configure_xpm);
 	Fl_Pixmap* wizard_icon =  new Fl_Pixmap(wizard_xpm);
-	Fl_Pixmap* log_viewer_icon =  new Fl_Pixmap(log_viewer_xpm);
 
 	pToolbar->AddHandle(toolbar_handle, NULL, NULL);
 	pToolbar->AddButton("New", new_file, cb_new_file, NULL);
@@ -2001,7 +1999,7 @@ cut routine.
 void VT_Ide::FindNext(void)
 {
 	Fl_Multi_Edit_Window*	mw;
-	const char *			pFind;
+	const char *			pFind = "";
 
 	// First get a pointer to the active (topmost) window
 	mw = (Fl_Multi_Edit_Window*) m_EditTabs->value();
@@ -2032,7 +2030,6 @@ void VT_Ide::FindNext(void)
 	if (!mw->ForwardSearch(m_Search, m_pFindDlg->m_pMatchCase->value()))
 	{
 		// Save the current position and search from beginning of file
-		int pos = mw->insert_position();
 		mw->insert_position(0);
 		if (!mw->ForwardSearch(m_Search, m_pFindDlg->m_pMatchCase->value()))
 		{
@@ -2048,7 +2045,6 @@ void VT_Ide::FindNext(void)
 				m_pFindDlg->m_pFind->take_focus();
 				m_pFindDlg->m_pFind->selectall();
 				return;
-				//mw->insert_position(pos);
 			}
 		}
 	}
@@ -2068,7 +2064,7 @@ cut routine.
 void VT_Ide::FindPrev(void)
 {
 	Fl_Multi_Edit_Window*	mw;
-	const char *			pFind;
+	const char *			pFind = "";
 
 	// First get a pointer to the active (topmost) window
 	mw = (Fl_Multi_Edit_Window*) m_EditTabs->value();
@@ -2098,7 +2094,6 @@ void VT_Ide::FindPrev(void)
 	if (!mw->BackwardSearch(m_Search, m_pFindDlg->m_pMatchCase->value()))
 	{
 		// Save the current position and search from beginning of file
-		int pos = mw->insert_position();
 		mw->insert_position(99999999);
 		if (!mw->BackwardSearch(m_Search, m_pFindDlg->m_pMatchCase->value()))
 		{
@@ -2114,7 +2109,6 @@ void VT_Ide::FindPrev(void)
 				m_pFindDlg->m_pFind->take_focus();
 				m_pFindDlg->m_pFind->selectall();
 				return;
-				//mw->insert_position(pos);
 			}
 		}
 	}
@@ -2156,7 +2150,6 @@ void VT_Ide::ToolbarFind(Flu_Combo_List *pList)
 	if (!mw->ForwardSearch(pFind, m_pFindDlg->m_pMatchCase->value()))
 	{
 		// Save the current position and search from beginning of file
-		int pos = mw->insert_position();
 		mw->insert_position(0);
 		if (!mw->ForwardSearch(pFind, m_pFindDlg->m_pMatchCase->value()))
 		{
@@ -3444,10 +3437,10 @@ project and to the tree control.
 void VT_Ide::NewFolder(Flu_Tree_Browser::Node* n)
 {
 	MString			name, filespec;
-	VT_IdeGroup*	pGroup;
+	VT_IdeGroup*	pGroup = NULL;
 	VT_IdeGroup*	pNewGrp;
 	int				len, c, root;
-	Flu_Tree_Browser::Node*	i;
+	Flu_Tree_Browser::Node*	i = NULL;
 	Flu_Tree_Browser::Node* newNode;
 	const char*			pName;
 
@@ -3540,7 +3533,7 @@ void VT_Ide::NewFolder(Flu_Tree_Browser::Node* n)
 		else
 			m_ActivePrj->m_Groups.InsertAt(c, pNewGrp);
 	}
-	else
+	else if (pGroup != NULL)
 	{
 		if (c == len)
 			pGroup->m_Objects.Add(pNewGrp);
@@ -3947,10 +3940,9 @@ LoadRomToRex: This routine load the built OptROM data to the REX flash
 */
 void VT_Ide::LoadRomToRex(VTLinker *pLinker)
 {
-    long            address, blockaddr;
+    long            address;
     unsigned char   sEntry[7];
-    int             x, actblk = 0;
-    unsigned char   status;
+    int             x;
     MString         temp;
     unsigned char   buf[32768];
 
@@ -3973,6 +3965,9 @@ void VT_Ide::LoadRomToRex(VTLinker *pLinker)
     }
 
 #if 0
+    int				actblk = 0;
+    unsigned char   status;
+
     // Address found.  Determine active block
     for (x = 0; x < 0x3FF; x++)
     {
@@ -4495,4 +4490,6 @@ VT_FindDlg::VT_FindDlg(class VT_Ide* pParent)
 
 	m_pParent = pParent;
 }
+
+// vim: noet ts=4 sw=4
 

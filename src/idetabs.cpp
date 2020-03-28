@@ -157,8 +157,6 @@ void Fl_Ide_Tabs::draw()
 	if (damage() & FL_DAMAGE_ALL) 
 	{ 
 		// redraw the entire thing:
-		Fl_Color c = v ? v->color() : color();
-      
 		if (v) 
 			draw_child(*v);
 	} 
@@ -221,6 +219,7 @@ void Fl_Ide_Tabs::draw()
 	}
 
 	// Draw the tabs
+	maxw = w() - (H2+1) * (m_hasCloseButton + m_hasMoreButton);
 	if (damage() & (FL_DAMAGE_SCROLL|FL_DAMAGE_ALL)) 
 	{
 		Fl_Widget*const* a = array();
@@ -230,7 +229,6 @@ void Fl_Ide_Tabs::draw()
 		// window.  If it is, then we will move it's position in the
 		// list of children such that it is the right most tab that is 
 		// fully visible.
-		maxw = w() - (H2+1) * (m_hasCloseButton + m_hasMoreButton);
 		if (p[selected] + wp[selected] >= maxw)
 		{
 			// Okay, the selected tab doesn't fit on the window.  Let's
@@ -321,7 +319,6 @@ int Fl_Ide_Tabs::tab_positions(int* p, int* wp)
 	int selected = 0;
 	Fl_Widget*const* a = array();
 	int i;
-    int H = tab_height();
 	char prev_draw_shortcut = fl_draw_shortcut;
 
 	fl_draw_shortcut = 1;
@@ -436,8 +433,6 @@ void Fl_Ide_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what)
   int i, clipw;
   char prev_draw_shortcut = fl_draw_shortcut;
   fl_draw_shortcut = 1;
-
-  Fl_Boxtype bt = (o==push() &&!sel) ? fl_down(box()) : box();
 
   // compute offsets to make selected tab look bigger
   int yofs =  sel ? BORDER + 1 : BORDER;
@@ -933,4 +928,6 @@ void Fl_Ide_Tabs::SelectTab(Fl_Widget *pTab)
     value(pTab);
     redraw();
 }
+
+// vim: noet sw=4 ts=4
 
