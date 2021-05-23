@@ -59,6 +59,12 @@
 #include "memedit.h"
 #include "fileview.h"
 
+#ifdef _MSC_VER 
+//not #if defined(_WIN32) || defined(_WIN64) because we have strncasecmp in mingw
+#define strncasecmp _strnicmp
+#define strcasecmp _stricmp
+#endif
+
 #define COLOR_BG  		(gMidnight ? FL_BLACK : fl_rgb_color(192, 192, 192))
 #define COLOR_BG_INPUT  (gMidnight ? FL_BLACK : FL_WHITE)
 #define COLOR_FG  		(gMidnight ? FL_WHITE : FL_BLACK)

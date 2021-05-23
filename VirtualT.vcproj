@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="VirtualT"
-	ProjectGUID="{4B62EF01-B8D4-4C99-BC7B-661B97684568}"
+	ProjectGUID="{7E618E02-9E81-408D-AC2F-0BEB162025BC}"
 	>
 	<Platforms>
 		<Platform
@@ -73,7 +73,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="fltkd.lib fltkimagesd.lib wsock32.lib comctl32.lib fltkjpegd.lib fltkpngd.lib fltkz.lib"
+				AdditionalDependencies="fltkd.lib fltk_imagesd.lib wsock32.lib comctl32.lib fltk_jpegd.lib fltk_pngd.lib fltk_zlibd.lib fltk_formsd.lib"
 				OutputFile=".\Debug/VirtualT.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
@@ -119,8 +119,7 @@
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
-			UseOfATL="1"
-			ATLMinimizesCRunTimeLibraryUsage="true"
+			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="2"
 			>
 			<Tool
@@ -149,7 +148,7 @@
 				Optimization="2"
 				AdditionalIncludeDirectories="$(FLTKDIR)"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_DEPRECATE"
-				RuntimeLibrary="0"
+				RuntimeLibrary="2"
 				PrecompiledHeaderFile=".\Release/VirtualT.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
@@ -170,7 +169,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="fltk.lib fltkimages.lib wsock32.lib comctl32.lib fltkjpeg.lib fltkpng.lib fltkz.lib"
+				AdditionalDependencies="fltk.lib fltk_images.lib wsock32.lib comctl32.lib fltk_jpeg.lib fltk_png.lib fltk_zlib.lib"
 				OutputFile=".\Release/VirtualT.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -687,19 +686,11 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\src\strcase.c"
-				>
-			</File>
-			<File
 				RelativePath=".\src\tdock.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\src\tdockvid.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\tpddclient.cpp"
 				>
 			</File>
 			<File
@@ -716,6 +707,10 @@
 			</File>
 			<File
 				RelativePath=".\VirtualT.rc"
+				>
+			</File>
+			<File
+				RelativePath=".\src\watchtable.cpp"
 				>
 			</File>
 			<Filter
@@ -1131,10 +1126,6 @@
 					RelativePath=".\src\vtpaper.cpp"
 					>
 				</File>
-				<File
-					RelativePath=".\src\watchtable.cpp"
-					>
-				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -1143,10 +1134,6 @@
 			>
 			<File
 				RelativePath=".\src\clock.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\colors.h"
 				>
 			</File>
 			<File
@@ -1254,31 +1241,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\tdock.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\tdockvid.h"
-				>
-			</File>
-			<File
 				RelativePath=".\src\tpddclient.h"
 				>
 			</File>
 			<File
-				RelativePath=".\src\tpddserver.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\tpddserverlog.h"
-				>
-			</File>
-			<File
 				RelativePath="src\VirtualT.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\watchtable.h"
 				>
 			</File>
 			<File

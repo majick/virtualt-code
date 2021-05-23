@@ -3887,6 +3887,7 @@ unsigned char rexC_read(unsigned short address)
 			break;						
 		}
 	}
+	return 0;
 }
 
 /*

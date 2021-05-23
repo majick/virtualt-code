@@ -52,12 +52,12 @@ extern "C"
 #include "m100emu.h"
 
 extern RomDescription_t *gStdRomDesc;
-extern int gMidnight;
 void jump_to_zero(void);
 }
-
 #include "file.h"
 #include "fileview.h"
+
+extern int gMidnight;
 
 #define COLOR_BG  		(gMidnight ? FL_BLACK : fl_rgb_color(192, 192, 192))
 #define COLOR_BG_INPUT  (gMidnight ? FL_BLACK : FL_WHITE)
