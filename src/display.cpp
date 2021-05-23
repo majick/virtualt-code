@@ -97,6 +97,7 @@ void 			cb_TpddServerLog(Fl_Widget* w, void*);
 Fl_Window		*MainWin = NULL;
 T100_Disp		*gpDisp;
 T100_Disp		*gpDebugMonitor;
+int				gDefaultColor;
 Fl_Box			*gpCode, *gpGraph, *gpKey, *gpSpeed, *gpCaps, *gpKeyInfo;
 Fl_Action_Icon	*gpPrint;
 Fl_Box			*gpMap = NULL;
@@ -119,6 +120,7 @@ int				gBackgroundColor = FL_GRAY;
 int				gPixelColor = FL_BLACK;
 int				gLabelColor = FL_WHITE;
 int				gConsoleDebug = FALSE;
+int				gMidnight = 1;
 
 Fl_Double_Window*	gDisplayColors;
 Fl_Button*			gLcdBkButton;
@@ -509,6 +511,57 @@ extern "C" void resize_window()
 	}
 #endif	/* ZIPIT_Z2 */
 
+	if (gMidnight)
+	{
+		Menu->color(FL_BLACK);
+		Menu->textcolor(FL_WHITE);
+		Menu->selection_color(FL_BLUE);
+		MainWin->color(FL_BLACK);
+		MainWin->labelcolor(FL_WHITE);
+
+		gpGraph->color(FL_BLACK);
+		gpGraph->labelcolor(FL_WHITE);
+		gpCode->color(FL_BLACK);
+		gpCode->labelcolor(FL_WHITE);
+		gpCaps->color(FL_BLACK);
+		gpCaps->labelcolor(FL_WHITE);
+		gpKey->color(FL_BLACK);
+		gpKey->labelcolor(FL_WHITE);
+		gpSpeed->color(FL_BLACK);
+		gpSpeed->labelcolor(FL_WHITE);
+		gpMap->color(FL_BLACK);
+		gpMap->labelcolor(FL_WHITE);
+		gpPrint->color(FL_BLACK);
+		gpPrint->labelcolor(FL_WHITE);
+		gpPrint->box(FL_DOWN_BOX);
+		gpKeyInfo->color(FL_BLACK);
+		gpKeyInfo->labelcolor(FL_WHITE);
+	}
+	else
+	{
+		Menu->color(gDefaultColor);
+		Menu->textcolor(FL_BLACK);
+		MainWin->color(gDefaultColor);
+		MainWin->labelcolor(FL_BLACK);
+
+		gpGraph->color(gDefaultColor);
+		gpGraph->labelcolor(FL_BLACK);
+		gpCode->color(gDefaultColor);
+		gpCode->labelcolor(FL_BLACK);
+		gpCaps->color(gDefaultColor);
+		gpCaps->labelcolor(FL_BLACK);
+		gpKey->color(gDefaultColor);
+		gpKey->labelcolor(FL_BLACK);
+		gpSpeed->color(gDefaultColor);
+		gpSpeed->labelcolor(FL_BLACK);
+		gpMap->color(gDefaultColor);
+		gpMap->labelcolor(FL_BLACK);
+		gpPrint->color(gDefaultColor);
+		gpPrint->labelcolor(FL_BLACK);
+		gpPrint->box(FL_DOWN_BOX);
+		gpKeyInfo->color(gDefaultColor);
+		gpKeyInfo->labelcolor(FL_BLACK);
+	}
 	gpDisp->CalcScreenCoords();
 
 	Fl::check();
@@ -721,6 +774,13 @@ void cb_save_co(Fl_Widget* w, void*)
 	COSaveMode  ^= 1;
     virtualt_prefs.set("COSaveMode",COSaveMode);
 }
+void cb_midnight (Fl_Widget* w, void*)
+{
+	gMidnight ^= 1;
+	
+	virtualt_prefs.set("Midnight",gMidnight);
+	resize_window();
+}
 
 void cb_reset (Fl_Widget* w, void*)
 {
@@ -755,7 +815,6 @@ void cb_coldBoot (Fl_Widget* w, void*)
 	if (gReMem)
 	{
 		if (w != NULL)
-			//a = fl_choice("Cold Boot.  Reload System ROM too?", "Cancel", "Yes", "No", NULL);
 			a = fl_choice("Cold Boot.  Reload System ROM too?", "Cancel", "Yes", "No");
 		else
 			a = 2;
@@ -1171,52 +1230,82 @@ cb_about:	This callback routine displays the about box
 void cb_about (Fl_Widget* w, void*)
 {
   
-   Fl_Window* o = new Fl_Window(420, 340);
+   Fl_Window* o = new Fl_Window(520, 440);
+   if (gMidnight)
+	   o->color(FL_BLACK);
+
+   Fl_Window* o2 = new Fl_Window(50, 50, 420, 340);
+   if (gMidnight)
+	   o2->color(FL_BLACK);
   
-    { Fl_Box* o = new Fl_Box(20, 0, 345, 95, "Virtual T");
+    { Fl_Box* o = new Fl_Box(20, 0, 345, 85, "Virtual T");
       o->labelfont(11);
       o->labelsize(80);
+	  if (gMidnight)
+		  o->labelcolor(FL_WHITE);
     }
     { Fl_Box* o = new Fl_Box(50, 105, 305, 40, "A Tandy Model 100/102/200 Emulator");
       o->labelfont(8);
-      o->labelsize(24);
+      o->labelsize(20);
+	  if (gMidnight)
+		  o->labelcolor(FL_WHITE);
     }
     { Fl_Box* o = new Fl_Box(30, 150, 335, 35, "written by: "); 
       o->labelfont(8);
       o->labelsize(18);
+	  if (gMidnight)
+		  o->labelcolor(FL_WHITE);
     }
     { Fl_Box* o = new Fl_Box(30, 170, 335, 35, "Ken Pettit");
       o->labelfont(8);
       o->labelsize(18);
+	  if (gMidnight)
+		  o->labelcolor(FL_WHITE);
     }
     { Fl_Box* o = new Fl_Box(25, 190, 340, 35, "Stephen Hurd");
       o->labelfont(8);
       o->labelsize(18);
+	  if (gMidnight)
+		  o->labelcolor(FL_WHITE);
     }
     { Fl_Box* o = new Fl_Box(25, 210, 340, 35, "Jerome Vernet");
       o->labelfont(8);
       o->labelsize(18);
+	  if (gMidnight)
+		  o->labelcolor(FL_WHITE);
     }
     { Fl_Box* o = new Fl_Box(25, 230, 340, 35, "John Hogerhuis");
       o->labelfont(8);
       o->labelsize(18);
+	  if (gMidnight)
+		  o->labelcolor(FL_WHITE);
     }
     { Fl_Box* o = new Fl_Box(95, 265, 195, 25, "V " VERSION);
       o->labelfont(8);
       o->labelsize(18);
+	  if (gMidnight)
+		  o->labelcolor(FL_WHITE);
     }
     { Fl_Box* o = new Fl_Box(35, 295, 320, 25, "This program may be distributed freely ");
       o->labelfont(8);
       o->labelsize(16);
+	  if (gMidnight)
+		  o->labelcolor(FL_WHITE);
     }
     { Fl_Box* o = new Fl_Box(35, 315, 320, 25, "under the terms of the BSD license");
       o->labelfont(8);
       o->labelsize(16);
+	  if (gMidnight)
+		  o->labelcolor(FL_WHITE);
     }
     { Fl_Box* o = new Fl_Box(20, 75, 320, 20, "in FLTK");
       o->labelfont(8);
       o->labelsize(18);
+	  if (gMidnight)
+		  o->labelcolor(FL_WHITE);
     }
+	o2->end();
+	o2->show();
     o->end();
     o->show();   
 }
@@ -1353,6 +1442,7 @@ Fl_Menu_Item menuitems[] = {
 		{ "Framed",  0, cb_framed, (void *) 1, FL_MENU_TOGGLE|FL_MENU_VALUE },
 		{ "Solid Chars",  0, cb_solidchars, (void *) 1, FL_MENU_TOGGLE | FL_MENU_DIVIDER},
 		{ "Display Colors",  0, cb_display_colors, 0, 0 },
+		{ "Midnight",  0, cb_midnight, (void *) 0, FL_MENU_TOGGLE},
 		{ 0 },
 	{ "Peripheral Setup...",     0, cb_PeripheralSetup, 0, 0 },
 #ifdef	__APPLE__
@@ -1376,6 +1466,7 @@ Fl_Menu_Item menuitems[] = {
 	{ "Enable Console Debug",  0, cb_ConsoleDebug },
 #endif
 	{ "ReMem Configuration",   0, cb_RememCfg, 0, 0 },
+//	{ "Rex Monitor",   		   0, cb_RexMon, 0, 0 },	
 	{ "Peripheral Devices",    0, cb_PeripheralDevices },
 	{ "Model T File Viewer",   0, cb_FileView },
 	{ "TPDD Server Log",       0, cb_TpddServerLog, 0, FL_MENU_INVISIBLE },
@@ -1459,18 +1550,29 @@ void remote_set_speed(int speed)
 void init_menus(void)
 {
 	int 	remem_menu_flag = FL_MENU_INVISIBLE;
+	//int 	rexmon_menu_flag = FL_MENU_INVISIBLE;
 	int		mIndex;
 
 	if (gReMem)
 	{
 		remem_menu_flag = 0;
 	}
+	//if (gRex)		// added SA
+	//{
+		//rexmon_menu_flag = 0;
+	//}
 
 	// Locate the ReMem Configuration menu item
 	mIndex = 0;
 	while (menuitems[mIndex].callback_ != cb_RememCfg)
 		mIndex++;
 	menuitems[mIndex].flags= remem_menu_flag;
+	
+// 	// Locate the ReMem Configuration menu item  //added SA
+// 	mIndex = 0;
+// 	while (menuitems[mIndex].callback_ != cb_RexMon)
+// 		mIndex++;
+// 	menuitems[mIndex].flags= rexmon_menu_flag;
 }
 
 /*
@@ -2003,6 +2105,7 @@ void init_pref(void)
 	virtualt_prefs.get("MultFact",MultFact,3);
 	virtualt_prefs.get("DisplayMode",DisplayMode,1);
 	virtualt_prefs.get("SolidChars",SolidChars,0);
+	virtualt_prefs.get("Midnight",gMidnight,0);
 	virtualt_prefs.get("BasicSaveMode",BasicSaveMode,0);
 	virtualt_prefs.get("COSaveMode",COSaveMode,0);
 	virtualt_prefs.get("Model",gModel, MODEL_M100);
@@ -2154,6 +2257,15 @@ void init_display(void)
 #endif	/* ZIPIT_Z2 */
 
 	Menu = new Fl_Menu_Bar(0, 0, MainWin->w(), MENU_HEIGHT-2);
+	gDefaultColor = Menu->color();
+	if (gMidnight)
+	{
+		Menu->color(FL_BLACK);
+		Menu->textcolor(FL_WHITE);
+		Menu->selection_color(FL_BLUE);
+		MainWin->color(FL_BLACK);
+		MainWin->labelcolor(FL_WHITE);
+	}
 	if (gModel == MODEL_T200)
 		gpDisp = new T200_Disp(0, MENU_HEIGHT, MainWin->w(), MainWin->h() - MENU_HEIGHT - 20);
 	else
@@ -2275,6 +2387,19 @@ void init_display(void)
         
 	/*
 	==================================================
+	Update Midnight menu item
+	==================================================
+	*/
+    if(gMidnight==1)
+	{
+		mIndex = 0;
+		while (menuitems[mIndex].callback_ != cb_midnight)
+			mIndex++;
+        menuitems[mIndex].flags=FL_MENU_TOGGLE|FL_MENU_VALUE;
+	}
+        
+	/*
+	==================================================
 	Update BasicSaveMode parameter 
 	==================================================
 	*/
@@ -2364,6 +2489,27 @@ void init_display(void)
 		gpDisp->MultFact = MultFact;
 		gpDisp->SolidChars = SolidChars;
 		gpDisp->CalcScreenCoords();
+	}
+
+	if (gMidnight)
+	{
+		gpGraph->color(FL_BLACK);
+		gpGraph->labelcolor(FL_WHITE);
+		gpCode->color(FL_BLACK);
+		gpCode->labelcolor(FL_WHITE);
+		gpCaps->color(FL_BLACK);
+		gpCaps->labelcolor(FL_WHITE);
+		gpKey->color(FL_BLACK);
+		gpKey->labelcolor(FL_WHITE);
+		gpSpeed->color(FL_BLACK);
+		gpSpeed->labelcolor(FL_WHITE);
+		gpMap->color(FL_BLACK);
+		gpMap->labelcolor(FL_WHITE);
+		gpPrint->color(FL_BLACK);
+		gpPrint->labelcolor(FL_WHITE);
+		gpPrint->box(FL_DOWN_BOX);
+		gpKeyInfo->color(FL_BLACK);
+		gpKeyInfo->labelcolor(FL_WHITE);
 	}
 
 	/* End the Window and show it */
@@ -3352,7 +3498,8 @@ drag selection and word drag selection.
 */
 int T100_Disp::MouseMoveInText(int mx, int my)
 {
-	int		cursorRow, cursorCol;
+	//int		cursorRow
+	int		cursorCol;
 	int		newCol, newRow, pos;
 
 	// Calculate new row and col 
@@ -3365,7 +3512,7 @@ int T100_Disp::MouseMoveInText(int mx, int my)
 
 	pos = newRow * 40 + newCol;
 	// Find address of cursor row and col
-	cursorRow = find_stdrom_addr(R_CURSOR_ROW);
+	//cursorRow = find_stdrom_addr(R_CURSOR_ROW);
 	cursorCol = find_stdrom_addr(R_CURSOR_COL);
 
 	// Test if the cursor changed positions 
@@ -3409,7 +3556,7 @@ char	keylabel[128];
 int T100_Disp::handle(int event)
 {
 	char	keystr[10];
-	char	isSpecialKey = 1;
+	//char	isSpecialKey = 1;
 	int		c;
 	int		simulated;
 	get_key_t	get_key;
@@ -4041,7 +4188,7 @@ int T100_Disp::handle(int event)
 				}
 			}
 
-			isSpecialKey = 0;
+			//isSpecialKey = 0;
 			break;
 		}
 		update_keys();
@@ -4489,7 +4636,7 @@ int T100_Disp::handle(int event)
 					}
 				}
 			}
-			isSpecialKey = 0;
+			//isSpecialKey = 0;
 			break;
 		}
 		update_keys();
@@ -5019,4 +5166,6 @@ void init_other_windows(void)
 	// Give the focus back to the main VirtualT window
 	MainWin->show();
 }
+
+// vim: noet sw=4 ts=4
 

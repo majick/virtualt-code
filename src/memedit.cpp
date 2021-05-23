@@ -57,6 +57,8 @@ extern int		gRamBottom;
 extern uchar    gQuad;
 }
 
+extern int    gMidnight;
+
 void cb_Ide(Fl_Widget* w, void*); 
 void cb_menu_run(Fl_Widget* w, void*);
 void cb_menu_stop(Fl_Widget* w, void*);
@@ -619,6 +621,8 @@ void cb_load(Fl_Widget* w, void*)
 	// Create edit field for filename
 	o = new Fl_Box(FL_NO_BOX, 10, 10, 50, 15, "Filename");
 	o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+	if (gMidnight)
+		o->labelcolor(FL_WHITE);
 	gDialog.pFilename = new Fl_Input(10, 30, 300, 20, "");
 	gDialog.pFilename->callback(load_filename_cb);
 
@@ -626,10 +630,11 @@ void cb_load(Fl_Widget* w, void*)
 	gDialog.pBrowse = new Fl_Button(320, 30, 70, 20, "Browse");
 	gDialog.pBrowse->callback(load_browseButton_cb);
 
-
 	// Create report field for # bytes being loaded
 	o = new Fl_Box(FL_NO_BOX, 25, 55, 100, 15, "Filesize (bytes):");
 	o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+	if (gMidnight)
+		o->labelcolor(FL_WHITE);
 	gDialog.sBytes[0] = 0;
 	gDialog.pBytes = new Fl_Box(FL_NO_BOX, 135, 55, 150, 15, gDialog.sBytes);
 	gDialog.pBytes->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
@@ -637,11 +642,15 @@ void cb_load(Fl_Widget* w, void*)
 	// Create Edit fields for memory range
 	o = new Fl_Box(FL_NO_BOX, 10, 90, 110, 15, "Start Address");
 	o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+	if (gMidnight)
+		o->labelcolor(FL_WHITE);
 	gDialog.pStartAddr = new Fl_Input(120, 90, 90, 20, "");
 	gDialog.pStartAddr->value(memedit_ctrl.pMemRange->value());
 
 	o = new Fl_Box(FL_NO_BOX, 10, 120, 110, 15, "End Address");
 	o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+	if (gMidnight)
+		o->labelcolor(FL_WHITE);
 	gDialog.pEndAddr = new Fl_Box(FL_NO_BOX, 120, 120, 90, 15, "");
 	gDialog.pEndAddr->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
 
@@ -655,6 +664,33 @@ void cb_load(Fl_Widget* w, void*)
 
 	b = new Fl_Button(210, 160, 75, 25, "Cancel");
 	b->callback(load_cancelButton_cb);
+
+	if (gMidnight)
+  {
+		gDialog.pWin->color(FL_BLACK);
+
+		gDialog.pBrowse->color(FL_BLACK);
+		gDialog.pBrowse->labelcolor(FL_WHITE);
+
+		gDialog.pFilename->color(FL_BLACK);
+		gDialog.pFilename->textcolor(FL_WHITE);
+		gDialog.pFilename->cursor_color(FL_WHITE);
+
+		gDialog.pBytes->color(FL_BLACK);
+		gDialog.pBytes->labelcolor(FL_WHITE);
+
+		gDialog.pStartAddr->color(FL_BLACK);
+		gDialog.pStartAddr->textcolor(FL_WHITE);
+		gDialog.pStartAddr->cursor_color(FL_WHITE);
+
+		gDialog.pEndAddr->color(FL_BLACK);
+		gDialog.pEndAddr->labelcolor(FL_WHITE);
+
+    rb->color(FL_BLACK);
+    rb->labelcolor(FL_WHITE);
+    b->color(FL_BLACK);
+    b->labelcolor(FL_WHITE);
+  }
 
 	gDialog.pWin->set_modal();
 
@@ -768,6 +804,8 @@ void cb_save_memory(Fl_Widget* w, void*)
 	// Create edit field for filename
 	o = new Fl_Box(FL_NO_BOX, 10, 40, 50, 15, "Filename");
 	o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+	if (gMidnight)
+		o->labelcolor(FL_WHITE);
 	gDialog.pFilename = new Fl_Input(10, 60, 300, 20, "");
 	gDialog.pFilename->callback(load_filename_cb);
 
@@ -778,16 +816,22 @@ void cb_save_memory(Fl_Widget* w, void*)
 	// Create Edit fields for memory range
 	o = new Fl_Box(FL_NO_BOX, 10, 90, 110, 15, "Start Address");
 	o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+	if (gMidnight)
+		o->labelcolor(FL_WHITE);
 	gDialog.pStartAddr = new Fl_Input(120, 90, 90, 20, "");
 	gDialog.pStartAddr->value(memedit_ctrl.pMemRange->value());
 
 	o = new Fl_Box(FL_NO_BOX, 10, 120, 110, 15, "End Address");
 	o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+	if (gMidnight)
+		o->labelcolor(FL_WHITE);
 	gDialog.pEndSaveAddr = new Fl_Input(120, 120, 90, 20, "");
 
 	// Create edit field for length
 	o = new Fl_Box(FL_NO_BOX, 10, 150, 110, 15, "Length");
 	o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+	if (gMidnight)
+		o->labelcolor(FL_WHITE);
 	gDialog.pSaveLen = new Fl_Input(120, 150, 90, 20, "");
 
 	// We aren't using pBytes for save
@@ -799,6 +843,38 @@ void cb_save_memory(Fl_Widget* w, void*)
 
 	b = new Fl_Button(210, 190, 75, 25, "Cancel");
 	b->callback(load_cancelButton_cb);
+
+	if (gMidnight)
+	{
+		gDialog.pWin->color(FL_BLACK);
+
+		gDialog.pHex->labelcolor(FL_WHITE);
+		gDialog.pBin->labelcolor(FL_WHITE);
+
+		gDialog.pBrowse->color(FL_BLACK);
+		gDialog.pBrowse->labelcolor(FL_WHITE);
+
+		gDialog.pFilename->color(FL_BLACK);
+		gDialog.pFilename->textcolor(FL_WHITE);
+		gDialog.pFilename->cursor_color(FL_WHITE);
+
+		gDialog.pStartAddr->color(FL_BLACK);
+		gDialog.pStartAddr->textcolor(FL_WHITE);
+		gDialog.pStartAddr->cursor_color(FL_WHITE);
+
+		gDialog.pEndSaveAddr->color(FL_BLACK);
+		gDialog.pEndSaveAddr->labelcolor(FL_WHITE);
+		gDialog.pEndSaveAddr->cursor_color(FL_WHITE);
+
+		gDialog.pSaveLen->color(FL_BLACK);
+		gDialog.pSaveLen->labelcolor(FL_WHITE);
+		gDialog.pSaveLen->cursor_color(FL_WHITE);
+
+		rb->color(FL_BLACK);
+		rb->labelcolor(FL_WHITE);
+		b->color(FL_BLACK);
+		b->labelcolor(FL_WHITE);
+	}
 
 	gDialog.pWin->set_modal();
 
@@ -938,7 +1014,6 @@ void cb_MemoryEditor (Fl_Widget* pW, void*)
 
 	// Create a menu for the new window.
 	memedit_ctrl.pMenu = new Fl_Menu_Bar(0, 0, w, MENU_HEIGHT-2);
-
 	gmew->callback(cb_memeditwin);
 	memedit_ctrl.pMenu->menu(gMemEdit_menuitems);
 
@@ -954,8 +1029,12 @@ void cb_MemoryEditor (Fl_Widget* pW, void*)
 	// Create static text boxes
 	o = new Fl_Box(FL_NO_BOX, 10, 10, 50, 15, "Region");
 	o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+	if (gMidnight)
+		o->labelcolor(FL_WHITE);
 	o = new Fl_Box(FL_NO_BOX, 175, 10, 50, 15, "Address");
 	o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+	if (gMidnight)
+		o->labelcolor(FL_WHITE);
 	
 	// Create Region choice box
 	memedit_ctrl.pRegion = new Fl_Choice(70, 8, 100, 20, "");
@@ -966,6 +1045,20 @@ void cb_MemoryEditor (Fl_Widget* pW, void*)
 	memedit_ctrl.pMemRange->callback(cb_memory_range);
 	memedit_ctrl.pMemRange->when(FL_WHEN_ENTER_KEY|FL_WHEN_NOT_CHANGED);
 
+	if (gMidnight)
+	{
+		gmew->color(FL_BLACK);
+		memedit_ctrl.pMenu->color(FL_BLACK);
+		memedit_ctrl.pMenu->textcolor(FL_WHITE);
+		memedit_ctrl.pTile->color(FL_BLACK);
+		memedit_ctrl.pTopPane->color(FL_BLACK);
+		memedit_ctrl.pRegion->color(FL_BLACK);
+		memedit_ctrl.pRegion->textcolor(FL_WHITE);
+		memedit_ctrl.pMemRange->color(FL_BLACK);
+		memedit_ctrl.pMemRange->textcolor(FL_WHITE);
+		memedit_ctrl.pMemRange->cursor_color(FL_WHITE);
+	}
+
 	// Create a resize box for the group and end the group.  This resizing box within
 	// the group causes the region and address edit fields to maintain size / position
 	// while allowing the editor region to resize with the group.
@@ -975,6 +1068,12 @@ void cb_MemoryEditor (Fl_Widget* pW, void*)
 	g->end();
 
 	// Create the memory editor widget and scrollbar
+	if (gMidnight)
+	{
+		o = new Fl_Box(7, 37, w-20-2, 350-MENU_HEIGHT+15);
+		o->box(FL_THIN_DOWN_BOX);
+		o->color(FL_WHITE);
+	}
 	memedit_ctrl.pMemEdit = new T100_MemEditor(10, 40, w-20-15/*545*/, 350-MENU_HEIGHT+10);
 	memedit_ctrl.pScroll = new Fl_Scrollbar(w-10-15/*555*/, 40, 15, 350-MENU_HEIGHT+10, "");
 
@@ -994,6 +1093,15 @@ void cb_MemoryEditor (Fl_Widget* pW, void*)
 
 	// Create a group to hold the framing box and the actual watch table widget
 	g = new Fl_Group(0, 0, w, wh, "");
+
+	if (gMidnight)
+	{
+		memedit_ctrl.pBottomPane->color(FL_BLACK);
+		o = new Fl_Box(7, 0, w-20-2, 350-MENU_HEIGHT+15);
+		o->box(FL_THIN_DOWN_BOX);
+		o->color(FL_WHITE);
+	}
+
 	Fl_Box* b = new Fl_Box(FL_DOWN_FRAME, 9, 2, w-17/*22*/, wh-5, "");
 
 	// Create the Watch Table widget
@@ -1255,7 +1363,7 @@ void T100_MemEditor::SetRegionOptions(void)
 	// Update the Regions control with appropriate options
 	if (gReMem)
 	{
-		if (gRex)
+		if ((gRex && (gRex != REXC)))
 		{
 			if (gModel == MODEL_T200 || gModel == MODEL_PC8201 || gModel == MODEL_PC8300)
 			{
@@ -1287,6 +1395,15 @@ void T100_MemEditor::SetRegionOptions(void)
 			memedit_ctrl.pRegion->add("Flash");
 			if (gRex == REX2)
 				memedit_ctrl.pRegion->add("128K SRAM");
+			memedit_ctrl.pRegion->value(0);
+		}
+		
+		else if  (gRex && (gRex == REXC))		// added SA
+		{
+			memedit_ctrl.pRegion->add("RAM");
+			memedit_ctrl.pRegion->add("ROM");
+			memedit_ctrl.pRegion->add("Opt ROM");			
+			memedit_ctrl.pRegion->add("4MB SRAM");
 			memedit_ctrl.pRegion->value(0);
 		}
 		else 
@@ -1395,7 +1512,7 @@ void T100_MemEditor::SetScrollSize(void)
 					m_Max = 1024 * 1024 / 16;
 					break;
 				case 6:
-					m_Max = 128 * 1024 / 16;			
+					m_Max = 128 * 1024 / 16;
 					break;
 				default:
 					m_Max = ROMSIZE / 16;
@@ -1411,7 +1528,7 @@ void T100_MemEditor::SetScrollSize(void)
                     else if (region == 4)
                         m_Max = ROMSIZE / 16;
                     else
-                        m_Max = 1024 * 1024 / 16;			
+                        m_Max = 1024 * 1024 / 16;
                 }
                 else
                 {
@@ -1420,9 +1537,20 @@ void T100_MemEditor::SetScrollSize(void)
                     else if (region == 1)
                         m_Max = ROMSIZE / 16;
                     else if (region == 2)
-                        m_Max = 1024 * 1024 / 16;			
+                    {
+	                    if (gRex == REXC)
+                 	       m_Max = ROMSIZE / 16;	// added SA
+						else
+                  		   m_Max = 1024 * 1024 / 16;	
+					}
                     else if (region == 3)
-                        m_Max = 128 * 1024 / 16;			
+                    {
+	                    if (gRex == REXC)
+							m_Max = 4 * 1024 * 1024 / 16;	// added SA
+						else
+		                    m_Max = 128 * 1024 / 16;
+					}
+	
                 }
 			}
 		}
@@ -1564,6 +1692,10 @@ int T100_MemEditor::GetRegionEnum(void)
 	if (strcmp(reg_text, "128K SRAM") == 0)
 		m_Region = REGION_REX2_RAM;
 
+	// Test if REXCPM RAM region is selected
+	if (strcmp(reg_text, "4MB SRAM") == 0)
+		m_Region = REGION_REXC_RAM;		
+		
 	return m_Region;
 
 }
@@ -1921,10 +2053,9 @@ Handle mouse events, key events, focus events, etc.
 */
 int T100_MemEditor::handle(int event)
 {
-	int				c, xp, yp, shift;
-	int				line_click, col_click, cnt;
-	int				col, line;
-	int				lineIndex;
+	int				c, xp = 0, yp = 0, shift = 0;
+	int				line_click = 0, col_click = 0;
+	int				col;
 	int				height, size;
 	int				value;
 	unsigned int	key;
@@ -1936,7 +2067,6 @@ int T100_MemEditor::handle(int event)
 	if (event == 0)
 		return 0;
 
-	//printf("Event %d\n", event);
 	// Do some common processing before the switch
 	if (event == FL_PUSH || event == FL_MOVE || event == FL_DRAG)
 	{
@@ -2087,13 +2217,7 @@ int T100_MemEditor::handle(int event)
 			m_HaveMouse = TRUE;
 			m_DragX = xp;
 			m_DragY = yp;
-
-			// Get LineStart index
-			lineIndex = (m_FirstLine + line_click) >> 1;
-
-			cnt = 0;
 			col = 0;
-			line = lineIndex << 1;
 
 			// Select 12 point Courier font
 			fl_font(m_Font, m_FontSize);
@@ -3383,7 +3507,7 @@ Update the Address edit box base on the position of the cursor
 */
 void T100_MemEditor::UpdateAddressText()
 {
-	char	string[10];
+	char	string[20];
 	long	address;
 	int		col, region;
 
@@ -3416,14 +3540,14 @@ void T100_MemEditor::UpdateAddressText()
 		(region == REGION_RAM3) || region == REGION_RAM1 || (region == REGION_RAM4))
 	{
 		if (gReMem)
-			sprintf(string, "0x%06X", (unsigned int) (address + RAMSTART));
+			sprintf(string, "0x%06X", (unsigned int) ((address + RAMSTART) & 0xFFFFFF));
 		else
 			sprintf(string, "0x%04X", (unsigned int) (address + RAMSTART));
 	}
 	else
 	{
 		if (gReMem)
-			sprintf(string, "0x%06X", (unsigned int) address);
+			sprintf(string, "0x%06X", (unsigned int) (address & 0xFFFFFF));
 		else
 			sprintf(string, "0x%04X", (unsigned int) address);
 	}
@@ -4085,40 +4209,71 @@ void cb_setup_memedit(Fl_Widget* w, void* pOpaque)
 
 	/* Create a button for the marker foreground color */
 	p.pMarkerForeground = new Fl_Button(22, 110, 15, 15, "Marker Forground Color");
-    p.pMarkerForeground->callback((Fl_Callback*) cb_marker_foreground, &p);
+	p.pMarkerForeground->callback((Fl_Callback*) cb_marker_foreground, &p);
 	p.pMarkerForeground->align(FL_ALIGN_RIGHT);
 	p.pMarkerForeground->color(memedit_ctrl.pMemEdit->GetMarkerForegroundColor());
 
 	/* Create a button for the marker background color */
 	p.pMarkerBackground = new Fl_Button(22, 130, 15, 15, "Marker Background Color");
-    p.pMarkerBackground->callback((Fl_Callback*) cb_marker_background, &p);
+	p.pMarkerBackground->callback((Fl_Callback*) cb_marker_background, &p);
 	p.pMarkerBackground->align(FL_ALIGN_RIGHT);
 	p.pMarkerBackground->color(memedit_ctrl.pMemEdit->GetMarkerBackgroundColor());
 
 	/* Create a button for the marker foreground color */
 	p.pSelectedForeground = new Fl_Button(22, 150, 15, 15, "Selected Marker Forground");
-    p.pSelectedForeground->callback((Fl_Callback*) cb_selected_foreground, &p);
+	p.pSelectedForeground->callback((Fl_Callback*) cb_selected_foreground, &p);
 	p.pSelectedForeground->align(FL_ALIGN_RIGHT);
 	p.pSelectedForeground->color(memedit_ctrl.pMemEdit->GetSelectedForegroundColor());
 
 	/* Create a button for the marker background color */
 	p.pSelectedBackground = new Fl_Button(22, 170, 15, 15, "Selected Marker Background");
-    p.pSelectedBackground->callback((Fl_Callback*) cb_selected_background, &p);
+	p.pSelectedBackground->callback((Fl_Callback*) cb_selected_background, &p);
 	p.pSelectedBackground->align(FL_ALIGN_RIGHT);
 	p.pSelectedBackground->color(memedit_ctrl.pMemEdit->GetSelectedBackgroundColor());
 
 	p.pDefaults = new Fl_Button(240, 135, 70, 30, "Defaults");
 	p.pDefaults->callback((Fl_Callback *) cb_default_colors, &p);
 
+	if (gMidnight)
+	{
+		pWin->color(FL_BLACK);
+		b->labelcolor(FL_WHITE);
+		p.pFontSize->color(FL_BLACK);
+		p.pFontSize->textcolor(FL_WHITE);
+		p.pFontSize->cursor_color(FL_WHITE);
+		p.pBold->color(FL_BLACK);
+		p.pBold->labelcolor(FL_WHITE);
+		p.pBlackBackground->color(FL_BLACK);
+		p.pBlackBackground->labelcolor(FL_WHITE);
+		p.pColorHilight->color(FL_BLACK);
+		p.pColorHilight->labelcolor(FL_WHITE);
+		p.pMarkerForeground->labelcolor(FL_WHITE);
+		p.pMarkerBackground->labelcolor(FL_WHITE);
+		p.pSelectedForeground->labelcolor(FL_WHITE);
+		p.pSelectedBackground->labelcolor(FL_WHITE);
+		p.pDefaults->color(FL_BLACK);
+		p.pDefaults->labelcolor(FL_WHITE);
+	}
+
 	// Cancel button
-    { Fl_Button* o = new Fl_Button(80, 200, 60, 30, "Cancel");
-      o->callback((Fl_Callback*) cb_setupdlg_cancel, &p);
-    }
+	{ Fl_Button* o = new Fl_Button(80, 200, 60, 30, "Cancel");
+		o->callback((Fl_Callback*) cb_setupdlg_cancel, &p);
+		if (gMidnight)
+		{
+			o->color(FL_BLACK);
+			o->labelcolor(FL_WHITE);
+		}
+	}
 
 	// OK button
-    { Fl_Return_Button* o = new Fl_Return_Button(160, 200, 60, 30, "OK");
-      o->callback((Fl_Callback*) cb_setupdlg_OK, &p);
-    }
+	{ Fl_Return_Button* o = new Fl_Return_Button(160, 200, 60, 30, "OK");
+		o->callback((Fl_Callback*) cb_setupdlg_OK, &p);
+		if (gMidnight)
+		{
+			o->color(FL_BLACK);
+			o->labelcolor(FL_WHITE);
+		}
+	}
 
 	// Loop until user presses OK or Cancel
 	pWin->show();
@@ -4692,3 +4847,5 @@ void cb_show_hide_watch(Fl_Widget* w, void*)
 		gMemEdit_menuitems[3].text = "Show Watch Window";
 	}
 }
+
+// vim: noet sw=4 ts=4

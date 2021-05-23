@@ -51,6 +51,12 @@
 #include "vtpaper.h"
 #include "chargen.h"
 
+extern int gMidnight;
+
+#define COLOR_BG  		(gMidnight ? FL_BLACK : fl_rgb_color(192, 192, 192))
+#define COLOR_BG_INPUT  (gMidnight ? FL_BLACK : FL_WHITE)
+#define COLOR_FG  		(gMidnight ? FL_WHITE : FL_BLACK)
+
 extern unsigned char gFX80CharRom[256][12];
 
 unsigned char	gIntlTable[9][12] = {
@@ -355,23 +361,31 @@ void VTFX80Print::BuildPropertyDialog(Fl_Window* pParent)
 
 	// Resize the parent
 	pParent->resize(pParent->x(), pParent->y(), pParent->w()+300, pParent->h());
+	pParent->color(COLOR_BG);
 
 	o = new Fl_Box(20, 15, 660, 20, "Emulated Epson FX-80 Printer");
+	o->labelcolor(COLOR_FG);
 
 	// Create checkbox for use of external ROM file
 	m_pUseRomFile = new Fl_Check_Button(20, 50, 230, 20, "Use External Character ROM");
 	m_pUseRomFile->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 	m_pUseRomFile->value(m_useRomFile);
 	m_pUseRomFile->callback(cb_UseRomCheck, this);
+	m_pUseRomFile->labelcolor(COLOR_FG);
 
 	// Create edit field for External ROM file
 	m_pRomFile = new Fl_Input(40, 78, 260, 20, "");
 	strcpy(m_romFileStr, (const char *) m_sRomFile);
 	m_pRomFile->value(m_romFileStr);
+	m_pRomFile->color(COLOR_BG);
+	m_pRomFile->textcolor(COLOR_FG);
+	m_pRomFile->cursor_color(COLOR_FG);
 
 	// Create Browse button
 	m_pRomBrowse = new Fl_Button(315, 73, 60, 30, "Browse");
 	m_pRomBrowse->callback(cb_CharRomBrowse, this);
+	m_pRomBrowse->color(COLOR_BG);
+	m_pRomBrowse->labelcolor(COLOR_FG);
 
 	// Deactivate controls if check not selected
 	if (!m_useRomFile)
@@ -385,15 +399,21 @@ void VTFX80Print::BuildPropertyDialog(Fl_Window* pParent)
 	m_pUseRamFile->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 	m_pUseRamFile->value(m_useRamFile);
 	m_pUseRamFile->callback(cb_UseRomCheck, this);
+	m_pUseRamFile->labelcolor(COLOR_FG);
 
 	// Create edit field for External RAM file
 	m_pRamFile = new Fl_Input(40, 128, 260, 20, "");
 	strcpy(m_ramFileStr, (const char *) m_sRamFile);
 	m_pRamFile->value(m_ramFileStr);
+	m_pRamFile->color(COLOR_BG);
+	m_pRamFile->textcolor(COLOR_FG);
+	m_pRamFile->cursor_color(COLOR_FG);
 
 	// Create Browse button
 	m_pRamBrowse = new Fl_Button(315, 123, 60, 30, "Browse");
 	m_pRamBrowse->callback(cb_CharRomBrowse, this);
+	m_pRamBrowse->color(COLOR_BG);
+	m_pRamBrowse->labelcolor(COLOR_FG);
 
 	// Deactivate controls if check not selected
 	if (!m_useRamFile)
@@ -421,6 +441,9 @@ void VTFX80Print::BuildPropertyDialog(Fl_Window* pParent)
 		}
 	}
 	m_pPaperChoice->callback(cb_PaperSelect, this);
+	m_pPaperChoice->color(COLOR_BG);
+	m_pPaperChoice->textcolor(COLOR_FG);
+	m_pPaperChoice->labelcolor(COLOR_FG);
 
 	// Ensure a paper is selected
 	if (m_pPaperChoice->value() == -1)
@@ -437,24 +460,30 @@ void VTFX80Print::BuildPropertyDialog(Fl_Window* pParent)
 	// Create controls for setting DIP switch default settings
 	o = new Fl_Box(470, 50, 280, 20, "DIP Switch Settings");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	o->labelcolor(COLOR_FG);
 
 	o = new Fl_Box(FL_BORDER_BOX, 510, 75, 50, 170, "");
 
 	// Create buttons for International Char Set
 	o = new Fl_Box(440, 85, 60, 20, "Intl Char");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	o->labelcolor(COLOR_FG);
 	o = new Fl_Box(440, 107, 60, 20, "Set");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	o->labelcolor(COLOR_FG);
 
 	g = new Fl_Group(510,78, 60, 25);
+	g->color(COLOR_FG);
 		m_pIntlChar4off = new Fl_Round_Button(515, 80, 20, 20, "");
 		m_pIntlChar4off->type(102);
 		m_pIntlChar4off->callback(cb_IntlCharDip, this);
+		m_pIntlChar4off->labelcolor(COLOR_FG);
 		if (!(m_defCharSet & 0x04))
 			m_pIntlChar4off->value(1);
 		m_pIntlChar4on = new Fl_Round_Button(538, 80, 20, 20, "");
 		m_pIntlChar4on->type(102);
 		m_pIntlChar4on->callback(cb_IntlCharDip, this);
+		m_pIntlChar4on->labelcolor(COLOR_FG);
 		if (m_defCharSet & 0x04)
 			m_pIntlChar4on->value(1);
 	g->end();
@@ -462,11 +491,13 @@ void VTFX80Print::BuildPropertyDialog(Fl_Window* pParent)
 		m_pIntlChar2off = new Fl_Round_Button(515, 100, 20, 20, "");
 		m_pIntlChar2off->type(102);
 		m_pIntlChar2off->callback(cb_IntlCharDip, this);
+		m_pIntlChar2off->labelcolor(COLOR_FG);
 		if (!(m_defCharSet & 0x02))
 			m_pIntlChar2off->value(1);
 		m_pIntlChar2on = new Fl_Round_Button(538, 100, 20, 20, "");
 		m_pIntlChar2on->type(102);
 		m_pIntlChar2on->callback(cb_IntlCharDip, this);
+		m_pIntlChar2on->labelcolor(COLOR_FG);
 		if (m_defCharSet & 0x02)
 			m_pIntlChar2on->value(1);
 	g->end();
@@ -474,16 +505,19 @@ void VTFX80Print::BuildPropertyDialog(Fl_Window* pParent)
 		m_pIntlChar1off = new Fl_Round_Button(515, 120, 20, 20, "");
 		m_pIntlChar1off->type(102);
 		m_pIntlChar1off->callback(cb_IntlCharDip, this);
+		m_pIntlChar1off->labelcolor(COLOR_FG);
 		if (!(m_defCharSet & 0x01))
 			m_pIntlChar1off->value(1);
 		m_pIntlChar1on = new Fl_Round_Button(538, 120, 20, 20, "");
 		m_pIntlChar1on->type(102);
 		m_pIntlChar1on->callback(cb_IntlCharDip, this);
+		m_pIntlChar1on->labelcolor(COLOR_FG);
 		if (m_defCharSet & 0x01)
 			m_pIntlChar1on->value(1);
 	g->end();
 	m_pIntlCharText = new Fl_Box(580, 95, 80, 20, "");
 	m_pIntlCharText->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	m_pIntlCharText->labelcolor(COLOR_FG);
 
 	// Set the international character set text
 	SetIntlDipText(m_defCharSet);
@@ -491,17 +525,21 @@ void VTFX80Print::BuildPropertyDialog(Fl_Window* pParent)
 	// Create switch for Print Weight
 	o = new Fl_Box(440, 140, 60, 20, "Emphasized");
 	o->align(FL_ALIGN_RIGHT | FL_ALIGN_INSIDE);
+	o->labelcolor(COLOR_FG);
 	o = new Fl_Box(570, 140, 60, 20, "Single Strike");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	o->labelcolor(COLOR_FG);
 
 	// Create switches for Print Weight
 	g = new Fl_Group(510,140, 60, 25);
 		m_pPrintWeightOff = new Fl_Round_Button(515, 140, 20, 20, "");
 		m_pPrintWeightOff->type(102);
+		m_pPrintWeightOff->labelcolor(COLOR_FG);
 		if (m_defEnhance)
 			m_pPrintWeightOff->value(1);
 		m_pPrintWeightOn = new Fl_Round_Button(538, 140, 20, 20, "");
 		m_pPrintWeightOn->type(102);
+		m_pPrintWeightOn->labelcolor(COLOR_FG);
 		if (!m_defEnhance)
 			m_pPrintWeightOn->value(1);
 	g->end();
@@ -509,17 +547,21 @@ void VTFX80Print::BuildPropertyDialog(Fl_Window* pParent)
 	// Create switch for Zero slash
 	o = new Fl_Box(440, 160, 60, 20, "Zero Slashed");
 	o->align(FL_ALIGN_RIGHT | FL_ALIGN_INSIDE);
+	o->labelcolor(COLOR_FG);
 	o = new Fl_Box(570, 160, 60, 20, "Zero Normal");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	o->labelcolor(COLOR_FG);
 
 	// Create switches for Print Weight
 	g = new Fl_Group(510,160, 60, 25);
 		m_pZeroSlashOff = new Fl_Round_Button(515, 160, 20, 20, "");
 		m_pZeroSlashOff->type(102);
+		m_pZeroSlashOff->labelcolor(COLOR_FG);
 		if (m_zeroSlashed)
 			m_pZeroSlashOff->value(1);
 		m_pZeroSlashOn = new Fl_Round_Button(538, 160, 20, 20, "");
 		m_pZeroSlashOn->type(102);
+		m_pZeroSlashOn->labelcolor(COLOR_FG);
 		if (!m_zeroSlashed)
 			m_pZeroSlashOn->value(1);
 	g->end();
@@ -527,17 +569,21 @@ void VTFX80Print::BuildPropertyDialog(Fl_Window* pParent)
 	// Create switch for Print Pitch
 	o = new Fl_Box(440, 180, 60, 20, "Compressed");
 	o->align(FL_ALIGN_RIGHT | FL_ALIGN_INSIDE);
+	o->labelcolor(COLOR_FG);
 	o = new Fl_Box(570, 180, 60, 20, "Pica");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	o->labelcolor(COLOR_FG);
 
 	// Create switches for Print Pitch
 	g = new Fl_Group(510,180, 60, 25);
 		m_pPitchOff = new Fl_Round_Button(515, 180, 20, 20, "");
 		m_pPitchOff->type(102);
+		m_pPitchOff->labelcolor(COLOR_FG);
 		if (m_defCompressed)
 			m_pPitchOff->value(1);
 		m_pPitchOn = new Fl_Round_Button(538, 180, 20, 20, "");
 		m_pPitchOn->type(102);
+		m_pPitchOn->labelcolor(COLOR_FG);
 		if (!m_defCompressed)
 			m_pPitchOn->value(1);
 	g->end();
@@ -545,17 +591,21 @@ void VTFX80Print::BuildPropertyDialog(Fl_Window* pParent)
 	// Create switch for Auto CR
 	o = new Fl_Box(440, 200, 60, 20, "CR + LF");
 	o->align(FL_ALIGN_RIGHT | FL_ALIGN_INSIDE);
+	o->labelcolor(COLOR_FG);
 	o = new Fl_Box(570, 200, 60, 20, "CR Only");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	o->labelcolor(COLOR_FG);
 
 	// Create switches for Auto CR
 	g = new Fl_Group(510,200, 60, 25);
 		m_pAutoCROff = new Fl_Round_Button(515, 200, 20, 20, "");
 		m_pAutoCROff->type(102);
+		m_pAutoCROff->labelcolor(COLOR_FG);
 		if (m_autoCR)
 			m_pAutoCROff->value(1);
 		m_pAutoCROn = new Fl_Round_Button(538, 200, 20, 20, "");
 		m_pAutoCROn->type(102);
+		m_pAutoCROn->labelcolor(COLOR_FG);
 		if (!m_autoCR)
 			m_pAutoCROn->value(1);
 	g->end();
@@ -563,18 +613,22 @@ void VTFX80Print::BuildPropertyDialog(Fl_Window* pParent)
 	// Create switch for Skip Perforation
 	o = new Fl_Box(440, 220, 60, 20, "Skip Perforation");
 	o->align(FL_ALIGN_RIGHT | FL_ALIGN_INSIDE);
+	o->labelcolor(COLOR_FG);
 	o = new Fl_Box(570, 220, 60, 20, "No Skip");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	o->labelcolor(COLOR_FG);
 
 	// Create switches for Skip Perforation
 	g = new Fl_Group(510,220, 60, 25);
 		m_pSkipPerfOff = new Fl_Round_Button(515, 220, 20, 20, "");
 		m_pSkipPerfOff->type(102);
+		m_pSkipPerfOff->labelcolor(COLOR_FG);
 		m_pSkipPerfOff->callback(cb_SkipPerf, this);
 		if (m_defSkipPerf)
 			m_pSkipPerfOff->value(1);
 		m_pSkipPerfOn = new Fl_Round_Button(538, 220, 20, 20, "");
 		m_pSkipPerfOn->type(102);
+		m_pSkipPerfOn->labelcolor(COLOR_FG);
 		m_pSkipPerfOn->callback(cb_SkipPerf, this);
 		if (!m_defSkipPerf)
 			m_pSkipPerfOn->value(1);
@@ -583,19 +637,27 @@ void VTFX80Print::BuildPropertyDialog(Fl_Window* pParent)
 	// Create control for setting the Top of Form
 	o = new Fl_Box(400, 250, 60, 20, "Top of Form");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	o->labelcolor(COLOR_FG);
 	m_pTopOfForm = new Fl_Input(510, 250, 60, 20, "");
 	m_pTopOfForm->value(m_topOfFormStr);
+	m_pTopOfForm->color(COLOR_BG);
+	m_pTopOfForm->textcolor(COLOR_FG);
+	m_pTopOfForm->cursor_color(COLOR_FG);
 	o = new Fl_Box(575, 250, 60, 20, "inches from top");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	o->labelcolor(COLOR_FG);
 
 	// Create checkbox for auto-word wrap (not a feature of original FX-80)
 	m_pAutoWrap = new Fl_Check_Button(400, 280, 230, 20, "Auto wrap (CR/LF at end of line)");
 	m_pAutoWrap->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 	m_pAutoWrap->value(m_autoWrap);
+	m_pAutoWrap->labelcolor(COLOR_FG);
 
 	// Button for Character Generator
 	b = new Fl_Button(360, 310, 120, 30, "Char Generator");
 	b->callback(cb_CreateNewCharGen);
+	b->color(COLOR_BG);
+	b->labelcolor(COLOR_FG);
 }
 
 /*
@@ -631,7 +693,7 @@ void VTFX80Print::SetIntlDipText(char intlCode)
 	if (intlCode > 8)
 		return;
 
-	m_pIntlCharText->label(gIntlCharDesc[intlCode]);
+	m_pIntlCharText->label(gIntlCharDesc[(int) intlCode]);
 }
 
 /*
@@ -1066,7 +1128,8 @@ void VTFX80Print::ResetPrinter(void)
 				fclose(fd);
 				
 				// Indicate ROM loaded
-				fileLoaded = TRUE;
+        if (readlen == sizeof(m_charRom))
+          fileLoaded = TRUE;
 			}
 		}
 	}
@@ -1576,7 +1639,7 @@ int VTFX80Print::ProcessAsCmd(unsigned char byte)
 			// On first byte, copy ROM to RAM
 			if (m_escParamsRcvd  == 0)
 			{
-				for (c = 0; c < sizeof(m_charRam); c++)
+				for (c = 0; c < (int) sizeof(m_charRam); c++)
 					((char*)m_charRam)[c] = ((char*)m_charRom)[c];
 				m_escParamsRcvd++;
 			}
@@ -2028,7 +2091,7 @@ int VTFX80Print::SetVertChannelTabs(unsigned char byte)
 		return TRUE;
 	}
 	else if ((byte == 0) || ((m_escParamsRcvd > 1) && 
-		(byte < m_vertTabs[m_escTabChannel][m_escParamsRcvd-2])))
+		(byte < m_vertTabs[(int) m_escTabChannel][(int) m_escParamsRcvd-2])))
 	{
 		m_escCmd = m_escParamsRcvd = 0;
 		return TRUE;
@@ -2039,7 +2102,7 @@ int VTFX80Print::SetVertChannelTabs(unsigned char byte)
 	{
 		if (m_escTabChannel < 8)
 		{
-			m_vertTabs[m_escTabChannel][m_escParamsRcvd++] = 
+			m_vertTabs[(int) m_escTabChannel][m_escParamsRcvd++] = 
 				(int) (m_vertDpi  * (double) byte * m_lineSpacing);
 		}
 		else
@@ -2315,7 +2378,7 @@ Processes a Set Form Height argument
 */
 int VTFX80Print::FormHeightCmd(unsigned char byte)
 {
-	double		newHeight;
+	double		newHeight = m_formHeight;
 
 	// Check if using inches mode.  If inches, need to wait for next byte
 	if (byte == 0)
@@ -2511,100 +2574,143 @@ void VTFX80Print::BuildMonTab(void)
 
 	o = new Fl_Box(20, 45+MENU_HEIGHT, 100, 20, "Print Pitch:");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+  o->labelcolor(COLOR_FG);
 	o = new Fl_Box(20, 70+MENU_HEIGHT, 100, 20, "Print Weight:");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+  o->labelcolor(COLOR_FG);
 	o = new Fl_Box(20, 95+MENU_HEIGHT, 100, 20, "Italic Mode:");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+  o->labelcolor(COLOR_FG);
 	o = new Fl_Box(20, 120+MENU_HEIGHT, 100, 20, "Script Mode:");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+  o->labelcolor(COLOR_FG);
 	o = new Fl_Box(20, 145+MENU_HEIGHT, 100, 20, "Underline:");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+  o->labelcolor(COLOR_FG);
 	o = new Fl_Box(20, 170+MENU_HEIGHT, 100, 20, "Line Spacing:");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+  o->labelcolor(COLOR_FG);
 	o = new Fl_Box(20, 195+MENU_HEIGHT, 100, 20, "Form Length:");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+  o->labelcolor(COLOR_FG);
 	o = new Fl_Box(20, 220+MENU_HEIGHT, 100, 20, "Left Margin:");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+  o->labelcolor(COLOR_FG);
 	o = new Fl_Box(20, 245+MENU_HEIGHT, 100, 20, "Head Position:");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+  o->labelcolor(COLOR_FG);
 	o = new Fl_Box(20, 270+MENU_HEIGHT, 100, 20, "Perforation Skip:");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+  o->labelcolor(COLOR_FG);
 	o = new Fl_Box(20, 295+MENU_HEIGHT, 100, 20, "Paper Type:");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+  o->labelcolor(COLOR_FG);
 	o = new Fl_Box(20, 320+MENU_HEIGHT, 100, 20, "Paper Status:");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+  o->labelcolor(COLOR_FG);
 
 	// 2nd Column of status items
 	o = new Fl_Box(280, 45+MENU_HEIGHT, 100, 20, "ESC Mode:");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+  o->labelcolor(COLOR_FG);
 	o = new Fl_Box(280, 70+MENU_HEIGHT, 100, 20, "ESC Params:");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+  o->labelcolor(COLOR_FG);
 	o = new Fl_Box(280, 95+MENU_HEIGHT, 100, 20, "Graphics Mode:");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+  o->labelcolor(COLOR_FG);
 	o = new Fl_Box(280, 120+MENU_HEIGHT, 100, 20, "Graphics Res:");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+  o->labelcolor(COLOR_FG);
 	o = new Fl_Box(280, 145+MENU_HEIGHT, 100, 20, "Graphics Rcvd:");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+  o->labelcolor(COLOR_FG);
 	o = new Fl_Box(280, 170+MENU_HEIGHT, 100, 20, "Update Char:");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+  o->labelcolor(COLOR_FG);
 	o = new Fl_Box(280, 195+MENU_HEIGHT, 100, 20, "Last Char:");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+  o->labelcolor(COLOR_FG);
 	o = new Fl_Box(280, 220+MENU_HEIGHT, 100, 20, "Update Bytes:");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+  o->labelcolor(COLOR_FG);
 	o = new Fl_Box(280, 245+MENU_HEIGHT, 100, 20, "Font Source:");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+  o->labelcolor(COLOR_FG);
 	o = new Fl_Box(280, 270+MENU_HEIGHT, 100, 20, "Intl Char Set:");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+  o->labelcolor(COLOR_FG);
 
 	// Create controls for displaying the current status
 	m_pStatPrintPitch = new Fl_Box(150, 45+MENU_HEIGHT, 100, 20, "");
 	m_pStatPrintPitch->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	m_pStatPrintPitch->labelcolor(COLOR_FG);
 	m_pStatPrintWeight = new Fl_Box(150, 70+MENU_HEIGHT, 100, 20, "");
 	m_pStatPrintWeight->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	m_pStatPrintWeight->labelcolor(COLOR_FG);
 	m_pStatItalic = new Fl_Box(150, 95+MENU_HEIGHT, 100, 20, "");
 	m_pStatItalic->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	m_pStatItalic->labelcolor(COLOR_FG);
 	m_pStatScriptMode = new Fl_Box(150, 120+MENU_HEIGHT, 100, 20, "");
 	m_pStatScriptMode->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	m_pStatScriptMode->labelcolor(COLOR_FG);
 	m_pStatUnderline = new Fl_Box(150, 145+MENU_HEIGHT, 100, 20, "");
 	m_pStatUnderline->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	m_pStatUnderline->labelcolor(COLOR_FG);
 	m_pStatLineSpacing = new Fl_Box(150, 170+MENU_HEIGHT, 100, 20, "");
 	m_pStatLineSpacing->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	m_pStatLineSpacing->labelcolor(COLOR_FG);
 	m_pStatFormLength = new Fl_Box(150, 195+MENU_HEIGHT, 100, 20, "");
 	m_pStatFormLength->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	m_pStatFormLength->labelcolor(COLOR_FG);
 	m_pStatLeftMargin = new Fl_Box(150, 220+MENU_HEIGHT, 100, 20, "");
 	m_pStatLeftMargin->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	m_pStatLeftMargin->labelcolor(COLOR_FG);
 	m_pStatPos = new Fl_Box(150, 245+MENU_HEIGHT, 100, 20, "");
 	m_pStatPos->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	m_pStatPos->labelcolor(COLOR_FG);
 	m_pStatPerfSkip = new Fl_Box(150, 270+MENU_HEIGHT, 100, 20, "");
 	m_pStatPerfSkip->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	m_pStatPerfSkip->labelcolor(COLOR_FG);
 	m_pStatPaperType = new Fl_Box(150, 295+MENU_HEIGHT, 250, 20, "");
 	m_pStatPaperType->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	m_pStatPaperType->labelcolor(COLOR_FG);
 	m_pStatPaperStatus = new Fl_Box(150, 320+MENU_HEIGHT, 250, 20, "");
 	m_pStatPaperStatus->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	m_pStatPaperStatus->labelcolor(COLOR_FG);
 
 	m_pStatEscMode = new Fl_Box(390, 45+MENU_HEIGHT, 100, 20, "");
 	m_pStatEscMode->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	m_pStatEscMode->labelcolor(COLOR_FG);
 	m_pStatEscParams = new Fl_Box(390, 70+MENU_HEIGHT, 130, 20, "");
 	m_pStatEscParams->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	m_pStatEscParams->labelcolor(COLOR_FG);
 	m_pStatGraphicsMode = new Fl_Box(390, 95+MENU_HEIGHT, 130, 20, "");
 	m_pStatGraphicsMode->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	m_pStatGraphicsMode->labelcolor(COLOR_FG);
 	m_pStatGraphicsRes = new Fl_Box(390, 120+MENU_HEIGHT, 130, 20, "");
 	m_pStatGraphicsRes->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	m_pStatGraphicsRes->labelcolor(COLOR_FG);
 	m_pStatGraphicsRcvd = new Fl_Box(390, 145+MENU_HEIGHT, 130, 20, "");
 	m_pStatGraphicsRcvd->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	m_pStatGraphicsRcvd->labelcolor(COLOR_FG);
 	m_pStatUpdateChar = new Fl_Box(390, 170+MENU_HEIGHT, 130, 20, "");
 	m_pStatUpdateChar->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	m_pStatUpdateChar->labelcolor(COLOR_FG);
 	m_pStatLastChar = new Fl_Box(390, 195+MENU_HEIGHT, 130, 20, "");
 	m_pStatLastChar->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	m_pStatLastChar->labelcolor(COLOR_FG);
 	m_pStatUpdateBytes = new Fl_Box(390, 220+MENU_HEIGHT, 130, 20, "");
 	m_pStatUpdateBytes->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	m_pStatUpdateBytes->labelcolor(COLOR_FG);
 	m_pStatFontSource = new Fl_Box(390, 245+MENU_HEIGHT, 130, 20, "");
 	m_pStatFontSource->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	m_pStatFontSource->labelcolor(COLOR_FG);
 	m_pStatIntlCharSet = new Fl_Box(390, 270+MENU_HEIGHT, 130, 20, "");
 	m_pStatIntlCharSet->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	m_pStatIntlCharSet->labelcolor(COLOR_FG);
 
 	UpdateMonTab(TRUE);
-	
 }
 
 /*
@@ -2853,4 +2959,6 @@ void VTFX80Print::UpdateMonTab(int forceUpdate)
 		m_pStatIntlCharSet->label(m_sStatIntlCharSet);
 	}
 }
+
+// vim: noet sw=4 ts=4
 

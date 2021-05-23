@@ -35,6 +35,9 @@ public:
   //! Publicly exposed list widget (instance of Fl_Hold_Browser)
   Fl_Hold_Browser list;
 
+  //! Set the widget colors
+  void set_colors( Fl_Color bgcolor, Fl_Color textcolor );
+
  protected:
 
   bool _value( const char *v );

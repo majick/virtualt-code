@@ -31,6 +31,7 @@ Flu_Combo_Box :: Flu_Combo_Box( int X, int Y, int W, int H, const char* l )
 
   _cbox = NULL;
   _valbox = FL_UP_BOX;
+  _arrowColor = FL_BLACK;
 
   input_callback( NULL );
   input.box( FL_FLAT_BOX );
@@ -48,6 +49,14 @@ Flu_Combo_Box :: Flu_Combo_Box( int X, int Y, int W, int H, const char* l )
 
 Flu_Combo_Box::~Flu_Combo_Box()
 {
+}
+
+void Flu_Combo_Box :: set_colors( Fl_Color fgcolor, Fl_Color textcolor )
+{
+  color(fgcolor);
+  _arrowColor = textcolor;
+  input.color(fgcolor);
+  input.textcolor(textcolor);
 }
 
 void Flu_Combo_Box :: set_combo_widget( Fl_Widget *w )
@@ -93,7 +102,8 @@ void Flu_Combo_Box :: draw()
 
   // draw the arrow button
   fl_draw_box( (Fl_Boxtype)_valbox, X, Y, W, H, color() );
-  fl_color( active_r() ? FL_FOREGROUND_COLOR : fl_inactive(FL_FOREGROUND_COLOR) );
+  //fl_color( active_r() ? FL_FOREGROUND_COLOR : fl_inactive(FL_FOREGROUND_COLOR) );
+  fl_color( active_r() ? _arrowColor : fl_inactive(_arrowColor) );
   fl_polygon( X+W/2-4, Y+H/2-2, X+W/2+4, Y+H/2-2, X+W/2, Y+H/2+2 );
 
   draw_child( input );

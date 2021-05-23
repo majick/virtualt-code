@@ -48,6 +48,13 @@
 #include "memory.h"
 #include "clock.h"
 
+#define COLOR_BG  		(gMidnight ? FL_BLACK : fl_rgb_color(192, 192, 192))
+#define COLOR_BG_INPUT  (gMidnight ? FL_BLACK : FL_WHITE)
+#define COLOR_FG  		(gMidnight ? FL_WHITE : FL_BLACK)
+#define COLOR_TAB_INACTIVE_BG  		(gMidnight ? fl_rgb_color(32,32,32) : fl_rgb_color(192,192,192))
+#define COLOR_TAB_INACTIVE_FG  		(gMidnight ? fl_rgb_color(192,192,192) : FL_BLACK)
+
+extern  int gMidnight;
 uchar			gClockMode = 255;
 uchar			gRp5c01_mode;
 uchar			gRp5c01_data[4][13];
@@ -556,24 +563,29 @@ void build_clock_setup_tab(void)
 {
 	Fl_Box* pText = new Fl_Box(20, 10, 60, 80, "Clock operation upon power-up");
 	pText->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+	pText->labelcolor(COLOR_FG);
 
 	// Create Radio button for "Host Time"
 	gClockCtrl.pSysTime = new Fl_Round_Button(20, 70, 200, 20, "Reset to Host Time");
 	gClockCtrl.pSysTime->type(FL_RADIO_BUTTON);
 	gClockCtrl.pSysTime->callback(cb_clock_radio_sys);
+	gClockCtrl.pSysTime->labelcolor(COLOR_FG);
 
 	gClockCtrl.pReload = new Fl_Check_Button(45, 95, 250, 20, "Reset time when changing models");
 	gClockCtrl.pReload->value(gReload);
+	gClockCtrl.pReload->labelcolor(COLOR_FG);
 	if (gClockTimingMode != CLOCK_MODE_SYS)
 		gClockCtrl.pReload->deactivate();
 
 	// Create Radio button for Model Clock Time
 	gClockCtrl.pEmulTime = new Fl_Round_Button(20, 130, 200, 20, "Restore Emulated Time");
 	gClockCtrl.pEmulTime->type(FL_RADIO_BUTTON);
+	gClockCtrl.pEmulTime->labelcolor(COLOR_FG);
 	gClockCtrl.pEmulTime->callback(cb_clock_radio_emul);
 
 	gClockCtrl.pTimeElapse = new Fl_Check_Button(45, 155, 270, 20, "Time elapses while emulation stopped");
 	gClockCtrl.pTimeElapse->value(gTimeElapse);
+	gClockCtrl.pTimeElapse->labelcolor(COLOR_FG);
 	if (gClockTimingMode != CLOCK_MODE_EMUL)
 		gClockCtrl.pTimeElapse->deactivate();
 

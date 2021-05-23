@@ -57,6 +57,11 @@
 #define	EDIT_FIELD_X	200
 #define EDIT_FIELD_Y	10
 
+#define COLOR_BG  		(gMidnight ? FL_BLACK : fl_rgb_color(192, 192, 192))
+#define COLOR_BG_INPUT  (gMidnight ? FL_BLACK : FL_WHITE)
+#define COLOR_FG  		(gMidnight ? FL_WHITE : FL_BLACK)
+
+extern int gMidnight;
 VTCharacterGen*		gpCharGen;
 
 /*
@@ -135,25 +140,37 @@ VTCharacterGen::VTCharacterGen(int w, int h, const char* title) :
 	Fl_Box*	o;
 	Fl_Button*	b;
 
+  // Set the window background color
+  color(COLOR_BG);
+
 	// Create Text field with char value
 	o = new Fl_Box(FL_NO_BOX, 20, 10, 100, 20, "Character:");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+  o->labelcolor(COLOR_FG);
 	m_pCharText = new Fl_Box(FL_NO_BOX, 120, 10, 60, 20, "");
 	m_pCharText->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+  m_pCharText->labelcolor(COLOR_FG);
 
 	// Create Clear, Copy, Paste buttons
 	b = new Fl_Button(20, 45, 60, 25, "Copy");
 	b->callback(cb_Copy);
+  b->color(COLOR_BG);
+  b->labelcolor(COLOR_FG);
 	b = new Fl_Button(100, 45, 60, 25, "Paste");
 	b->callback(cb_Paste);
+  b->color(COLOR_BG);
+  b->labelcolor(COLOR_FG);
 	b = new Fl_Button(20, 80, 60, 25, "Clear");
 	b->callback(cb_Clear);
+  b->color(COLOR_BG);
+  b->labelcolor(COLOR_FG);
 
 	for (c = 0; c < 6; c++)
 		for (r = 0; r < 9; r++)
 		{
-			m_pBoxes[c][r] = new Fl_Box(FL_BORDER_BOX, EDIT_FIELD_X + c*GRID_SIZE, 
+			m_pBoxes[c][r] = new Fl_Box(FL_BORDER_FRAME, EDIT_FIELD_X + c*GRID_SIZE, 
 				EDIT_FIELD_Y + r*GRID_SIZE, GRID_SIZE+1, GRID_SIZE+1, "");
+      m_pBoxes[c][r]->color(COLOR_FG);
 		}
 	// Generate the dots
 	for (c = 0; c < 11; c++)
@@ -161,7 +178,7 @@ VTCharacterGen::VTCharacterGen(int w, int h, const char* title) :
 		{
 			m_pDots[c][r] = new Fl_Box(FL_OVAL_BOX, EDIT_FIELD_X + c*GRID_SIZE/2+5, 
 				EDIT_FIELD_Y +r*GRID_SIZE+5, GRID_SIZE-10, GRID_SIZE-10, "");
-			m_pDots[c][r]->color(FL_BLACK);
+			m_pDots[c][r]->color(COLOR_FG);
 			m_pDots[c][r]->hide();
 			m_Dots[c][r] = 0;
 		}
@@ -169,59 +186,77 @@ VTCharacterGen::VTCharacterGen(int w, int h, const char* title) :
 	// Create text for the sample output displays
 	o = new Fl_Box(EDIT_FIELD_X + GRID_SIZE * 7, 10, 80, 20, "Pica:");
 	o->align(FL_ALIGN_RIGHT | FL_ALIGN_INSIDE);
+  o->labelcolor(COLOR_FG);
 	m_pExPica = new Fl_Box(FL_NO_BOX, EDIT_FIELD_X + GRID_SIZE * 7 + 100, 10, 35, 35, "");
+	m_pExPica->color(COLOR_FG);
+	m_pExPica->labelcolor(COLOR_FG);
 	o = new Fl_Box(EDIT_FIELD_X + GRID_SIZE * 7, 50, 80, 20, "Expanded:");
 	o->align(FL_ALIGN_RIGHT | FL_ALIGN_INSIDE);
-	m_pExPica = new Fl_Box(FL_NO_BOX, EDIT_FIELD_X + GRID_SIZE * 7 + 100, 10, 35, 35, "");
+  o->labelcolor(COLOR_FG);
+	//m_pExPica = new Fl_Box(FL_NO_BOX, EDIT_FIELD_X + GRID_SIZE * 7 + 100, 10, 35, 35, "");
 	m_pExExpand = new Fl_Box(FL_NO_BOX, EDIT_FIELD_X + GRID_SIZE * 7 + 100, 50, 35, 35, "");
 	o = new Fl_Box(EDIT_FIELD_X + GRID_SIZE * 7, 90, 80, 20, "Enhanced:");
 	o->align(FL_ALIGN_RIGHT | FL_ALIGN_INSIDE);
-	m_pExPica = new Fl_Box(FL_NO_BOX, EDIT_FIELD_X + GRID_SIZE * 7 + 100, 10, 35, 35, "");
+  o->labelcolor(COLOR_FG);
+	//m_pExPica = new Fl_Box(FL_NO_BOX, EDIT_FIELD_X + GRID_SIZE * 7 + 100, 10, 35, 35, "");
 	m_pExEnhance = new Fl_Box(FL_NO_BOX, EDIT_FIELD_X + GRID_SIZE * 7 + 100, 90, 35, 35, "");
 	o = new Fl_Box(EDIT_FIELD_X + GRID_SIZE * 7, 130, 80, 20, "Dbl-Strike:");
 	o->align(FL_ALIGN_RIGHT | FL_ALIGN_INSIDE);
-	m_pExPica = new Fl_Box(FL_NO_BOX, EDIT_FIELD_X + GRID_SIZE * 7 + 100, 10, 35, 35, "");
+  o->labelcolor(COLOR_FG);
+	//m_pExPica = new Fl_Box(FL_NO_BOX, EDIT_FIELD_X + GRID_SIZE * 7 + 100, 10, 35, 35, "");
 	m_pExDblStrike = new Fl_Box(FL_NO_BOX, EDIT_FIELD_X + GRID_SIZE * 7 + 100, 130, 35, 35, "");
 	o = new Fl_Box(EDIT_FIELD_X + GRID_SIZE * 7, 170, 80, 20, "Dbl-Enhance:");
 	o->align(FL_ALIGN_RIGHT | FL_ALIGN_INSIDE);
-	m_pExPica = new Fl_Box(FL_NO_BOX, EDIT_FIELD_X + GRID_SIZE * 7 + 100, 10, 35, 35, "");
+  o->labelcolor(COLOR_FG);
+	//m_pExPica = new Fl_Box(FL_NO_BOX, EDIT_FIELD_X + GRID_SIZE * 7 + 100, 10, 35, 35, "");
 	m_pExDblEnhance = new Fl_Box(FL_NO_BOX, EDIT_FIELD_X + GRID_SIZE * 7 + 100, 170, 35, 35, "");
 
 	// Create a character table
 	m_pCharTable = new VTCharTable(40, EDIT_FIELD_Y + GRID_SIZE * 11, 15*32, 22*8,"");
 	m_pCharTable->callback(cb_CloseCharGen);
+  m_pCharTable->color(COLOR_BG);
 
 	// Text for the Char Table
 	o = new Fl_Box(FL_NO_BOX, 10, EDIT_FIELD_Y+GRID_SIZE*11+5, 25, 15,"00h");
 	o->align(FL_ALIGN_RIGHT | FL_ALIGN_INSIDE);
+  o->labelcolor(COLOR_FG);
 	o->labelsize(10);
 	o = new Fl_Box(FL_NO_BOX, 10, EDIT_FIELD_Y+GRID_SIZE*11+5+1*22, 25, 15,"20h");
 	o->align(FL_ALIGN_RIGHT | FL_ALIGN_INSIDE);
+  o->labelcolor(COLOR_FG);
 	o->labelsize(10);
 	o = new Fl_Box(FL_NO_BOX, 10, EDIT_FIELD_Y+GRID_SIZE*11+5+2*22, 25, 15,"40h");
 	o->align(FL_ALIGN_RIGHT | FL_ALIGN_INSIDE);
 	o->labelsize(10);
+  o->labelcolor(COLOR_FG);
 	o = new Fl_Box(FL_NO_BOX, 10, EDIT_FIELD_Y+GRID_SIZE*11+5+3*22, 25, 15,"60h");
 	o->align(FL_ALIGN_RIGHT | FL_ALIGN_INSIDE);
 	o->labelsize(10);
+  o->labelcolor(COLOR_FG);
 	o = new Fl_Box(FL_NO_BOX, 10, EDIT_FIELD_Y+GRID_SIZE*11+5+4*22, 25, 15,"80h");
 	o->align(FL_ALIGN_RIGHT | FL_ALIGN_INSIDE);
 	o->labelsize(10);
+  o->labelcolor(COLOR_FG);
 	o = new Fl_Box(FL_NO_BOX, 10, EDIT_FIELD_Y+GRID_SIZE*11+5+5*22, 25, 15,"A0h");
 	o->align(FL_ALIGN_RIGHT | FL_ALIGN_INSIDE);
 	o->labelsize(10);
+  o->labelcolor(COLOR_FG);
 	o = new Fl_Box(FL_NO_BOX, 10, EDIT_FIELD_Y+GRID_SIZE*11+5+6*22, 25, 15,"C0h");
 	o->align(FL_ALIGN_RIGHT | FL_ALIGN_INSIDE);
 	o->labelsize(10);
+  o->labelcolor(COLOR_FG);
 	o = new Fl_Box(FL_NO_BOX, 10, EDIT_FIELD_Y+GRID_SIZE*11+5+7*22, 25, 15,"E0h");
 	o->align(FL_ALIGN_RIGHT | FL_ALIGN_INSIDE);
 	o->labelsize(10);
+  o->labelcolor(COLOR_FG);
 	o = new Fl_Box(FL_NO_BOX, 40, EDIT_FIELD_Y+GRID_SIZE*11-15, 25, 15,"00h");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 	o->labelsize(10);
+  o->labelcolor(COLOR_FG);
 	o = new Fl_Box(FL_NO_BOX, 40+15*32-22, EDIT_FIELD_Y+GRID_SIZE*11-15, 25, 15,"1Fh");
 	o->align(FL_ALIGN_RIGHT | FL_ALIGN_INSIDE);
 	o->labelsize(10);
+  o->labelcolor(COLOR_FG);
 
 	// Create load button
 	b = new Fl_Button(40, 460, 70, 30, "Load");
@@ -1120,7 +1155,7 @@ void VTCharTable::DrawChar(int index)
 	if (index == m_ActiveChar)
 		bk_color = fl_rgb_color(255, 255, 0);
 	else
-		bk_color = FL_GRAY;
+		bk_color = COLOR_BG;
 
 	for (j = 1; j < 12; j++)
 	{
@@ -1139,7 +1174,12 @@ void VTCharTable::DrawChar(int index)
 		for (i = 7; i >= 0; i--)
 		{
 			if (m_Data[index][j] & (0x01 << i))
-				fl_color(FL_BLACK);
+      {
+	      if (index == m_ActiveChar)
+          fl_color(FL_BLACK);
+        else
+          fl_color(COLOR_FG);
+      }
 			else
 				fl_color(bk_color);
 

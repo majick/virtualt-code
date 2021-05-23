@@ -69,6 +69,9 @@ public:
   inline void input_callback( void (*cb)(Fl_Widget*,void*), void* cbd = NULL )
     { _inputCB = cb; _inputCBD = cbd; }
 
+  //! Set the string in the input field and the value of the popup box.
+  void set_colors( Fl_Color fgcolor, Fl_Color textcolor);
+
   //! Publicly exposed input widget
   Fl_Input input;
 
@@ -91,6 +94,7 @@ protected:
   bool _pushed, _popped;
   Fl_Widget *_cbox;
   int popHeight;
+  Fl_Color  _arrowColor;
 
   static void input_cb( Fl_Widget*, void* v );
 

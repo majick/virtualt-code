@@ -188,6 +188,7 @@ std::string cmd_help(ServerSocket& sock)
 	sock << "  radix [10 or 16]" << gLineTerm;
 	sock << "  read_mem(rm) address [count]" << gLineTerm;
 	sock << "  read_reg(rr) [all A B h m DE ...]" << gLineTerm;
+	sock << "  read_rex" << gLineTerm;
 	sock << "  reset" << gLineTerm;
 	sock << "  run" << gLineTerm;
 	sock << "  screen_dump(sd)" << gLineTerm;
@@ -1080,6 +1081,45 @@ std::string cmd_read_reg(ServerSocket& sock, std::string& args)
 		return ret + gLineTerm + gOk;
 	}
 	return gOk;
+}
+
+/*
+=======================================================
+Read rex command:  Reads REX state and register contents
+// added SA
+=======================================================
+*/
+std::string cmd_read_rex(ServerSocket& sock)
+{
+	std::string ret="";
+	char		rex1_str[300];
+	char		rex2_str[300];
+	char		rex3_str[300];
+
+	// Lock the global access object so the registers are stable
+	lock_remote();
+
+	if (gRadix == 10)
+	{
+		sprintf(rex1_str, "REX state=%d REX OPTROM register=%d", gRexState, gRexSector);
+
+		sprintf(rex2_str, "REXC state=%d REXC OPTROM register=%d REXC LowRam register=%d REXC UpRam register=%d  REXC WP= %d",
+			gRexCState, gRexCOSector, gRexCRLSector, gRexCRUSector, gRexCWP);
+	}
+	else
+	{
+		sprintf(rex1_str, "REX state=%02X REX OPTROM register=%02X", gRexState, gRexSector);
+
+		sprintf(rex2_str, "REXC state=%02X REXC OPTROM register=%02X REXC LowRam register=%02X REXC UpRam register=%02X  REXC WP= %02X",
+			gRexCState, gRexCOSector, gRexCRLSector, gRexCRUSector, gRexCWP);
+	}
+
+	sprintf(rex3_str, "gReMem=%02X gRex=%02X readcounter=%02X keyvalue=%02X keyaddr=%02X  ",
+		gReMem, gRex, readcounter, gRexCKey, gRexCKeyAddr);
+
+	unlock_remote();
+
+	return rex1_str+ gLineTerm + rex2_str+ gLineTerm + rex3_str+ gLineTerm + gOk ;
 }
 
 /*
@@ -2133,7 +2173,7 @@ get_lcd_coords: Extracts row and column values from
 */
 int get_lcd_coords(std::string& str, int& row, int& col)
 {
-	int		pos, c;
+	unsigned int		pos, c;
 
 	// Ensure there is a '('
 	if (str[0] != '(')
@@ -2141,11 +2181,11 @@ int get_lcd_coords(std::string& str, int& row, int& col)
 
 	// Find the ','
 	pos = str.find(",");
-	if (pos == -1)
+	if (pos == std::string::npos)
 		return 1;
 
 	// Find the position of the col value
-	for (c = pos+1; c < (int) str.length(); c++)
+	for (c = pos+1; c < str.length(); c++)
 	{
 		if (str[c] != ' ')
 			break;
@@ -2834,13 +2874,13 @@ int telnet_command_ready(ServerSocket& sock, std::string &cmd, char* sockData, i
 		/* Test for 0x0a command line terminaor */
 		if (ch == gTelnetCR)
 		{
-			char temp[2];
 			cmd_term = TRUE;
 			cmd = gTelnetCmd;
 			gTelnetCmd = "";
+#ifdef WIN32
+			char temp[2];
 			temp[0] = ch;
 			temp[1] = 0;
-#ifdef WIN32
 			sock << temp;
 			temp[0] = 0x0A;
 			sock << temp;
@@ -2850,11 +2890,10 @@ int telnet_command_ready(ServerSocket& sock, std::string &cmd, char* sockData, i
 		/* Test for 0x0D and ignore it */
 		if (ch == 0x0D)
 		{
+#ifdef WIN32
 			char temp[2];
 			temp[0] = ch;
 			temp[1] = 0;
-			temp[1] = 0;
-#ifdef WIN32
 			sock << temp;
 #endif
 			continue;
@@ -2996,6 +3035,9 @@ std::string process_command(ServerSocket& sock, char *sockdata, int len,
 	else if ((cmd_word == "read_reg") || (cmd_word == "rr"))
 		ret = cmd_read_reg(sock, args);
 
+	else if ((cmd_word == "read_rex") || (cmd_word == "rx"))
+		ret = cmd_read_rex(sock);
+
 	else if (cmd_word == "regs")
 	{
 		args = "all";
@@ -3121,7 +3163,7 @@ std::string process_command(ServerSocket& sock, char *sockdata, int len,
 		gLastCmdDis = TRUE;
 		return ret;
 	}
-	else if (cmd_word.find('=') != -1)
+	else if (cmd_word.find('=') != std::string::npos)
 		ret = cmd_write_reg(sock, cmd);
 
 	gLastCmdDis = FALSE;
@@ -3249,10 +3291,10 @@ Handles user input at the console
 */
 void* console_control(void* pArg)
 {
-	static	char	cmdLine[256];
-	static	int		cmdLen = 0;
-	static	int		cmdReady = 0;
-	std::string  	ret;
+	static	char			cmdLine[256];
+	static	unsigned int	cmdLen = 0;
+	static	int				cmdReady = 0;
+	std::string  			ret;
 
 	// Check if no-GUI mode enabled
 	send_telnet_greeting(gConsole, TRUE);
@@ -3717,10 +3759,10 @@ Handles user input at the console
 */
 void remote_process_console_input(void)
 {
-	int				ch;
-	static	char	cmdLine[256];
-	static	char	cmdLen = 0;
-	std::string  	ret;
+	int						ch;
+	static	char			cmdLine[256];
+	static	unsigned int	cmdLen = 0;
+	std::string  			ret;
 
 	// Get the character from the console
 	while (1)
@@ -3775,7 +3817,8 @@ void remote_process_console_input(void)
 			cmdLen = 0;
 			return;
 		}
-
 	}
 }
+
+// vim: noet sw=4 ts=4
 

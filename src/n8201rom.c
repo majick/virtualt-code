@@ -898,7 +898,8 @@ RomDescription_t gN8201_Desc = {
 	gN8201_Vars,				/* Known variables */
 	gN8201_Funs,				/* Known functions */
 
-	0xF979,                     /* Address of unsaved BASIC prgm */
+	0xF45D,                     /* Address of unsaved BASIC prgm */
+	//0xF979,                     /* Address of unsaved BASIC prgm */
 	0xF87C,                     /* Address of next DO file */
 	0xFAE1,                     /* Start of DO file area */
 	0xFAE3,                     /* Start of CO file area */

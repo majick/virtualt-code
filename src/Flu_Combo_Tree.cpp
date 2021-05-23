@@ -35,6 +35,14 @@ Flu_Combo_Tree :: ~Flu_Combo_Tree()
 {
 }
 
+void Flu_Combo_Tree :: set_colors( Fl_Color bgcolor, Fl_Color textcolor )
+{
+  tree.color(bgcolor);
+  tree.labelcolor(textcolor);
+  tree.set_colors(bgcolor, textcolor);
+  Flu_Combo_Box::set_colors(bgcolor, textcolor);
+}
+
 void Flu_Combo_Tree :: cb()
 {
   //if( tree.callback_reason() == FLU_UNSELECTED )

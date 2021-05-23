@@ -112,9 +112,13 @@ extern "C" {
 #define	REGION_ROM4					14
 #define	REGION_MAX					15
 #define REGION_RAM4                 16
+#define REGION_REXC_RAM				17			// added SA
 
 #define	REX							1
 #define	REX2						2
+#define REXS						3			// added SA
+#define REXC						4			// added SA
+
 
 #define	REX_ROM_REPLACEMENT			0x01
 #define	REX2_RAM_MODE				0x02
@@ -146,6 +150,18 @@ extern unsigned char	gBaseMemory[65536];
 extern unsigned char	gReMem;
 extern int				gRex;
 
+extern int				gRexState;		// added SA to support remote.cpp functions
+extern int				gRexSector;
+extern int				gRexCState;
+extern unsigned char				gRexCOSector;
+extern unsigned char				gRexCRLSector;
+extern unsigned char				gRexCRUSector;
+extern int				gRexCWP;
+extern int				readcounter;
+
+extern int				gRexCKey;
+extern int				gRexCKeyAddr;
+
 void			init_mem(void);
 void			reinit_mem(void);
 void			cold_boot_mem(void);
@@ -153,8 +169,10 @@ void			free_mem(void);
 void			free_remem_mem(void);
 void			free_rampac_mem(void);
 void			load_rampac_ram(void);
+void			load_rexc_ram(void);		// added SA
 void			load_remem_ram(void);
 void			save_rampac_ram(void);
+void			save_rexc_ram(void);		// added SA
 void			save_remem_ram(void);
 void			reload_sys_rom(void);
 void			save_rex2_ram(void);
@@ -163,6 +181,7 @@ void			load_rex2_ram(void);
 void			load_rex_flash(void);
 
 unsigned char	get_memory8(unsigned short address);
+unsigned char	get_memory8_counter(unsigned short address);		// added to facilitate read counting in REXCPM
 unsigned short	get_memory16(unsigned short address);
 void			set_memory8(unsigned short address, unsigned char data);
 void			set_memory16(unsigned short address, unsigned short data);
@@ -184,7 +203,9 @@ unsigned char	remem_flash_sm_read(unsigned short address);
 void			remem_flash_proc_timer(void);
 void			patch_vt_version(char* pMem, int size);
 unsigned char	rex_read(unsigned short address);
-void			rex_set8(unsigned short address, unsigned char val);
+unsigned char	rexC_read(unsigned short address);							// added SA
+void			rex_set8(unsigned short address, unsigned char val);		
+void			rexC_set8(unsigned short address, unsigned char val);		// added SA
 
 void			save_ram(void);
 void			load_ram(void);

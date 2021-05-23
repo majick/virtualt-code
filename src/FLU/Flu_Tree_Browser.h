@@ -63,6 +63,9 @@ class FLU_EXPORT Flu_Tree_Browser : public Fl_Double_Window
   //! Default destructor
   virtual ~Flu_Tree_Browser();
 
+  //! Set the widget's colors
+  void set_colors( Fl_Color bgcolor, Fl_Color textcolor);
+
   //! Add the entry specified by \b fullpath to the tree. If \b w is not \c NULL then that widget is the entry and its label is visible depending on the value of \b showLabel. Note that the widget is destroyed by the tree/node on clear() or the destructor
   /*! If \b fullpath ends in a slash ("/"), then the entry is added as a branch, else it is added as a leaf
     \return a pointer to the Node of the added entry or NULL if the add failed */

@@ -34,6 +34,8 @@ public:
   //! Publicly exposed tree widget (instance of Flu_Tree_Browser)
   Flu_Tree_Browser tree;
 
+  void set_colors( Fl_Color fgcolor, Fl_Color textcolor );
+
  protected:
 
   bool _value( const char *v );

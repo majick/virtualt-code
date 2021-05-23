@@ -3398,6 +3398,7 @@ Flu_Tree_Browser::Node* Flu_Tree_Browser :: Node :: insert_at( Node* p, Node* i,
 	rdata.visibilityChanged = true;
 
 	free( nodeName );
+  (void) remainingPath;
 
 	return retNode;
 }
@@ -3478,3 +3479,14 @@ void Flu_Tree_Browser :: Node :: leaf_icon( Fl_Image *icon )
       tree->rdata.forceResize = true;
     }
 }
+
+void Flu_Tree_Browser :: set_colors ( Fl_Color bgcolor, Fl_Color textcolor )
+{
+  _box->color(bgcolor);
+  color(bgcolor);
+  branch_text( textcolor, FL_HELVETICA_BOLD, 12 );
+  leaf_text( textcolor, FL_HELVETICA, 12 );
+  shaded_entry_colors( bgcolor, bgcolor );
+  connector_style( textcolor, FL_DOT );
+}
+

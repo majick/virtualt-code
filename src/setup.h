@@ -77,6 +77,8 @@ typedef struct memory_setup
 	char	rampac_file[256];			// Filename for RamPac storage
 	char	rex_flash_file[256];		// Rex flash file
 	char	rex2_ram_file[256];			// Rex2 RAM file
+	char	rexc_ram_file[256];			// REXCPM RAM file added SA
+
 } memory_setup_t;
 
 extern memory_setup_t	mem_setup;
@@ -96,6 +98,8 @@ enum {
 	SETUP_MEM_REMEM_RAMPAC,
 	SETUP_MEM_REX,
 	SETUP_MEM_REX2,
+	SETUP_MEM_REXC,						// added SA
+	SETUP_MEM_REXS,						// added SA
     SETUP_MEM_QUAD,
     SETUP_MEM_REX_QUAD
 };

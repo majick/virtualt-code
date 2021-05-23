@@ -45,17 +45,23 @@
 
 extern "C"
 {
+#include "VirtualT.h"
 #include "memory.h"
 #include "roms.h"
 #include "intelhex.h"
 #include "m100emu.h"
 
 extern RomDescription_t *gStdRomDesc;
+extern int gMidnight;
 void jump_to_zero(void);
 }
 
 #include "file.h"
 #include "fileview.h"
+
+#define COLOR_BG  		(gMidnight ? FL_BLACK : fl_rgb_color(192, 192, 192))
+#define COLOR_BG_INPUT  (gMidnight ? FL_BLACK : FL_WHITE)
+#define COLOR_FG  		(gMidnight ? FL_WHITE : FL_BLACK)
 
 int		BasicSaveMode = 0;
 int		COSaveMode = 0;
@@ -257,7 +263,7 @@ int relocate(unsigned char* in, unsigned char* out, unsigned short addr)
 
 		if (in[c] + (in[c+1] << 8) <= line_number)
 		{
-			fl_message("%s", gIllformedBasic);
+			fl_message("1: %s", gIllformedBasic);
 			return 0;
 		}
 
@@ -271,11 +277,52 @@ int relocate(unsigned char* in, unsigned char* out, unsigned short addr)
 		line_len++;
 
 		// Copy tokenized line
-		while (in[c] != 0)
+		if (gModel == MODEL_PC8201 || gModel == MODEL_PC8300)
 		{
-			out[c] = in[c];
-			c++;
-			line_len++;
+			// For MODEL_PC8201 or PC8300, the line can have embedded
+			// zeros.  This is because integer numbers are encoded as 3
+			// bytes:  0x0E  LSB MSB
+			// So for a value of say, 256, the LSB would be zero.
+			while (in[c] != 0)
+			{
+				// Test for 0x0E encoding
+				if (in[c] == 0x0E || in[c] == 0x1C || in[c] == 0x1D)
+				{
+					int encoding = in[c];
+
+					// Copy this byte and the next directly
+					out[c] = in[c];
+					c++;
+					out[c] = in[c];
+					c++;
+					line_len += 2;
+
+					// The 0x1D encoding is 4 bytes
+					if (encoding == 0x1D)
+					{
+						// Copy this byte and the next directly
+						out[c] = in[c];
+						c++;
+						out[c] = in[c];
+						c++;
+						line_len += 2;
+					}
+				}
+
+				out[c] = in[c];
+				c++;
+				line_len++;
+			}
+		}
+		else
+		{
+			// Each line is terminated with a zero
+			while (in[c] != 0)
+			{
+				out[c] = in[c];
+				c++;
+				line_len++;
+			}
 		}
 
 		out[c] = in[c];		// Copy terminating zero
@@ -292,7 +339,7 @@ int relocate(unsigned char* in, unsigned char* out, unsigned short addr)
 			addr1 = in[this_line] + (in[this_line+1] << 8);
 			if (addr1 != base + line_len)
 			{
-				fl_message("%s", gIllformedBasic);
+				fl_message("2: %s", gIllformedBasic);
 				return 0;
 			}
 		}
@@ -369,7 +416,7 @@ int tokenize(unsigned char* in, unsigned char* out, unsigned short addr)
 				// Check for characters with no line number
 				else if (line_num_len == 0)
 				{
-					fl_message("%s", gIllformedBasic);
+					fl_message("3: %s", gIllformedBasic);
 					return 0;
 				}
 
@@ -972,6 +1019,9 @@ void cb_LoadFromHost(Fl_Widget* w, void* host_filename)
 	// Close the file
 	fclose(fd);
 
+  if (readlen == 0)
+    return;
+
 	// Determine file location
 	if (file_type == TYPE_BA)
 	{
@@ -985,6 +1035,8 @@ void cb_LoadFromHost(Fl_Widget* w, void* host_filename)
 	{
 		addr1 = get_memory16(gStdRomDesc->sFilePtrDO);
 	}
+  else
+    return;
 
 	// Determine length of data and expand LF to CRLF
 	if (file_type == TYPE_DO)
@@ -1492,11 +1544,19 @@ void cb_SaveToHost(Fl_Widget* w, void*)
 
 	// Create the windows
 	gSaveToHost = new Fl_Window(220,320,"Select file to save to Host");
+	gSaveToHost->color(COLOR_BG);
 	fsb = new Fl_Hold_Browser(0, 0, 220,280);
+	fsb->color(COLOR_BG);
+	fsb->labelcolor(COLOR_FG);
+	fsb->textcolor(COLOR_FG);
 	fsave = new Fl_Button(20,288,80,25,"Save");
+	fsave->color(COLOR_BG);
+	fsave->labelcolor(COLOR_FG);
 	fsave->callback(cb_save);
 	fcancel = new Fl_Button(130, 288, 80, 25, "Cancel");
 	fcancel->callback(cb_cancel);
+	fcancel->color(COLOR_BG);
+	fcancel->labelcolor(COLOR_FG);
 
 	// Add Model T files to the browser
 	addr1 = gStdRomDesc->sDirectory;

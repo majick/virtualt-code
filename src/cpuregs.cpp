@@ -677,7 +677,7 @@ void redraw_trace(Fl_Widget* w, void* pOpaque)
 	int		x, draw, lines, last_pc, last_sp;
 	char	lineStr[120], str[100];
 	int		trace_top = gcpuw->m_pTraceBox->y() + gcpuw->m_fontHeight - 4;
-	int		lookahead = 0, bold;
+	int		lookahead = 0, bold = 0;
 	int		selStart, selEnd;
 
 	// Clear rectangle
@@ -985,7 +985,8 @@ unsigned char get_m()
 	if (gReMem & !gRex)
 		return (gMemory[gIndex[HL]][HL & 0x3FF]);
 	else
-		return gBaseMemory[HL];
+		return get_memory8(HL);
+		//return gBaseMemory[HL];
 }
 
 /*
@@ -2524,7 +2525,7 @@ VTCpuRegs::VTCpuRegs(int x, int y, const char *title) :
 	/* Load the user preferences for window size, etc. */
 	LoadPrefs();
 	SetTraceColors();
-	for (c = 0; c < sizeof(m_pad); c++)
+	for (c = 0; c < (int) sizeof(m_pad); c++)
 		m_pad[c] = '1';
 
 	// Allocate the trace buffer

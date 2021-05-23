@@ -51,6 +51,12 @@
 #include "VirtualT.h"
 #include "hostprint.h"
 
+extern int gMidnight;
+
+#define COLOR_BG  		(gMidnight ? FL_BLACK : fl_rgb_color(192, 192, 192))
+#define COLOR_BG_INPUT  (gMidnight ? FL_BLACK : FL_WHITE)
+#define COLOR_FG  		(gMidnight ? FL_WHITE : FL_BLACK)
+
 /*
 ================================================================================
 VTHostPrint:	This is the class construcor for the HostPrint Device emulation.
@@ -112,18 +118,24 @@ void VTHostPrint::BuildPropertyDialog(Fl_Window* pParent)
 {
 	// Create controls for Host Port emulation mode
 	Fl_Box* o = new Fl_Box(20, 20, 360, 20, "Host Port / Device Printer");
+	o->labelcolor(COLOR_FG);
 
 	// Host port name control
 	o = new Fl_Box(20, 50, 300, 20, "Host Port Name");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 	m_pHostPort = new Fl_Input(50, 75, 300, 20, "");
 	m_pHostPort->value(m_HostPort);
+	m_pHostPort->color(COLOR_BG);
+	m_pHostPort->textcolor(COLOR_FG);
+	m_pHostPort->cursor_color(COLOR_FG);
 
 	m_pClosePort = new Fl_Check_Button(20, 115, 215, 20, "Close port between sessions");
 	m_pClosePort->value(m_ClosePort);
+	m_pClosePort->labelcolor(COLOR_FG);
 
 	m_pReadBusy = new Fl_Check_Button(20, 140, 205, 20, "Read BUSY status from port");
 	m_pReadBusy->value(m_ReadBusy);
+	m_pReadBusy->labelcolor(COLOR_FG);
 }
 
 /*
@@ -306,13 +318,17 @@ void VTHostPrint::BuildMonTab(void)
 
 	o = new Fl_Box(20, 45+MENU_HEIGHT, 100, 20, "Host Port:");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+  o->labelcolor(COLOR_FG);
 	o = new Fl_Box(20, 70+MENU_HEIGHT, 100, 20, "Port Status:");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+  o->labelcolor(COLOR_FG);
 
 	m_pStatHostPort = new Fl_Box(150, 45+MENU_HEIGHT, 300, 20, "");
 	m_pStatHostPort->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	m_pStatHostPort->labelcolor(COLOR_FG);
 	m_pStatPortStatus = new Fl_Box(150, 70+MENU_HEIGHT, 300, 20, "");
 	m_pStatPortStatus->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	m_pStatPortStatus->labelcolor(COLOR_FG);
 
 	UpdateMonTab();
 }

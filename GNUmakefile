@@ -24,8 +24,8 @@ ifeq ($(DEBUG),)
 OPTIMIZE	=	-O2
 endif
 
-CFLAGS		+=	 -I $(SRCDIR)/FLU $(OPTIMIZE) $(DEBUG) -fsigned-char
-CPPFLAGS	+=	 -I $(SRCDIR) $(OPTIMIZE) $(DEBUG)
+CFLAGS		+=	 -I $(SRCDIR)/FLU $(OPTIMIZE) $(DEBUG) -fsigned-char -Wall
+CPPFLAGS	+=	 -I $(SRCDIR) $(OPTIMIZE) $(DEBUG) -Wall
 VIRTUALT	=	 virtualt
 CLIENT		=	 vt_client
 ifndef CC

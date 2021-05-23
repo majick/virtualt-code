@@ -58,6 +58,8 @@
 
 #define DEFAULT_ENTRY_WIDTH 235
 
+extern int gMidnight;
+
 Fl_Pixmap up_folder_img( big_folder_up_xpm ), trash( trash_xpm ), new_folder( big_folder_new_xpm ), 
   reload( reload_xpm ), preview_img( monalisa_xpm ), file_list_img( filelist_xpm ), file_listwide_img( filelistwide_xpm ),
   fileDetails( filedetails_xpm ), add_to_favorite_folder( folder_favorite_xpm ),
@@ -293,12 +295,20 @@ Flu_File_Chooser :: Flu_File_Chooser( const char *pathname, const char *pat, int
   Fl_Group *quickIcons = new Fl_Group( 5, 5, 100, h()-10-60 );
   quickIcons->box( FL_DOWN_BOX );
   quickIcons->color( FL_DARK3 );
+  if (gMidnight)
+  {
+    color(fl_rgb_color(0x1e, 0x27, 0x28));
+    //color(FL_BLACK);
+    quickIcons->color( FL_BLACK );
+  }
 
   Flu_Button *desktopBtn = new Flu_Button( 30, 18, 50, 48 );
   desktopBtn->box( FL_FLAT_BOX );
   desktopBtn->image( desktop );
   desktopBtn->enter_box( FL_THIN_UP_BOX );
   desktopBtn->color( FL_DARK3 );
+  if (gMidnight)
+    desktopBtn->color( FL_BLACK );
   desktopBtn->callback( _desktopCB, this );
   { 
     Flu_Label *l = new Flu_Label( 5, 62, 100, 20, "Desktop" );
@@ -310,6 +320,8 @@ Flu_File_Chooser :: Flu_File_Chooser( const char *pathname, const char *pat, int
   homeBtn->box( FL_FLAT_BOX );
   homeBtn->enter_box( FL_THIN_UP_BOX );
   homeBtn->color( FL_DARK3 );
+  if (gMidnight)
+    homeBtn->color( FL_BLACK );
   homeBtn->callback( _homeCB, this );
   {
 #ifdef WIN32
@@ -328,6 +340,8 @@ Flu_File_Chooser :: Flu_File_Chooser( const char *pathname, const char *pat, int
   documentsBtn->enter_box( FL_THIN_UP_BOX );
   documentsBtn->labelcolor( FL_WHITE );
   documentsBtn->color( FL_DARK3 );
+  if (gMidnight)
+    documentsBtn->color( FL_BLACK );
   documentsBtn->callback( _documentsCB, this );
   { 
 #ifdef WIN32
@@ -346,6 +360,8 @@ Flu_File_Chooser :: Flu_File_Chooser( const char *pathname, const char *pat, int
   favoritesBtn->image( favorites );
   favoritesBtn->enter_box( FL_THIN_UP_BOX );
   favoritesBtn->color( FL_DARK3 );
+  if (gMidnight)
+    favoritesBtn->color( FL_BLACK );
   favoritesBtn->callback( _favoritesCB, this );
   { 
     Flu_Label *l = new Flu_Label( 5, 302, 100, 20, "Favorites" );
@@ -370,6 +386,11 @@ Flu_File_Chooser :: Flu_File_Chooser( const char *pathname, const char *pat, int
   filesystems->tree.horizontal_gap( -10 );
   filesystems->tree.show_leaves( false );
   filesystems->callback( _filesystemsCB, this );
+  if (gMidnight)
+  {
+    filesystems->set_colors(FL_BLACK, FL_WHITE);
+    filesystems->labelcolor(FL_WHITE);
+  }
 
   ////////////////////////////////////////////////////////////////
 
@@ -467,6 +488,8 @@ Flu_File_Chooser :: Flu_File_Chooser( const char *pathname, const char *pat, int
 
   hiddenFiles = new Fl_Check_Button( 110, 33, 130, 25, "Show Hidden Files" );
   hiddenFiles->callback( reloadCB, this );
+  if (gMidnight)
+    hiddenFiles->labelcolor(FL_WHITE);
 #ifdef WIN32
   hiddenFiles->hide();
 #endif
@@ -486,6 +509,8 @@ Flu_File_Chooser :: Flu_File_Chooser( const char *pathname, const char *pat, int
     filelist = new FileList( fileGroup->x()+2, fileGroup->y()+2, fileGroup->w()-4, fileGroup->h()-4, this );
     filelist->box( FL_FLAT_BOX );
     filelist->color( FL_WHITE );
+    if (gMidnight)
+      filelist->color(FL_BLACK);
     filelist->type( FL_HORIZONTAL );
     filelist->spacing( 4, 1 );
     filelist->scrollbar.linesize( DEFAULT_ENTRY_WIDTH+4 );
@@ -493,13 +518,29 @@ Flu_File_Chooser :: Flu_File_Chooser( const char *pathname, const char *pat, int
 
     filecolumns = new FileColumns( fileGroup->x()+2, fileGroup->y()+2, fileGroup->w()-4, 20, this );
     filecolumns->hide();
+    if (gMidnight)
+    {
+      filecolumns->color(FL_BLACK);
+      filecolumns->labelcolor(FL_WHITE);
+    }
+    filecolumns->end();
     filescroll = new Fl_Scroll( fileGroup->x()+2, fileGroup->y()+22, fileGroup->w()-4, fileGroup->h()-20-4 );
     filescroll->color( FL_WHITE );
+    if (gMidnight)
+    {
+      filescroll->color(FL_BLACK);
+      filescroll->labelcolor(FL_WHITE);
+    }
     filescroll->scrollbar.linesize( 20 );
     filescroll->box( FL_FLAT_BOX );
     filescroll->type( Fl_Scroll::VERTICAL );
     {
       filedetails = new FileDetails( fileGroup->x()+2, fileGroup->y()+22, fileGroup->w()-4, fileGroup->h()-20-4, this );
+      if (gMidnight)
+      {
+        filedetails->color(FL_BLACK);
+        filedetails->labelcolor(FL_WHITE);
+      }
       filedetails->end();
     }
     filescroll->end();
@@ -527,6 +568,18 @@ Flu_File_Chooser :: Flu_File_Chooser( const char *pathname, const char *pat, int
 
   ok.callback( _okCB, this );
   cancel.callback( _cancelCB, this );
+  if (gMidnight)
+  {
+    ok.color(FL_BLACK);
+    ok.labelcolor(FL_WHITE);
+    cancel.color(FL_BLACK);
+    cancel.labelcolor(FL_WHITE);
+    filename.color(FL_BLACK);
+    filename.labelcolor(FL_WHITE);
+    filename.textcolor(FL_WHITE);
+    filename.cursor_color(FL_WHITE);
+    filePattern->set_colors(FL_BLACK, FL_WHITE);
+  }
 
   {
     g = new Fl_Group( 0, h()-60, w(), 30 );
@@ -577,7 +630,8 @@ Flu_File_Chooser :: Flu_File_Chooser( const char *pathname, const char *pat, int
     //printf( "load: %s %X\n", buf, f );
     if( f )
       {
-		  int scanLen = fscanf(f, "%d, %d\n", &neww, &newh);
+		  int dummy =  fscanf(f, "%d, %d\n", &neww, &newh);
+      (void) dummy;
 	buf[0] = '\0';
 	while( !feof(f) )
 	  {
@@ -828,6 +882,12 @@ void Flu_File_Chooser :: newFolderCB()
 
   // create a new entry with the name of the new folder. add to either the list or the details
   Entry *entry = new Entry( newName.c_str(), ENTRY_DIR, fileDetailsBtn->value(), this );
+  if (gMidnight)
+  {
+    entry->color(FL_BLACK);
+    entry->textcolor(FL_WHITE);
+    entry->cursor_color(FL_WHITE);
+  }
   if( !fileDetailsBtn->value() )
     filelist->add( *entry );
   else
@@ -1440,6 +1500,11 @@ Flu_File_Chooser :: FileColumns :: FileColumns( int x, int y, int w, int h, Flu_
   c->detailNameBtn = new Flu_Button( x, y, W1, h, "Name" );
   c->detailNameBtn->align( FL_ALIGN_CLIP );
   c->detailNameBtn->callback( Flu_File_Chooser::_sortCB, c );
+  if (gMidnight)
+  {
+    c->detailNameBtn->color(fl_rgb_color(0x0e, 0x17, 0x18));
+    c->detailNameBtn->labelcolor(FL_WHITE);
+  }
   {
     CBTile *tile = new CBTile( x+W1, y, W2+W3+W4, h, c );
     Fl_Box *box = new Fl_Box( tile->x()+50, tile->y(), tile->w()-150, tile->h() );
@@ -1447,6 +1512,11 @@ Flu_File_Chooser :: FileColumns :: FileColumns( int x, int y, int w, int h, Flu_
     c->detailTypeBtn = new Flu_Button( x+W1, y, W2, h, "Type" );
     c->detailTypeBtn->align( FL_ALIGN_CLIP );
     c->detailTypeBtn->callback( Flu_File_Chooser::_sortCB, c );
+    if (gMidnight)
+    {
+      c->detailTypeBtn->color(fl_rgb_color(0x0e, 0x17, 0x18));
+      c->detailTypeBtn->labelcolor(FL_WHITE);
+    }
     {
       CBTile *tile = new CBTile( x+W1+W2, y, W3+W4, h, c );
       Fl_Box *box = new Fl_Box( tile->x()+50, tile->y(), tile->w()-100, tile->h() );
@@ -1457,6 +1527,13 @@ Flu_File_Chooser :: FileColumns :: FileColumns( int x, int y, int w, int h, Flu_
       c->detailDateBtn = new Flu_Button( x+W1+W2+W3, y, W4, h, "Date" );
       c->detailDateBtn->align( FL_ALIGN_CLIP );
       c->detailDateBtn->callback( Flu_File_Chooser::_sortCB, c );
+      if (gMidnight)
+      {
+        c->detailSizeBtn->color(fl_rgb_color(0x0e, 0x17, 0x18));
+        c->detailSizeBtn->labelcolor(FL_WHITE);
+        c->detailDateBtn->color(fl_rgb_color(0x0e, 0x17, 0x18));
+        c->detailDateBtn->labelcolor(FL_WHITE);
+      }
       tile->end();
     }
     tile->end();
@@ -1917,11 +1994,10 @@ void Flu_File_Chooser :: Entry :: updateSize()
     nameW = w();
 
   // how big is the icon?
-  int iW = 0, iH = 0;
+  int iW = 0;
   if( icon )
     {
       iW = icon->w()+2;
-      iH = icon->h();
     }
 
   fl_font( labelfont(), labelsize() );
@@ -2354,12 +2430,26 @@ int Flu_File_Chooser :: popupContextMenu( Entry *entry )
 
 void Flu_File_Chooser :: Entry :: draw()
 {
+  int   white;
+  int   black;
+
+  if (gMidnight)
+  {
+    white = FL_BLACK;
+    black = FL_WHITE;
+  }
+  else
+  {
+    white = FL_WHITE;
+    black = FL_BLACK;
+  }
+
   if( editMode )
     {
       if( editMode == 2 )
 	{
 	  editMode--;
-	  fl_draw_box( FL_FLAT_BOX, x(), y(), w(), h(), FL_WHITE );
+	  fl_draw_box( FL_FLAT_BOX, x(), y(), w(), h(), white );
 	  redraw();
 	}
       Fl_Input::draw();
@@ -2369,12 +2459,15 @@ void Flu_File_Chooser :: Entry :: draw()
   if( selected )
     {
       fl_draw_box( FL_FLAT_BOX, x(), y(), w(), h(), FL_SELECTION_COLOR );
-      fl_color( FL_WHITE );
+      if (gMidnight)
+        fl_color( black );
+      else
+        fl_color( white );
     }
   else
     {
-      fl_draw_box( FL_FLAT_BOX, x(), y(), w(), h(), FL_WHITE );
-      fl_color( FL_BLACK );
+      fl_draw_box( FL_FLAT_BOX, x(), y(), w(), h(), white );
+      fl_color( black );
     }
 
   int X = x()+4;
@@ -2943,7 +3036,7 @@ void Flu_File_Chooser :: cd( const char *localpath )
   previewGroup->redraw();
 
   filelist->scroll_to_beginning();
-  filescroll->position( 0, 0 );
+  //KDP filescroll->position( 0, 0 );
 
   bool listMode = !fileDetailsBtn->value() || streq( localpath, FAVORITES_UNIQUE_STRING );
 
@@ -2975,13 +3068,14 @@ void Flu_File_Chooser :: cd( const char *localpath )
     {
       filelist->hide();
       filecolumns->show();
+      //filescroll->position( filecolumns->x(), filecolumns->y()+20);
       filescroll->show();
       filescroll->parent()->resizable( filescroll );
       updateEntrySizes();
     }
 
   FluSimpleString currentFile = filename.value();
-  filescroll->position( 0, 0 );
+  // KDP filescroll->position( 0, 0 );
   Fl::focus( &filename );
   upDirBtn->activate();
   ok.activate();
@@ -3008,6 +3102,12 @@ void Flu_File_Chooser :: cd( const char *localpath )
       for( int i = 1; i <= favoritesList->size(); i++ )
 	{
 	  entry = new Entry( favoritesList->text(i), ENTRY_FAVORITE, false/*fileDetailsBtn->value()*/, this );
+    if (gMidnight)
+    {
+      entry->color(FL_BLACK);
+      entry->textcolor(FL_WHITE);
+      entry->cursor_color(FL_WHITE);
+    }
 	  entry->updateSize();
 	  entry->updateIcon();
 	}
@@ -3115,6 +3215,12 @@ void Flu_File_Chooser :: cd( const char *localpath )
 	      char drive[] = "A:/";
 	      drive[0] = 'A' + i;
 	      entry = new Entry( drive, ENTRY_DRIVE, fileDetailsBtn->value(), this );
+        if (gMidnight)
+        {
+          entry->color(FL_BLACK);
+          entry->textcolor(FL_WHITE);
+          entry->cursor_color(FL_WHITE);
+        }
 	      switch( driveTypes[i] )
 		{
 		case DRIVE_REMOVABLE: entry->description = "Floppy Disk"; break;
@@ -3144,9 +3250,21 @@ void Flu_File_Chooser :: cd( const char *localpath )
       else
 	filedetails->begin();
       entry = new Entry( "My Documents", ENTRY_MYDOCUMENTS, fileDetailsBtn->value(), this );
+      if (gMidnight)
+      {
+        entry->color(FL_BLACK);
+        entry->textcolor(FL_WHITE);
+        entry->cursor_color(FL_WHITE);
+      }
       entry->updateSize();     
       entry->updateIcon();
       entry = new Entry( "My Computer", ENTRY_MYCOMPUTER, fileDetailsBtn->value(), this );
+      if (gMidnight)
+      {
+        entry->color(FL_BLACK);
+        entry->textcolor(FL_WHITE);
+        entry->cursor_color(FL_WHITE);
+      }
       entry->updateSize();     
       entry->updateIcon();
       if( listMode )
@@ -3355,6 +3473,12 @@ void Flu_File_Chooser :: cd( const char *localpath )
 
 	  // add directories at the beginning, and files at the end
 	  entry = new Entry( name, isDir?ENTRY_DIR:ENTRY_FILE, fileDetailsBtn->value(), this );
+    if (gMidnight)
+    {
+      entry->color(FL_BLACK);
+      entry->textcolor(FL_WHITE);
+      entry->cursor_color(FL_WHITE);
+    }
 	  if( isDir )
 	    {
 	      if( listMode )

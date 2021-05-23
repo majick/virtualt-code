@@ -48,6 +48,12 @@
 #include "VirtualT.h"
 #include "vtpaper.h"
 
+extern int gMidnight;
+
+#define COLOR_BG  		(gMidnight ? FL_BLACK : fl_rgb_color(192, 192, 192))
+#define COLOR_BG_INPUT  (gMidnight ? FL_BLACK : FL_WHITE)
+#define COLOR_FG  		(gMidnight ? FL_WHITE : FL_BLACK)
+
 void cb_VTPaperScroll(Fl_Widget *w, void * ptr)
 {
 	if (ptr != NULL)
@@ -690,22 +696,28 @@ void VTPSPaper::BuildControls()
 	m_pPrompt = new Fl_Check_Button(45, 210, 155, 20, "Prompt for Filename");
 	m_pPrompt->hide();
 	m_pPrompt->value(m_prompt);
+  m_pPrompt->labelcolor(COLOR_FG);
 
 	// Control to enable auto file generation
 	m_pAutoFilename = new Fl_Check_Button(45, 235, 210, 20, "Generate Automatic filename");
 	m_pAutoFilename->hide();
 	m_pAutoFilename->value(m_autoFilename);
+  m_pAutoFilename->labelcolor(COLOR_FG);
 
 	// Control to edit the output file generator format
 	m_pFileFormat = new Fl_Input(65, 260, 240, 20, "");
 	m_pFileFormat->hide();
 	m_pFileFormat->value((const char *) m_fileFormat);
+  m_pFileFormat->color(COLOR_BG);
+  m_pFileFormat->textcolor(COLOR_FG);
+  m_pFileFormat->cursor_color(COLOR_FG);
 	if (!m_autoFilename)
 		m_pFileFormat->deactivate();
 
 	// Control to show the format specifiers
 	m_pFormatText = new Fl_Box(75, 280, 230, 20, "%d = Date   %s = Seq");
 	m_pFormatText->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+  m_pFormatText->labelcolor(COLOR_FG);
 	m_pFormatText->hide();
 
 	// Create control for ink darkness
@@ -716,13 +728,17 @@ void VTPSPaper::BuildControls()
 	m_pDarkness->range(20, 60);
 	m_pDarkness->value(m_darkness);
 	m_pDarkness->hide();
+	m_pDarkness->color(COLOR_BG);
+	m_pDarkness->labelcolor(COLOR_FG);
 	
 	m_pLight = new Fl_Box(45, 305, 40, 20, "Light");
 	m_pLight->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 	m_pLight->hide();
+  m_pLight->labelcolor(COLOR_FG);
 	m_pDark = new Fl_Box(240, 305, 40, 20, "Dark");
 	m_pDark->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 	m_pDark->hide();
+  m_pDark->labelcolor(COLOR_FG);
 
 	// Set callback for checkbox
 	m_pAutoFilename->callback(cb_PSAutoFilenameCheck, m_pFileFormat);
@@ -1415,16 +1431,23 @@ void VTlprPaper::BuildControls()
 	m_pFileFormat = new Fl_Input(65, 215, 240, 20, "Format");
 	m_pFileFormat->hide();
 	m_pFileFormat->value((const char *) m_fileFormat);
+	m_pFileFormat->color(COLOR_BG);
+	m_pFileFormat->textcolor(COLOR_FG);
+	m_pFileFormat->cursor_color(COLOR_FG);
 
 	// Control to edit the output file generator format
 	m_pCmdLine = new Fl_Input(65, 245, 240, 20, "Cmd");
 	m_pCmdLine->hide();
 	m_pCmdLine->value((const char *) m_cmdLine);
+	m_pCmdLine->color(COLOR_BG);
+	m_pCmdLine->textcolor(COLOR_FG);
+	m_pCmdLine->cursor_color(COLOR_FG);
 
 	// Control to show the format specifiers
 	m_pFormatText = new Fl_Box(75, 270, 230, 20, "%d = Date  %s = Seq  %f = File");
 	m_pFormatText->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 	m_pFormatText->hide();
+	m_pFormatText->labelcolor(COLOR_FG);
 
 	// Create control for ink darkness
 	m_pDarkness = new Fl_Slider(90, 305, 140, 20, "Ink Density");
@@ -1434,13 +1457,17 @@ void VTlprPaper::BuildControls()
 	m_pDarkness->range(20, 60);
 	m_pDarkness->value(m_darkness);
 	m_pDarkness->hide();
+	m_pDarkness->color(COLOR_BG);
+	m_pDarkness->labelcolor(COLOR_FG);
 	
 	m_pLight = new Fl_Box(45, 305, 40, 20, "Light");
 	m_pLight->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 	m_pLight->hide();
+	m_pLight->labelcolor(COLOR_FG);
 	m_pDark = new Fl_Box(240, 305, 40, 20, "Dark");
 	m_pDark->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 	m_pDark->hide();
+	m_pDark->labelcolor(COLOR_FG);
 
 }
 

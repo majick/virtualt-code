@@ -119,6 +119,7 @@ public:
 	int				m_BackgroundColor;
 	int				m_PixelColor;
 	int				m_LabelColor;
+  int       m_DefaultColor;
 
 	int				m_DebugMonitor;
 	int				m_WheelKeys[32];

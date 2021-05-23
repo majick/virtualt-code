@@ -59,6 +59,12 @@
 #include "memedit.h"
 #include "fileview.h"
 
+#define COLOR_BG  		(gMidnight ? FL_BLACK : fl_rgb_color(192, 192, 192))
+#define COLOR_BG_INPUT  (gMidnight ? FL_BLACK : FL_WHITE)
+#define COLOR_FG  		(gMidnight ? FL_WHITE : FL_BLACK)
+#define COLOR_TAB_INACTIVE_BG  		(gMidnight ? fl_rgb_color(32,32,32) : fl_rgb_color(192,192,192))
+#define COLOR_TAB_INACTIVE_FG  		(gMidnight ? fl_rgb_color(192,192,192) : FL_BLACK)
+
 enum {
 	TPDD_STATE_IDLE = 0,
 	TPDD_STATE_Z,
@@ -85,6 +91,7 @@ extern volatile DWORD			rst7cycles;
 int strcasecmp(const char* s1, const char* s2);
 #endif
 }
+extern  int gMidnight;
 
 /*
 ======================================================
@@ -271,29 +278,40 @@ void tpdd_server_config(void)
 	// Create TPDD Server configuration window
 	gtcw = new Fl_Double_Window(480, 150, "TPDD / NADSBox Server");
 	gtcw->callback(cb_tcwin);
+	gtcw->color(COLOR_BG);
 
 	o = new Fl_Box(20, 20, 80, 20, "Root Directory");
 	o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+	o->labelcolor(COLOR_FG);
 
 	// Create an input field to edit / show the root directory
 	gTsCtrl.pRootDir = new Fl_Input(35, 40, 325, 20, "");
 	VTTpddServer* pServer = (VTTpddServer *) ser_get_tpdd_context();
 	strcpy(gTsCtrl.sRootDir, pServer->RootDir());
 	gTsCtrl.pRootDir->value(gTsCtrl.sRootDir);
+	gTsCtrl.pRootDir->color(COLOR_BG);
+	gTsCtrl.pRootDir->textcolor(COLOR_FG);
+	gTsCtrl.pRootDir->cursor_color(COLOR_FG);
 
 	// Create a browse button for the root directory
 	gTsCtrl.pTpddDir = new Fl_Button(380, 40, 80, 20, "Browse");
 	gTsCtrl.pTpddDir->callback(cb_TpddDir);
+	gTsCtrl.pTpddDir->color(COLOR_BG);
+	gTsCtrl.pTpddDir->labelcolor(COLOR_FG);
 
 	// Create a Cancel button
 	b = new Fl_Button(200, 120, 80, 20, "Cancel");
 	b->align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE);
 	b->callback(cb_tpdd_cancel);
+	b->color(COLOR_BG);
+	b->labelcolor(COLOR_FG);
 
 	// Create an OK button
 	b = new Fl_Return_Button(300, 120, 80, 20, "OK");
 	b->align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE);
 	b->callback(cb_tpdd_ok);
+	b->color(COLOR_BG);
+	b->labelcolor(COLOR_FG);
 
 	gtcw->show();
 }
@@ -2224,7 +2242,9 @@ void VTTpddServer::OpcodeClose(void)
 {
 	// Test if last "open" was a directory open
 	if (m_lastOpenWasDir)
+	{
 		SendNormalReturn(TPDD_ERR_NONE);
+	}
 
 	// Test if the active FD is open
 	else if (m_refFd[m_activeFd] == NULL)

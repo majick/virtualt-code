@@ -275,7 +275,7 @@ void update_keys(void)
 		}
 	}
 
-	if (((gSpecialKeys & (MT_GRAPH | MT_CODE | MT_SHIFT)) == 0) && !gCapture)
+	if (((gSpecialKeys & (MT_PASTE | MT_CTRL | MT_SHIFT)) == 0) && !gCapture)
 	{
 		FILE* fd;
 		int		d, col, row;
@@ -296,7 +296,9 @@ void update_keys(void)
 					fprintf(fd, "%x 0 %02x\n", d, row<<6);
 					for(col = 0; col < 50; col++)
 					{
-						fprintf(fd, "%x 1 %02x\n", d, lcd[d][(row<<2) + col]);
+						if ((row == 4 || row == 9) && col == 40)
+							break;
+						fprintf(fd, "%x 1 %02x\n", d, lcd[d][(row<<6) + col]);
 					}
 				}
 			}
@@ -1261,22 +1263,24 @@ int inport(uchar port)
 			if (gModel == MODEL_T200)
 				return t200_readport(0xFE);
 			else
-            {
-                if (fullspeed == 0)
+			{
+				if (fullspeed == 0)
 				{
+#if 0
 					/* Loop through all LCD driver modules */
 					for (c = 0; c < 10; c++)
 					{
 						/* Check if this driver is enabled */
 						if (lcdbits & (1 << c))
 							if (lcdTime[c]+.000003 > hirestimer())
-			                    return (0x80);
+								return (0x80);
 					}
+#endif
 					return 64;
 				}
-                else
-                    return(64);
-            }
+				else
+					return(64);
+			}
 		case 0xFF:
 			/* Loop through all LCD driver modules */
 			for (c = 0; c < 10; c++)

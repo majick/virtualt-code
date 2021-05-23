@@ -25,8 +25,20 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ *
+ * changes by S. Adolph to enable REX#, REXCPM
+ * new items:
+ *    mem_ctrl.pRexS, cb_radio_rexs, SETUP_MEM_REXS
+ *    mem_ctrl.pRexC, cb_radio_rexc, SETUP_MEM_REXC
+ *    mem_ctrl.pRexCRamFile, mem_setup.rexc_ram_file
+ *    mem_ctrl.pRexCRamBrowse, cb_rexc_browse
+ *
+ * issues:
+ *    - how to set up REXCPM memory? load_rex_flash()  load_rexc_ram(); save_rexc_ram();
+ *    - might want to make a callback for create default REX# flash
+ *      fix call to load_rexc and save_rexc
+ *    - memory options not filtering correctly with different model types
  */
-
 
 #include <FL/Fl.H>
 #include <FL/Fl_Tabs.H>
@@ -54,7 +66,14 @@
 #include "file.h"
 
 extern	Fl_Preferences virtualt_prefs;
+extern  int gMidnight;
 void 	init_menus(void);
+
+#define COLOR_BG  		(gMidnight ? FL_BLACK : fl_rgb_color(192, 192, 192))
+#define COLOR_BG_INPUT  (gMidnight ? FL_BLACK : FL_WHITE)
+#define COLOR_FG  		(gMidnight ? FL_WHITE : FL_BLACK)
+#define COLOR_TAB_INACTIVE_BG  		(gMidnight ? fl_rgb_color(32,32,32) : fl_rgb_color(192,192,192))
+#define COLOR_TAB_INACTIVE_FG  		(gMidnight ? fl_rgb_color(192,192,192) : FL_BLACK)
 
 extern "C"
 {
@@ -130,6 +149,8 @@ typedef struct memory_ctrl_struct
 	Fl_Round_Button*	pReMem_Rampac;
 	Fl_Round_Button*	pRex;
 	Fl_Round_Button*	pRex2;
+	Fl_Round_Button*	pRexS;			// added SA
+	Fl_Round_Button*	pRexC;			// added SA
 	Fl_Check_Button*	pReMemOverride;
 	Fl_Round_Button*	pQuad;
 	Fl_Round_Button*	pRexQuad;
@@ -137,11 +158,13 @@ typedef struct memory_ctrl_struct
 	Fl_Input*			pRampacFile;
 	Fl_Input*			pRexFlashFile;
 	Fl_Input*			pRex2RamFile;
+	Fl_Input*			pRexCRamFile;		// added SA
 	Fl_Button*			pRexCreateFlash;
 	Fl_Button*			pReMemBrowse;
 	Fl_Button*			pRampacBrowse;
 	Fl_Button*			pRexFlashBrowse;
 	Fl_Button*			pRex2RamBrowse;
+	Fl_Button*			pRexCRamBrowse;		// added SA
 	Fl_Box*				pReMemText;
 	Fl_Check_Button*	pOptRomRW;
 	Fl_Check_Button*	pShowVersion;
@@ -507,63 +530,72 @@ void cb_PeripheralSetup (Fl_Widget* w, void*)
 	// Create Peripheral Setup window
 	gpsw = new Fl_Window(350, 300, "Peripheral Setup");
 	gpsw->callback(cb_setupwin);
+	gpsw->color(COLOR_BG);
 
 	// Create Peripheral Tabs
     {  
 		setup_ctrl.pTabs = new Fl_Tabs(10, 10, 330, 240);
+		setup_ctrl.pTabs->color(COLOR_BG);
+		setup_ctrl.pTabs->selection_color(COLOR_BG);
+		setup_ctrl.pTabs->labelcolor(COLOR_FG);
 
 		// COM port Tab
 		{ 
 			setup_ctrl.com.g = new Fl_Group(10, 30, 350, 260, " COM ");
+			setup_ctrl.com.g->color(COLOR_BG);
+			setup_ctrl.com.g->selection_color(COLOR_TAB_INACTIVE_BG);
+			setup_ctrl.com.g->labelcolor(COLOR_TAB_INACTIVE_FG);
 
 			// Create items on the Tab
 			setup_ctrl.com.pNone = new Fl_Round_Button(20, 40, 180, 20, "No emulation");
 			setup_ctrl.com.pNone->type(FL_RADIO_BUTTON);
 			setup_ctrl.com.pNone->callback(cb_com_radio_none);
+			setup_ctrl.com.pNone->labelcolor(COLOR_FG);
 
 			// Create controls to select simulated TPDD client connection
 			setup_ctrl.com.pSim = new Fl_Round_Button(20, 65, 220, 20, "Connect to simulated NADSBox");
 			setup_ctrl.com.pSim->type(FL_RADIO_BUTTON);
 			setup_ctrl.com.pSim->callback(cb_com_radio_sim_tpdd);
+			setup_ctrl.com.pSim->labelcolor(COLOR_FG);
 
 			setup_ctrl.com.pTpddConfig = new Fl_Button(50, 90, 80, 20, "Configure");
 			if (setup.com_mode != SETUP_COM_SIM_TPDD)
 				setup_ctrl.com.pTpddConfig->deactivate();
 			setup_ctrl.com.pTpddConfig->callback(cb_com_sim_tpdd_config);
+			setup_ctrl.com.pTpddConfig->color(COLOR_BG);
+			setup_ctrl.com.pTpddConfig->labelcolor(COLOR_FG);
 
 			setup_ctrl.com.pCmd = NULL;
 
-#if 0
-			// Old simulation file controls...
-			setup_ctrl.com.pSim = new Fl_Round_Button(20, 65, 180, 20, "Use Simulated Port (not supported yet)");
-			setup_ctrl.com.pSim->type(FL_RADIO_BUTTON);
-			setup_ctrl.com.pSim->callback(cb_com_radio_sim);
-
-			setup_ctrl.com.pCmd = new Fl_Input(105, 90, 200, 20, "Cmd File:");
-			if (setup.com_mode != SETUP_COM_SIMULATED)
-				setup_ctrl.com.pCmd->deactivate();
-			setup_ctrl.com.pCmd->value(setup.com_cmd);
-#endif
 			setup_ctrl.com.pHost = new Fl_Round_Button(20, 115, 180, 20, "Use Host Port");
 			setup_ctrl.com.pHost->type(FL_RADIO_BUTTON);
 			setup_ctrl.com.pHost->callback(cb_com_radio_host);
+			setup_ctrl.com.pHost->labelcolor(COLOR_FG);
 
 			setup_ctrl.com.pPort = new Fl_Choice(50, 137, 240, 20, "");
+			setup_ctrl.com.pPort->color(COLOR_BG);
+			setup_ctrl.com.pPort->labelcolor(COLOR_FG);
+			setup_ctrl.com.pPort->textcolor(COLOR_FG);
 			if (setup.com_mode != SETUP_COM_HOST)
 				setup_ctrl.com.pPort->deactivate();
 
 			setup_ctrl.com.pOther = new Fl_Round_Button(20, 165, 180, 20, "Other Host Port");
 			setup_ctrl.com.pOther->type(FL_RADIO_BUTTON);
 			setup_ctrl.com.pOther->callback(cb_com_radio_other);
+			setup_ctrl.com.pOther->labelcolor(COLOR_FG);
 
 			setup_ctrl.com.pOtherName = new Fl_Input(50, 185, 240, 20, "");
 			if (setup.com_mode != SETUP_COM_OTHER)
 				setup_ctrl.com.pOtherName->deactivate();
 			setup_ctrl.com.pOtherName->value(setup.com_other);
+			setup_ctrl.com.pOtherName->color(COLOR_BG);
+			setup_ctrl.com.pOtherName->textcolor(COLOR_FG);
+			setup_ctrl.com.pOtherName->cursor_color(COLOR_FG);
+			setup_ctrl.com.pOtherName->labelcolor(COLOR_FG);
 
 			setup_ctrl.com.pIgnoreFlow = new Fl_Check_Button(20, 210, 180, 20, "Ignore Flow Control");
 			setup_ctrl.com.pIgnoreFlow->value(setup.com_ignore_flow);
-
+			setup_ctrl.com.pIgnoreFlow->labelcolor(COLOR_FG);
 
 			// Get list of COM ports on the host
 			ser_get_port_list(com_port_list, 256, &count);
@@ -597,9 +629,11 @@ void cb_PeripheralSetup (Fl_Widget* w, void*)
 		{ 
 			// Create the Group item (the "Tab")
 			setup_ctrl.lpt.g = new Fl_Group(10, 30, 350, 260, " LPT ");
+			setup_ctrl.lpt.g->color(COLOR_BG);
+			setup_ctrl.lpt.g->selection_color(COLOR_TAB_INACTIVE_BG);
+			setup_ctrl.lpt.g->labelcolor(COLOR_TAB_INACTIVE_FG);
 
 			// Create controls
-//			setup_ctrl.lpt.pText = new Fl_Box(120, 60, 60, 80, "Parallel Port not supported yet");
 			build_lpt_setup_tab();
 
 			// End of control for this tab
@@ -610,9 +644,13 @@ void cb_PeripheralSetup (Fl_Widget* w, void*)
 		{
 			// Create the Group item (the "Tab")
 			setup_ctrl.mdm.g = new Fl_Group(10, 30, 350, 260, " MDM ");
+			setup_ctrl.mdm.g->color(COLOR_BG);
+			setup_ctrl.mdm.g->selection_color(COLOR_TAB_INACTIVE_BG);
+			setup_ctrl.mdm.g->labelcolor(COLOR_TAB_INACTIVE_FG);
 
 			// Create controls
 			setup_ctrl.mdm.pText = new Fl_Box(120, 60, 60, 80, "Modem Port not supported yet");
+			setup_ctrl.mdm.pText->labelcolor(COLOR_FG);
 
 			// End of control for this tab
 			setup_ctrl.mdm.g->end();
@@ -622,34 +660,30 @@ void cb_PeripheralSetup (Fl_Widget* w, void*)
 		{ 
 			// Create the Group item (the "Tab")
 			setup_ctrl.cas.g = new Fl_Group(10, 30, 300, 260, " CAS ");
+			setup_ctrl.cas.g->color(COLOR_BG);
+			setup_ctrl.cas.g->selection_color(COLOR_TAB_INACTIVE_BG);
+			setup_ctrl.cas.g->labelcolor(COLOR_TAB_INACTIVE_FG);
 
 			// Create controls
 			setup_ctrl.cas.pText = new Fl_Box(120, 60, 60, 80, "Cassette Port not supported yet");
+			setup_ctrl.cas.pText->labelcolor(COLOR_FG);
 
 			// End of control for this tab
 			setup_ctrl.cas.g->end();
-		}
-
-		// BCR Port Tab
-		{ 
-			// Create the Group item (the "Tab")
-//			setup_ctrl.bcr.g = new Fl_Group(10, 30, 300, 260, " BCR ");
-
-			// Create controls
-//			setup_ctrl.bcr.pText = new Fl_Box(120, 60, 60, 80, "BCR Port not supported yet");
-
-			// End of control for this tab
-//			setup_ctrl.bcr.g->end();
 		}
 
 		// Sound Port Tab
 		{ 
 			// Create the Group item (the "Tab")
 			setup_ctrl.sound.g = new Fl_Group(10, 30, 300, 260, " Sound ");
+			setup_ctrl.sound.g->color(COLOR_BG);
+			setup_ctrl.sound.g->selection_color(COLOR_TAB_INACTIVE_BG);
+			setup_ctrl.sound.g->labelcolor(COLOR_TAB_INACTIVE_FG);
 
 			// Create controls
 			setup_ctrl.sound.pEnable = new Fl_Check_Button(20, 40, 180, 20, "Enable Sound");
 			setup_ctrl.sound.pEnable->value(setup.sound_enable);
+			setup_ctrl.sound.pEnable->labelcolor(COLOR_FG);
 
 			// Create a tone control slider
 			//Fl_Box* b = new Fl_Box(20, 80, 100, 20, "Tone Control");
@@ -662,11 +696,6 @@ void cb_PeripheralSetup (Fl_Widget* w, void*)
 			double tone = sound_get_tone_control();
 			setup_ctrl.sound.pTone->value(tone);
 			setup_ctrl.sound.pTone->hide();
-//			setup_ctrl.sound.pTone->step(1);
-
-			// Create text to describe tone control
-			//b = new Fl_Box(130, 100, 50, 20, "Agressive");
-			//b = new Fl_Box(280, 100, 50, 20, "Soft");
 
 			// End of control for this tab
 			setup_ctrl.sound.g->end();
@@ -676,6 +705,9 @@ void cb_PeripheralSetup (Fl_Widget* w, void*)
 		{ 
 			// Create the Group item (the "Tab")
 			setup_ctrl.clock.g = new Fl_Group(10, 30, 350, 260, " Clock ");
+			setup_ctrl.clock.g->color(COLOR_BG);
+			setup_ctrl.clock.g->selection_color(COLOR_TAB_INACTIVE_BG);
+			setup_ctrl.clock.g->labelcolor(COLOR_TAB_INACTIVE_FG);
 
 			// Create controls
 			build_clock_setup_tab();
@@ -692,9 +724,13 @@ void cb_PeripheralSetup (Fl_Widget* w, void*)
 	// OK button
     { Fl_Button* o = new Fl_Button(180, 260, 60, 30, "Cancel");
       o->callback((Fl_Callback*)cb_setup_cancel);
+	  o->color(COLOR_BG);
+	  o->labelcolor(COLOR_FG);
     }
     { Fl_Return_Button* o = new Fl_Return_Button(250, 260, 60, 30, "OK");
       o->callback((Fl_Callback*)cb_setup_OK);
+	  o->color(COLOR_BG);
+	  o->labelcolor(COLOR_FG);
     }
 
 	gpsw->show();
@@ -772,6 +808,11 @@ void save_memory_preferences(void)
 	strcat(pref, "_Rex2RamFile");
 	virtualt_prefs.set(pref, mem_setup.rex2_ram_file);
 
+	// new, added by SA
+	strcpy(pref, str);
+	strcat(pref, "_RexCRamFile");
+	virtualt_prefs.set(pref, mem_setup.rexc_ram_file);
+
 	strcpy(pref, str);
 	strcat(pref, "_OptRomRW");
 	virtualt_prefs.set(pref, gOptRomRW);
@@ -848,6 +889,16 @@ void load_memory_preferences(void)
 	if (strlen(mem_setup.rex2_ram_file) == 0)
 		strcpy(mem_setup.rex2_ram_file, path);
 
+// 	// Load REXCPM Ram filename based on Model
+// 	// new added by SA
+	strcpy(pref, str);
+	strcat(pref, "_RexCRamFile");
+	get_emulation_path(path, gModel);
+	strcat(path, "rexcpm_ram_4M.bin");
+	virtualt_prefs.get(pref, mem_setup.rexc_ram_file, path, 256);
+	if (strlen(mem_setup.rexc_ram_file) == 0)
+		strcpy(mem_setup.rexc_ram_file, path);
+
 	// Load OptRom R/W or R/O option
 	strcpy(pref, str);
 	strcat(pref, "_OptRomRW");
@@ -910,9 +961,10 @@ void cb_memory_OK(Fl_Widget* w, void*)
 	/* 
 	===================================================
 	Check if Rex Flash needs to be saved / deallocated
+	--> modified to include REX#
 	===================================================
 	*/
-	if ((mem_setup.mem_mode == SETUP_MEM_REX) || (mem_setup.mem_mode == SETUP_MEM_REX2))
+	if ((mem_setup.mem_mode == SETUP_MEM_REX) || (mem_setup.mem_mode == SETUP_MEM_REX2) || (mem_setup.mem_mode == SETUP_MEM_REXS))
 	{
 		// Save Rex Flash 
 		save_rex_flash();		// Write Rex flash memory to file
@@ -929,11 +981,23 @@ void cb_memory_OK(Fl_Widget* w, void*)
 		save_rex2_ram();			// Write Rex RAM memory to file
 	}
 
+	/*
+	===================================================
+	Check if REXCPM RAM needs to be saved / deallocated
+	===================================================
+	*/
+	if (mem_setup.mem_mode == SETUP_MEM_REXC)
+	{
+		// Save REXCPM RAM 
+		save_rexc_ram();			// Write REXCPM RAM memory to file
+	}
+
 	// Save old mem_mode so we know when to load data from file
 	old_mode = mem_setup.mem_mode;
 
 	// ===========================
 	// Get memory options
+	// --> modified by SA to support REX# and REXCPM
 	// ===========================
 	if (mem_ctrl.pNone->value() == 1)
 		mem_setup.mem_mode = SETUP_MEM_BASE;
@@ -947,6 +1011,10 @@ void cb_memory_OK(Fl_Widget* w, void*)
 		mem_setup.mem_mode = SETUP_MEM_REX;
 	else if (mem_ctrl.pRex2->value() == 1)
 		mem_setup.mem_mode = SETUP_MEM_REX2;
+	else if (mem_ctrl.pRexS->value() == 1)
+		mem_setup.mem_mode = SETUP_MEM_REXS;	// new SA
+	else if (mem_ctrl.pRexC->value() == 1)
+		mem_setup.mem_mode = SETUP_MEM_REXC;	// new SA
 	else if (mem_ctrl.pQuad->value() == 1)
 		mem_setup.mem_mode = SETUP_MEM_QUAD;
 	else if (mem_ctrl.pRexQuad->value() == 1)
@@ -971,12 +1039,16 @@ void cb_memory_OK(Fl_Widget* w, void*)
 	/* 
 	===================================================
 	Load Base memory if needed
+	--> modified to support REX# and REXCPM
 	===================================================
 	*/
 	if ((mem_setup.mem_mode == SETUP_MEM_RAMPAC) || (mem_setup.mem_mode == SETUP_MEM_BASE) ||
 		(mem_setup.mem_mode == SETUP_MEM_REX) || (mem_setup.mem_mode == SETUP_MEM_QUAD) ||
-        (mem_setup.mem_mode == SETUP_MEM_REX_QUAD))
-			load_ram();
+        (mem_setup.mem_mode == SETUP_MEM_REX_QUAD) || (mem_setup.mem_mode == SETUP_MEM_REXC) || 
+        (mem_setup.mem_mode == SETUP_MEM_REXS) )
+	{
+		load_ram();
+	}
 
 	// If we are in ReMem or ReMem_Rampac mode, check if ReMem filename changed
 	if ((mem_setup.mem_mode == SETUP_MEM_REMEM) || (mem_setup.mem_mode == SETUP_MEM_REMEM_RAMPAC))
@@ -1023,7 +1095,8 @@ void cb_memory_OK(Fl_Widget* w, void*)
 	}
 
 	// If we are in Rex or Rex2 mode, check if Rex Flash filename changed
-	if ((mem_setup.mem_mode == SETUP_MEM_REX) || (mem_setup.mem_mode == SETUP_MEM_REX2))
+	// extended to REX#
+	if ((mem_setup.mem_mode == SETUP_MEM_REX) || (mem_setup.mem_mode == SETUP_MEM_REX2) || (mem_setup.mem_mode == SETUP_MEM_REXS))
 	{
 		// Check if we are changing Rampac filename
 		if (strcmp(mem_ctrl.pRexFlashFile->value(), mem_setup.rex_flash_file) != 0)
@@ -1037,14 +1110,14 @@ void cb_memory_OK(Fl_Widget* w, void*)
 			// Load Rampac data from new file
 			load_rex_flash();
 		}
-		else if ((old_mode != SETUP_MEM_REX) && (old_mode != SETUP_MEM_REX2))
+		else if ((old_mode != SETUP_MEM_REX) && (old_mode != SETUP_MEM_REX2) && (old_mode != SETUP_MEM_REXS) )
 		{
 			// Load Rampac data from file
 			load_rex_flash();
 		}
 	}
 
-	// If we are in Rex or Rex2 mode, check if Rex Flash filename changed
+	// If we are in Rex2 mode, check if Rex2 ram filename changed
 	if (mem_setup.mem_mode == SETUP_MEM_REX2)
 	{
 		// Check if we are changing Rampac filename
@@ -1066,11 +1139,36 @@ void cb_memory_OK(Fl_Widget* w, void*)
 		}
 	}
 
+	// If we are in REXCPM mode, check if REXCPM ram filename changed
+	// added by SA
+	if (mem_setup.mem_mode == SETUP_MEM_REXC)
+	{
+		// Check if we are changing RAM filename
+		if (strcmp(mem_ctrl.pRexCRamFile->value(), mem_setup.rexc_ram_file) != 0)
+		{
+			// Save memory to old file
+			save_rexc_ram();
+
+			// Copy new filename to preferences
+			strcpy(mem_setup.rexc_ram_file, mem_ctrl.pRexCRamFile->value());
+
+			// Load REXC RAM data from new file
+			load_rexc_ram();
+		}
+		else if (old_mode != SETUP_MEM_REXC)
+		{
+			// Load Rampac data from file
+			load_rexc_ram();
+		}
+	}
+
 	// Copy new ReMem filename and Rampac filename to preferences
 	strcpy(mem_setup.remem_file, mem_ctrl.pReMemFile->value());
 	strcpy(mem_setup.rampac_file, mem_ctrl.pRampacFile->value());
 	strcpy(mem_setup.rex_flash_file, mem_ctrl.pRexFlashFile->value());
 	strcpy(mem_setup.rex2_ram_file, mem_ctrl.pRex2RamFile->value());
+	// added SA
+	strcpy(mem_setup.rexc_ram_file, mem_ctrl.pRexCRamFile->value());
 
 	// Save memory preferences to file
 	save_memory_preferences();
@@ -1099,7 +1197,6 @@ void cb_remem_browse(Fl_Widget* w, void*)
 	Flu_File_Chooser		*fc;
 	const char			*filename;
 	const char			*filename_name;
-	int					len;
 	char				mstr[16];
 	char				mstr_upper[16];
 	char				path[256];
@@ -1131,7 +1228,6 @@ void cb_remem_browse(Fl_Widget* w, void*)
 		delete fc;
 		return;
 	}
-	len = strlen(filename);
 
 	// Copy filename to edit field
 	filename_name = fl_filename_name(filename);
@@ -1158,7 +1254,6 @@ void cb_rex_browse(Fl_Widget* w, void*)
 	Flu_File_Chooser		*fc;
 	const char			*filename;
 	const char			*filename_name;
-	int					len;
 	char				mstr[16];
 	char				mstr_upper[16];
 	char				path[256];
@@ -1190,7 +1285,6 @@ void cb_rex_browse(Fl_Widget* w, void*)
 		delete fc;
 		return;
 	}
-	len = strlen(filename);
 
 	// Copy filename to edit field
 	filename_name = fl_filename_name(filename);
@@ -1217,7 +1311,6 @@ void cb_rex2_browse(Fl_Widget* w, void*)
 	Flu_File_Chooser		*fc;
 	const char			*filename;
 	const char			*filename_name;
-	int					len;
 	char				mstr[16];
 	char				mstr_upper[16];
 	char				path[256];
@@ -1249,7 +1342,6 @@ void cb_rex2_browse(Fl_Widget* w, void*)
 		delete fc;
 		return;
 	}
-	len = strlen(filename);
 
 	// Copy filename to edit field
 	filename_name = fl_filename_name(filename);
@@ -1270,6 +1362,66 @@ void cb_rex2_browse(Fl_Widget* w, void*)
 	delete fc;
 }
 
+
+// added to support REXCPM
+
+void cb_rexc_browse(Fl_Widget* w, void*)
+{
+	int					count;
+	Flu_File_Chooser		*fc;
+	const char			*filename;
+	const char			*filename_name;
+	char				mstr[16];
+	char				mstr_upper[16];
+	char				path[256];
+	int					c;
+
+	// Create chooser window to pick file
+	strcpy(path, mem_ctrl.pRexCRamFile->value());
+	fl_cursor(FL_CURSOR_WAIT);
+	fc = new Flu_File_Chooser(path,"Binary Files (*.bin)",2,"Choose REXCPM RAM File");
+	fl_cursor(FL_CURSOR_DEFAULT);
+	fc->preview(0);
+	fc->show();
+
+	// Show Chooser window
+	while (fc->visible())
+		Fl::wait();
+
+	count = fc->count();
+	if (count == 0)
+	{
+		delete fc;
+		return;
+	}
+
+	// Get Filename
+	filename = fc->value(1);
+	if (filename == 0)
+	{
+		delete fc;
+		return;
+	}
+
+	// Copy filename to edit field
+	filename_name = fl_filename_name(filename);
+
+	get_model_string(mstr, gModel);
+	strcpy(mstr_upper, mstr);
+	for (c = strlen(mstr_upper)-1; c >= 0; c--)
+		mstr_upper[c] = toupper(mstr_upper[c]);
+	if (strstr(filename, mstr) || strstr(filename, mstr_upper))
+	{
+		get_emulation_path(path, gModel);
+		strcat(path, filename_name);
+		mem_ctrl.pRexCRamFile->value(path);
+	}
+	else
+		mem_ctrl.pRexCRamFile->value(filename);
+
+	delete fc;
+}
+
 void cb_radio_base_memory (Fl_Widget* w, void*)
 {
 	mem_ctrl.pRampacFile->deactivate();
@@ -1283,6 +1435,8 @@ void cb_radio_base_memory (Fl_Widget* w, void*)
 	mem_ctrl.pRex2RamFile->deactivate();
 	mem_ctrl.pRex2RamBrowse->deactivate();
 	mem_ctrl.pRexCreateFlash->deactivate();
+	mem_ctrl.pRexCRamFile->deactivate();		//added SA
+	mem_ctrl.pRexCRamBrowse->deactivate();		//added SA
 }
 
 void cb_radio_remem (Fl_Widget* w, void*)
@@ -1298,6 +1452,8 @@ void cb_radio_remem (Fl_Widget* w, void*)
 	mem_ctrl.pRex2RamFile->deactivate();
 	mem_ctrl.pRex2RamBrowse->deactivate();
 	mem_ctrl.pRexCreateFlash->deactivate();
+	mem_ctrl.pRexCRamFile->deactivate();		//added SA
+	mem_ctrl.pRexCRamBrowse->deactivate();		//added SA
 }
 
 void cb_radio_rampac (Fl_Widget* w, void*)
@@ -1313,6 +1469,8 @@ void cb_radio_rampac (Fl_Widget* w, void*)
 	mem_ctrl.pRex2RamFile->deactivate();
 	mem_ctrl.pRex2RamBrowse->deactivate();
 	mem_ctrl.pRexCreateFlash->deactivate();
+	mem_ctrl.pRexCRamFile->deactivate();		//added SA
+	mem_ctrl.pRexCRamBrowse->deactivate();		//added SA
 }
 
 void cb_radio_remem_and_rampac (Fl_Widget* w, void*)
@@ -1328,6 +1486,8 @@ void cb_radio_remem_and_rampac (Fl_Widget* w, void*)
 	mem_ctrl.pRex2RamFile->deactivate();
 	mem_ctrl.pRex2RamBrowse->deactivate();
 	mem_ctrl.pRexCreateFlash->deactivate();
+	mem_ctrl.pRexCRamFile->deactivate();		//added SA
+	mem_ctrl.pRexCRamBrowse->deactivate();		//added SA
 }
 
 void cb_radio_rex (Fl_Widget* w, void*)
@@ -1343,6 +1503,8 @@ void cb_radio_rex (Fl_Widget* w, void*)
 	mem_ctrl.pRex2RamFile->deactivate();
 	mem_ctrl.pRex2RamBrowse->deactivate();
 	mem_ctrl.pRexCreateFlash->activate();
+	mem_ctrl.pRexCRamFile->deactivate();		//added SA
+	mem_ctrl.pRexCRamBrowse->deactivate();		//added SA
 }
 
 void cb_radio_rex2 (Fl_Widget* w, void*)
@@ -1358,6 +1520,44 @@ void cb_radio_rex2 (Fl_Widget* w, void*)
 	mem_ctrl.pRex2RamFile->activate();
 	mem_ctrl.pRex2RamBrowse->activate();
 	mem_ctrl.pRexCreateFlash->activate();
+	mem_ctrl.pRexCRamFile->deactivate();		//added SA
+	mem_ctrl.pRexCRamBrowse->deactivate();		//added SA
+}
+
+// new entry added by SA for REX#
+void cb_radio_rexs (Fl_Widget* w, void*)
+{
+	mem_ctrl.pRampacFile->deactivate();
+	mem_ctrl.pRampacBrowse->deactivate();
+	mem_ctrl.pReMemOverride->deactivate();
+	mem_ctrl.pReMemFile->deactivate();
+	mem_ctrl.pReMemBrowse->deactivate();
+	mem_ctrl.pReMemText->hide();
+	mem_ctrl.pRexFlashFile->activate();
+	mem_ctrl.pRexFlashBrowse->activate();
+	mem_ctrl.pRex2RamFile->deactivate();
+	mem_ctrl.pRex2RamBrowse->deactivate();
+	mem_ctrl.pRexCreateFlash->deactivate();
+	mem_ctrl.pRexCRamFile->deactivate();		//added SA
+	mem_ctrl.pRexCRamBrowse->deactivate();		//added SA
+}
+
+// new entry added by SA for REXCPM
+void cb_radio_rexc (Fl_Widget* w, void*)
+{
+	mem_ctrl.pRampacFile->deactivate();
+	mem_ctrl.pRampacBrowse->deactivate();
+	mem_ctrl.pReMemOverride->deactivate();
+	mem_ctrl.pReMemFile->deactivate();
+	mem_ctrl.pReMemBrowse->deactivate();
+	mem_ctrl.pReMemText->hide();
+	mem_ctrl.pRexFlashFile->deactivate();
+	mem_ctrl.pRexFlashBrowse->deactivate();
+	mem_ctrl.pRex2RamFile->deactivate();
+	mem_ctrl.pRex2RamBrowse->deactivate();
+	mem_ctrl.pRexCreateFlash->deactivate();
+	mem_ctrl.pRexCRamFile->activate();		//added SA
+	mem_ctrl.pRexCRamBrowse->activate();		//added SA
 }
 
 void cb_radio_quad (Fl_Widget* w, void*)
@@ -1373,6 +1573,8 @@ void cb_radio_quad (Fl_Widget* w, void*)
 	mem_ctrl.pRex2RamFile->deactivate();
 	mem_ctrl.pRex2RamBrowse->deactivate();
 	mem_ctrl.pRexCreateFlash->deactivate();
+	mem_ctrl.pRexCRamFile->deactivate();		//added SA
+	mem_ctrl.pRexCRamBrowse->deactivate();		//added SA
 }
 
 void cb_radio_rex_quad (Fl_Widget* w, void*)
@@ -1388,6 +1590,8 @@ void cb_radio_rex_quad (Fl_Widget* w, void*)
 	mem_ctrl.pRex2RamFile->deactivate();
 	mem_ctrl.pRex2RamBrowse->deactivate();
 	mem_ctrl.pRexCreateFlash->activate();
+	mem_ctrl.pRexCRamFile->deactivate();		//added SA
+	mem_ctrl.pRexCRamBrowse->deactivate();		//added SA
 }
 
 void cb_memory_cancel (Fl_Widget* w, void*)
@@ -1399,10 +1603,9 @@ void cb_memory_cancel (Fl_Widget* w, void*)
 void cb_rampac_browse (Fl_Widget* w, void*)
 {
 	int					count;
-	Flu_File_Chooser		*fc;
+	Flu_File_Chooser	*fc;
 	const char			*filename;
 	const char			*filename_name;
-	int					len;
 	char				mstr[16];
 	char				mstr_upper[16];
 	char				path[256];
@@ -1434,7 +1637,6 @@ void cb_rampac_browse (Fl_Widget* w, void*)
 		delete fc;
 		return;
 	}
-	len = strlen(filename);
 
 	// Copy filename to edit field
 	filename_name = fl_filename_name(filename);
@@ -1542,19 +1744,23 @@ Routine to create the PeripheralSetup Window and tabs
 void cb_MemorySetup (Fl_Widget* w, void*)
 {
 	// Create Peripheral Setup window
-	gmsw = new Fl_Window(520, 465, "Memory Emulation Options");
+	//gmsw = new Fl_Window(560, 560, "Memory Emulation Options");
+	gmsw = new Fl_Window(520, 560, "Memory Emulation Options");
 	gmsw->callback(cb_memorywin);
+	gmsw->color(COLOR_BG);
 
 	// Create items on the Tab
 	mem_ctrl.pNone = new Fl_Round_Button(20, 20, 120, 20, "Base Memory");
 	mem_ctrl.pNone->type(FL_RADIO_BUTTON);
 	mem_ctrl.pNone->callback(cb_radio_base_memory);
+	mem_ctrl.pNone->labelcolor(COLOR_FG);
 	if (mem_setup.mem_mode == SETUP_MEM_BASE)
 		mem_ctrl.pNone->value(1);
 
 	// Create list box for the amount of installed memory
 	mem_ctrl.pMemInstalled = new Fl_Choice(280, 20, 60, 20, "Memory Installed:");
 	mem_ctrl.pMemInstalled->align(FL_ALIGN_LEFT);
+	mem_ctrl.pMemInstalled->labelcolor(COLOR_FG);
 	if (gModel == MODEL_T200)
 	{
 		mem_ctrl.pMemInstalled->add("72K");
@@ -1579,22 +1785,26 @@ void cb_MemorySetup (Fl_Widget* w, void*)
 	mem_ctrl.pRampac = new Fl_Round_Button(20, 45, 180, 20, "RamPac  (256K RAM)");
 	mem_ctrl.pRampac->type(FL_RADIO_BUTTON);
 	mem_ctrl.pRampac->callback(cb_radio_rampac);
+	mem_ctrl.pRampac->labelcolor(COLOR_FG);
 	if (mem_setup.mem_mode == SETUP_MEM_RAMPAC)
 		mem_ctrl.pRampac->value(1);
 
 	mem_ctrl.pReMem = new Fl_Round_Button(20, 70, 220, 20, "ReMem   (2M RAM, 4M FLASH)");
 	mem_ctrl.pReMem->type(FL_RADIO_BUTTON);
 	mem_ctrl.pReMem->callback(cb_radio_remem);
+	mem_ctrl.pReMem->labelcolor(COLOR_FG);
 	if (mem_setup.mem_mode == SETUP_MEM_REMEM)
 		mem_ctrl.pReMem->value(1);
 
 	mem_ctrl.pReMem_Rampac = new Fl_Round_Button(20, 95, 180, 20, "ReMem + RamPac");
 	mem_ctrl.pReMem_Rampac->type(FL_RADIO_BUTTON);
 	mem_ctrl.pReMem_Rampac->callback(cb_radio_remem_and_rampac);
+	mem_ctrl.pReMem_Rampac->labelcolor(COLOR_FG);
 	if (mem_setup.mem_mode == SETUP_MEM_REMEM_RAMPAC)
 		mem_ctrl.pReMem_Rampac->value(1);
 
 	mem_ctrl.pReMemOverride = new Fl_Check_Button(210, 95, 210, 20, "ReMem overrides Rampac");
+	mem_ctrl.pReMemOverride->labelcolor(COLOR_FG);
 	if (mem_setup.remem_override)
 		mem_ctrl.pReMemOverride->value(1);
 	if (mem_setup.mem_mode != SETUP_MEM_REMEM_RAMPAC)
@@ -1605,9 +1815,15 @@ void cb_MemorySetup (Fl_Widget* w, void*)
 	// ===============================================
 	mem_ctrl.pRampacFile = new Fl_Input(105, 130, 310, 20, "RamPac File");
 	mem_ctrl.pRampacFile->value(mem_setup.rampac_file);
+	mem_ctrl.pRampacFile->color(COLOR_BG_INPUT);
+	mem_ctrl.pRampacFile->labelcolor(COLOR_FG);
+	mem_ctrl.pRampacFile->textcolor(COLOR_FG);
+	mem_ctrl.pRampacFile->cursor_color(COLOR_FG);
 
 	mem_ctrl.pRampacBrowse =	new Fl_Button(430, 125, 60, 30, "Browse");
     mem_ctrl.pRampacBrowse->callback((Fl_Callback*)cb_rampac_browse);
+	mem_ctrl.pRampacBrowse->color(COLOR_BG);
+	mem_ctrl.pRampacBrowse->labelcolor(COLOR_FG);
 
 	if ((mem_setup.mem_mode != SETUP_MEM_RAMPAC) && (mem_setup.mem_mode != SETUP_MEM_REMEM_RAMPAC))
 	{
@@ -1620,11 +1836,18 @@ void cb_MemorySetup (Fl_Widget* w, void*)
 	// ===============================================
 	mem_ctrl.pReMemFile = new Fl_Input(105, 170, 310, 20, "ReMem  File");
 	mem_ctrl.pReMemFile->value(mem_setup.remem_file);
+	mem_ctrl.pReMemFile->color(COLOR_BG_INPUT);
+	mem_ctrl.pReMemFile->labelcolor(COLOR_FG);
+	mem_ctrl.pReMemFile->textcolor(COLOR_FG);
+	mem_ctrl.pReMemFile->cursor_color(COLOR_FG);
     mem_ctrl.pReMemText = new Fl_Box(45, 190, 325, 20, "(Use Memory Editor to load FLASH)");
     mem_ctrl.pReMemText->labelsize(12);
+	mem_ctrl.pReMemText->labelcolor(COLOR_FG);
 
 	mem_ctrl.pReMemBrowse = new Fl_Button(430, 165, 60, 30, "Browse");
     mem_ctrl.pReMemBrowse->callback((Fl_Callback*)cb_remem_browse);
+	mem_ctrl.pReMemBrowse->color(COLOR_BG);
+	mem_ctrl.pReMemBrowse->labelcolor(COLOR_FG);
 
 	if ((mem_setup.mem_mode != SETUP_MEM_REMEM) && (mem_setup.mem_mode != SETUP_MEM_REMEM_RAMPAC))
 	{
@@ -1633,11 +1856,11 @@ void cb_MemorySetup (Fl_Widget* w, void*)
 		mem_ctrl.pReMemText->hide();
 	}
 
-
     // Add radio button for QUAD
 	mem_ctrl.pQuad = new Fl_Round_Button(20, 210, 270, 20, "QUAD    (128K Banked RAM)");
 	mem_ctrl.pQuad->type(FL_RADIO_BUTTON);
 	mem_ctrl.pQuad->callback(cb_radio_quad);
+	mem_ctrl.pQuad->labelcolor(COLOR_FG);
 	if (mem_setup.mem_mode == SETUP_MEM_QUAD)
 		mem_ctrl.pQuad->value(1);
 
@@ -1645,45 +1868,85 @@ void cb_MemorySetup (Fl_Widget* w, void*)
 	mem_ctrl.pRexQuad = new Fl_Round_Button(20, 235, 270, 20, "QUAD + REX");
 	mem_ctrl.pRexQuad->type(FL_RADIO_BUTTON);
 	mem_ctrl.pRexQuad->callback(cb_radio_rex_quad);
+	mem_ctrl.pRexQuad->labelcolor(COLOR_FG);
 	if (mem_setup.mem_mode == SETUP_MEM_REX_QUAD)
 		mem_ctrl.pRexQuad->value(1);
 
+    // QUAD filter
     if (gModel != MODEL_M100)
     {
         mem_ctrl.pQuad->deactivate();
         mem_ctrl.pRexQuad->deactivate();
     }
-
+ 
+    // added SA, REXCPM filter
+   	if  ((gModel != MODEL_M100) && (gModel != MODEL_M102) )
+  	{
+		if (mem_ctrl.pRexC)
+			mem_ctrl.pRexC->deactivate();
+   	}
+ 
+    // added SA, REX# filter
+	if ( (gModel != MODEL_M100) && (gModel != MODEL_M102) && (gModel != MODEL_T200) )
+	{
+		if (mem_ctrl.pRexS)
+			mem_ctrl.pRexS->deactivate();
+   	}
+ 
 	// Create Rex radio button
-	mem_ctrl.pRex = new Fl_Round_Button(20, 260, 270, 20, "Rex     (1M Flash Option ROM)");
+	mem_ctrl.pRex = new Fl_Round_Button(20, 260, 270, 20, "REX     (1M Flash Option ROM)");
 	mem_ctrl.pRex->type(FL_RADIO_BUTTON);
 	mem_ctrl.pRex->callback(cb_radio_rex);
+	mem_ctrl.pRex->labelcolor(COLOR_FG);
 	if (mem_setup.mem_mode == SETUP_MEM_REX)
 		mem_ctrl.pRex->value(1);
 
-	// Create Rex radio button
-	mem_ctrl.pRex2 = new Fl_Round_Button(20, 285, 270, 20, "Rex2   (1M Opt ROM + 128K SRAM)");
+	// Create Rex2 radio button
+	mem_ctrl.pRex2 = new Fl_Round_Button(20, 285, 270, 20, "REX2   (1M Opt ROM + 128K SRAM)");
 	mem_ctrl.pRex2->type(FL_RADIO_BUTTON);
 	mem_ctrl.pRex2->callback(cb_radio_rex2);
+	mem_ctrl.pRex2->labelcolor(COLOR_FG);
 	if (mem_setup.mem_mode == SETUP_MEM_REX2)
 		mem_ctrl.pRex2->value(1);
 
+    // added SA
+	// Create Rex# radio button NEW
+	mem_ctrl.pRexS = new Fl_Round_Button(20, 310, 270, 20, "REX#   (1M Opt ROM)");
+	mem_ctrl.pRexS->type(FL_RADIO_BUTTON);
+	mem_ctrl.pRexS->callback(cb_radio_rexs);
+	mem_ctrl.pRexS->labelcolor(COLOR_FG);
+	if (mem_setup.mem_mode == SETUP_MEM_REXS)
+		mem_ctrl.pRexS->value(1);
+	// end new
+
+	// location is fine but don't enable for REX#
 	mem_ctrl.pRexCreateFlash = new Fl_Button(300, 270, 170, 20, "Create Default Flash");
 	if (mem_setup.mem_mode != SETUP_MEM_REX && mem_setup.mem_mode != SETUP_MEM_REX2 &&
         mem_setup.mem_mode != SETUP_MEM_REX_QUAD)
             mem_ctrl.pRexCreateFlash->deactivate();
 	mem_ctrl.pRexCreateFlash->callback(cb_create_flash, &mem_ctrl);
+	mem_ctrl.pRexCreateFlash->color(COLOR_BG);
+	mem_ctrl.pRexCreateFlash->labelcolor(COLOR_FG);
 
 	// ===============================================
 	// Setup Rex Flash File edit field and Browser button
 	// ===============================================
-	mem_ctrl.pRexFlashFile = new Fl_Input(105, 310, 310, 20, "Flash File");
+	// modify location
+	mem_ctrl.pRexFlashFile = new Fl_Input(105, 335, 310, 20, "Flash File");
 	mem_ctrl.pRexFlashFile->value(mem_setup.rex_flash_file);
-	mem_ctrl.pRexFlashBrowse = new Fl_Button(430, 307, 60, 30, "Browse");
+	mem_ctrl.pRexFlashFile->color(COLOR_BG_INPUT);
+	mem_ctrl.pRexFlashFile->labelcolor(COLOR_FG);
+	mem_ctrl.pRexFlashFile->textcolor(COLOR_FG);
+	mem_ctrl.pRexFlashFile->cursor_color(COLOR_FG);
+	mem_ctrl.pRexFlashBrowse = new Fl_Button(430, 332, 60, 30, "Browse");
     mem_ctrl.pRexFlashBrowse->callback((Fl_Callback*)cb_rex_browse);
+	mem_ctrl.pRexFlashBrowse->color(COLOR_BG);
+	mem_ctrl.pRexFlashBrowse->labelcolor(COLOR_FG);
 
+	// added SA
+    // allow for REX#
 	if ((mem_setup.mem_mode != SETUP_MEM_REX) && (mem_setup.mem_mode != SETUP_MEM_REX2) && 
-        (mem_setup.mem_mode != SETUP_MEM_REX_QUAD))
+        (mem_setup.mem_mode != SETUP_MEM_REX_QUAD) && (mem_setup.mem_mode != SETUP_MEM_REXS))
 	{
 		mem_ctrl.pRexFlashFile->deactivate();
 		mem_ctrl.pRexFlashBrowse->deactivate();
@@ -1692,10 +1955,17 @@ void cb_MemorySetup (Fl_Widget* w, void*)
 	// ===============================================
 	// Setup Rex Flash File edit field and Browser button
 	// ===============================================
-	mem_ctrl.pRex2RamFile = new Fl_Input(105, 345, 310, 20, "RAM File");
+	// modify location
+	mem_ctrl.pRex2RamFile = new Fl_Input(105, 370, 310, 20, "REX2 RAM File");
 	mem_ctrl.pRex2RamFile->value(mem_setup.rex2_ram_file);
-	mem_ctrl.pRex2RamBrowse = new Fl_Button(430, 342, 60, 30, "Browse");
+	mem_ctrl.pRex2RamFile->color(COLOR_BG_INPUT);
+	mem_ctrl.pRex2RamFile->labelcolor(COLOR_FG);
+	mem_ctrl.pRex2RamFile->textcolor(COLOR_FG);
+	mem_ctrl.pRex2RamFile->cursor_color(COLOR_FG);
+	mem_ctrl.pRex2RamBrowse = new Fl_Button(430, 367, 60, 30, "Browse");
     mem_ctrl.pRex2RamBrowse->callback((Fl_Callback*)cb_rex2_browse);
+	mem_ctrl.pRex2RamBrowse->color(COLOR_BG);
+	mem_ctrl.pRex2RamBrowse->labelcolor(COLOR_FG);
 
 	if (mem_setup.mem_mode != SETUP_MEM_REX2)
 	{
@@ -1703,22 +1973,67 @@ void cb_MemorySetup (Fl_Widget* w, void*)
 		mem_ctrl.pRex2RamBrowse->deactivate();
 	}
 
+	// ===============================================
+	// Setup REXCPM RAM File edit field and Browser button
+	// ===============================================
+	// added SA
+	mem_ctrl.pRexC = new Fl_Round_Button(20, 395, 270, 20, "REXCPM  (4M SRAM)");
+	mem_ctrl.pRexC->type(FL_RADIO_BUTTON);
+	mem_ctrl.pRexC->callback(cb_radio_rexc);
+	mem_ctrl.pRexC->labelcolor(COLOR_FG);
+	if (mem_setup.mem_mode == SETUP_MEM_REXC)
+		mem_ctrl.pRexC->value(1);
+	// end new	
+
+	// ===============================================
+	// Setup REXCPM Flash File edit field and Browser button
+	// ===============================================
+	// modify location
+	// added SA
+	mem_ctrl.pRexCRamFile = new Fl_Input(105, 420, 310, 20, "REXCPM File");
+	mem_ctrl.pRexCRamFile->value(mem_setup.rexc_ram_file);
+	mem_ctrl.pRexCRamFile->color(COLOR_BG_INPUT);
+	mem_ctrl.pRexCRamFile->labelcolor(COLOR_FG);
+	mem_ctrl.pRexCRamFile->textcolor(COLOR_FG);
+	mem_ctrl.pRexCRamFile->cursor_color(COLOR_FG);
+	mem_ctrl.pRexCRamBrowse = new Fl_Button(430, 417, 60, 30, "Browse");
+    mem_ctrl.pRexCRamBrowse->callback((Fl_Callback*)cb_rexc_browse);
+	mem_ctrl.pRexCRamBrowse->color(COLOR_BG);
+	mem_ctrl.pRexCRamBrowse->labelcolor(COLOR_FG);
+
+	if (mem_setup.mem_mode != SETUP_MEM_REXC)
+	{
+		mem_ctrl.pRexCRamFile->deactivate();
+		mem_ctrl.pRexCRamBrowse->deactivate();
+	}
 
 	// Option ROM RW Enable
-	mem_ctrl.pOptRomRW = new Fl_Check_Button(20, 370, 210, 20, "Make Option ROM R/W");
+	// new location
+	mem_ctrl.pOptRomRW = new Fl_Check_Button(20, 445, 210, 20, "Make Option ROM R/W");
 	mem_ctrl.pOptRomRW->value(gOptRomRW);
+	mem_ctrl.pOptRomRW->labelcolor(COLOR_FG);
 
 	// Show Version Checkbox
-	mem_ctrl.pShowVersion = new Fl_Check_Button(20, 395, 210, 20, "Patch ROM on load to show VirtualT version");
+	// new location
+	mem_ctrl.pShowVersion = new Fl_Check_Button(20, 470, 210, 20, "Patch ROM on load to show VirtualT version");
 	mem_ctrl.pShowVersion->value(gShowVersion);
+	mem_ctrl.pShowVersion->labelcolor(COLOR_FG);
 
 	// OK button
-    { Fl_Button* o = new Fl_Button(140, 425, 60, 30, "Cancel");
+	// new location
+    { Fl_Button* o = new Fl_Button(190, 515, 60, 30, "Cancel");
       o->callback((Fl_Callback*)cb_memory_cancel);
+	  o->color(COLOR_BG);
+	  o->labelcolor(COLOR_FG);
     }
-    { Fl_Return_Button* o = new Fl_Return_Button(220, 425, 60, 30, "OK");
+    { Fl_Return_Button* o = new Fl_Return_Button(270, 515, 60, 30, "OK");
       o->callback((Fl_Callback*)cb_memory_OK);
+	  o->color(COLOR_BG);
+	  o->labelcolor(COLOR_FG);
     }
 
 	gmsw->show();
 }
+
+// vim: ts=4 sw=4 noet
+

@@ -57,6 +57,13 @@
 #include "fx80print.h"
 #include "fl_action_icon.h"
 
+#define COLOR_BG  		(gMidnight ? FL_BLACK : fl_rgb_color(192, 192, 192))
+#define COLOR_BG_INPUT  (gMidnight ? FL_BLACK : FL_WHITE)
+#define COLOR_FG  		(gMidnight ? FL_WHITE : FL_BLACK)
+#define COLOR_TAB_INACTIVE_BG  		(gMidnight ? fl_rgb_color(32,32,32) : fl_rgb_color(192,192,192))
+#define COLOR_TAB_INACTIVE_FG  		(gMidnight ? fl_rgb_color(192,192,192) : FL_BLACK)
+
+extern  int gMidnight;
 extern Fl_Preferences	virtualt_prefs;
 extern Fl_Action_Icon*	gpPrint;
 typedef struct 
@@ -607,50 +614,63 @@ void build_lpt_setup_tab(void)
 	gLptCtrl.pNone = new Fl_Round_Button(20, 40, 110, 20, "No emulation");
 	gLptCtrl.pNone->type(FL_RADIO_BUTTON);
 	gLptCtrl.pNone->callback(cb_lpt_radio_none);
+	gLptCtrl.pNone->labelcolor(COLOR_FG);
 
 	// Create Radio button for LPT emulation
 	gLptCtrl.pEmul = new Fl_Round_Button(20, 65, 160, 20, "Connect LPT to:");
 	gLptCtrl.pEmul->type(FL_RADIO_BUTTON);
 	gLptCtrl.pEmul->callback(cb_lpt_radio_emul);
+	gLptCtrl.pEmul->labelcolor(COLOR_FG);
 
 	// Create control to choose the printer emulation mode
 	gLptCtrl.pEmulPrint = new Fl_Choice(50, 90, 220, 20, "");
+	gLptCtrl.pEmulPrint->color(COLOR_BG);
+	gLptCtrl.pEmulPrint->textcolor(COLOR_FG);
+	gLptCtrl.pEmulPrint->labelcolor(COLOR_FG);
 	if (gLptPrefs.lpt_mode != LPT_MODE_EMUL)
 		gLptCtrl.pEmulPrint->deactivate();
 
 	gLptCtrl.pCRtoLF = new Fl_Check_Button(20, 120, 200, 20, "Convert lonely CR to LF");
 	gLptCtrl.pCRtoLF->value(gLptPrefs.lpt_cr2lf);
+	gLptCtrl.pCRtoLF->labelcolor(COLOR_FG);
 	if (gLptPrefs.lpt_mode != LPT_MODE_EMUL)
 		gLptCtrl.pCRtoLF->deactivate();
 
 	gLptCtrl.pAutoFF = new Fl_Check_Button(20, 145, 240, 20, "Auto FormFeed after timeout (sec):");
 	gLptCtrl.pAutoFF->value(gLptPrefs.lpt_auto_ff);
+	gLptCtrl.pAutoFF->labelcolor(COLOR_FG);
 	if (gLptPrefs.lpt_mode != LPT_MODE_EMUL)
 		gLptCtrl.pAutoFF->deactivate();
 
 	gLptCtrl.pAFFtimeout = new Fl_Input(280, 145, 40, 20, "");
 	sprintf(value, "%d", gLptPrefs.lpt_aff_timeout);
 	gLptCtrl.pAFFtimeout->value(value);
+	gLptCtrl.pAFFtimeout->color(COLOR_BG);
+	gLptCtrl.pAFFtimeout->textcolor(COLOR_FG);
+	gLptCtrl.pAFFtimeout->cursor_color(COLOR_FG);
 	if (gLptPrefs.lpt_mode != LPT_MODE_EMUL)
 		gLptCtrl.pAFFtimeout->deactivate();
 
 	gLptCtrl.pAutoClose = new Fl_Check_Button(20, 170, 240, 20, "Close Session after timeout (sec):");
 	gLptCtrl.pAutoClose->value(gLptPrefs.lpt_auto_close);
+	gLptCtrl.pAutoClose->labelcolor(COLOR_FG);
 	if (gLptPrefs.lpt_mode != LPT_MODE_EMUL)
 		gLptCtrl.pAutoClose->deactivate();
 
 	gLptCtrl.pCloseTimeout = new Fl_Input(280, 170, 40, 20, "");
 	sprintf(value, "%d", gLptPrefs.lpt_close_timeout);
 	gLptCtrl.pCloseTimeout->value(value);
+	gLptCtrl.pCloseTimeout->color(COLOR_BG);
+	gLptCtrl.pCloseTimeout->textcolor(COLOR_FG);
+	gLptCtrl.pCloseTimeout->cursor_color(COLOR_FG);
 	if (gLptPrefs.lpt_mode != LPT_MODE_EMUL)
 		gLptCtrl.pCloseTimeout->deactivate();
-
 
 	// Add help text for setting up printer preferences
 	Fl_Button* b = new Fl_Button(20, 210, 120, 30, "Printer Setup");
 	b->callback(cb_printer_properties);
-	//Fl_Box* o = new Fl_Box(20, 220, 300, 20, "Setup Printer Preferences from File menu");
-	//o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	b->color(COLOR_BG);
+	b->labelcolor(COLOR_FG);
 
 	// Add items to the EmulPrint choice box
 	count = gLpt->GetPrinterCount();
@@ -1108,6 +1128,7 @@ void VTLpt::PrinterProperties(int useActivePrinter)
 
 	// Create a dialog box first
 	m_pProp = new Fl_Window(400, 350, "Printer Properties");
+  m_pProp->color(COLOR_BG);
 	
 	// Create property page from selected printer
 	count = GetPrinterCount();
@@ -1142,9 +1163,13 @@ void VTLpt::PrinterProperties(int useActivePrinter)
 	// Create Ok and Cancel button
 	m_pCancel = new Fl_Button(m_pProp->w() - 165, m_pProp->h()-40, 60, 30, "Cancel");
 	m_pCancel->callback(cb_PrintProp_Cancel);
+	m_pCancel->color(COLOR_BG);
+	m_pCancel->labelcolor(COLOR_FG);
 
 	m_pOk = new Fl_Return_Button(m_pProp->w()-90, m_pProp->h()-40, 60, 30, "Ok");
 	m_pOk->callback(cb_PrintProp_Ok, pPrint);
+	m_pOk->color(COLOR_BG);
+	m_pOk->labelcolor(COLOR_FG);
 
 	// Show the dialog box
 	m_pProp->end();

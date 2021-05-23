@@ -34,6 +34,15 @@ Flu_Combo_List :: ~Flu_Combo_List()
 {
 }
 
+void Flu_Combo_List :: set_colors( Fl_Color bgcolor, Fl_Color textcolor )
+{
+  color(bgcolor);
+  labelcolor(textcolor);
+  Flu_Combo_Box::set_colors(bgcolor, textcolor);
+  list.color(bgcolor);
+  list.textcolor(textcolor);
+}
+
 void Flu_Combo_List :: cb()
 {
   if( list.value() == 0 )

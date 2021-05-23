@@ -268,10 +268,10 @@ protected:
 	int					m_graphicsRcvd;				// Number of bytes received
 	int					m_graphicsStartX;			// Start X location - preserves precision
 	double				m_graphicsDpi;				// DPI of graphics mode
-	char				m_escKmode;					// Graphics mode for ESC K
-	char				m_escLmode;					// Graphics mode for ESC L
-	char				m_escYmode;					// Graphics mode for ESC Y
-	char				m_escZmode;					// Graphics mode for ESC Z
+	unsigned char				m_escKmode;					// Graphics mode for ESC K
+	unsigned char				m_escLmode;					// Graphics mode for ESC L
+	unsigned char				m_escYmode;					// Graphics mode for ESC Y
+	unsigned char				m_escZmode;					// Graphics mode for ESC Z
 	char				m_graphicsReassign;			// Graphics command being reassigned
 	
 	unsigned char		m_charRom[256][12];			// Character ROM

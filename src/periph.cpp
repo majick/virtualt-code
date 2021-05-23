@@ -59,6 +59,16 @@
 #include "lpt.h"
 #include "fileview.h"
 
+extern int    gMidnight;
+
+#define COLOR_BG  		(gMidnight ? FL_BLACK : fl_rgb_color(192, 192, 192))
+#define COLOR_BG_INPUT  (gMidnight ? FL_BLACK : FL_WHITE)
+#define COLOR_FG  		(gMidnight ? FL_WHITE : FL_BLACK)
+#define COLOR_TAB_INACTIVE_BG  		(gMidnight ? fl_rgb_color(32,32,32) : fl_rgb_color(192,192,192))
+#define COLOR_TAB_INACTIVE_FG  		(gMidnight ? fl_rgb_color(192,192,192) : FL_BLACK)
+#define FL_LIGHT_RED  fl_rgb_color(255, 195, 195)
+#define FL_LIGHT_BLUE  fl_rgb_color(195, 195, 255)
+
 void cb_Ide(Fl_Widget* w, void*) ;
 
 typedef struct periph_ctrl_struct	
@@ -565,91 +575,122 @@ void cb_PeripheralDevices (Fl_Widget* w, void*)
 	// Create Peripheral Setup window
 	gpdw = new Fl_Window(550, 400, "Peripheral Devices");
 	gpdw->callback(cb_peripheralwin);
+  gpdw->color(COLOR_BG);
 
 	// Create Peripheral Tabs
     {  
 		// Create a menu for the new window.
 		periph_ctrl.pMenu = new Fl_Menu_Bar(0, 0, 550, MENU_HEIGHT-2);
 		periph_ctrl.pMenu->menu(gPeriph_menuitems);
+		periph_ctrl.pMenu->color(COLOR_BG);
+		periph_ctrl.pMenu->textcolor(COLOR_FG);
 
 		periph_ctrl.pTabs = new Fl_Tabs(10, MENU_HEIGHT+10, 530, 380-MENU_HEIGHT);
+    periph_ctrl.pTabs->color(COLOR_BG);
+    periph_ctrl.pTabs->selection_color(COLOR_BG);
+    periph_ctrl.pTabs->labelcolor(COLOR_FG);
 
 		// COM port Tab
 		{ 
 			periph_ctrl.com.g = new Fl_Group(10, 30+MENU_HEIGHT, 540, 380-MENU_HEIGHT, " COM ");
+      periph_ctrl.com.g->color(COLOR_BG);
+      periph_ctrl.com.g->selection_color(COLOR_TAB_INACTIVE_BG);
+      periph_ctrl.com.g->labelcolor(COLOR_TAB_INACTIVE_FG);
 
 			// Create static text boxes
 			o = new Fl_Box(FL_NO_BOX, 20, 45+MENU_HEIGHT, 50, 15, "Port Name:");
 			o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+      o->labelcolor(COLOR_FG);
 			o = new Fl_Box(FL_NO_BOX, 20, 70+MENU_HEIGHT, 50, 15, "Port Status:");
 			o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+      o->labelcolor(COLOR_FG);
 			o = new Fl_Box(FL_NO_BOX, 20, 95+MENU_HEIGHT, 50, 15, "Baud Rate:");
 			o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+      o->labelcolor(COLOR_FG);
 			o = new Fl_Box(FL_NO_BOX, 20, 120+MENU_HEIGHT, 50, 15, "Start Char:");
 			o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+      o->labelcolor(COLOR_FG);
 	
 			o = new Fl_Box(FL_NO_BOX, 180, 70+MENU_HEIGHT, 50, 15, "Word Size:");
 			o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+      o->labelcolor(COLOR_FG);
 			o = new Fl_Box(FL_NO_BOX, 180, 95+MENU_HEIGHT, 50, 15, "Parity:");
 			o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+      o->labelcolor(COLOR_FG);
 			o = new Fl_Box(FL_NO_BOX, 180, 120+MENU_HEIGHT, 50, 15, "End Char:");
 			o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+      o->labelcolor(COLOR_FG);
 
 			o = new Fl_Box(FL_NO_BOX, 320, 70+MENU_HEIGHT, 50, 15, "Stop Bits:");
 			o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+      o->labelcolor(COLOR_FG);
 
 			o = new Fl_Box(FL_NO_BOX, 450, 45+MENU_HEIGHT, 50, 15, "RTS:");
 			o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+      o->labelcolor(COLOR_FG);
 			o = new Fl_Box(FL_NO_BOX, 450, 70+MENU_HEIGHT, 50, 15, "DTR:");
 			o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+      o->labelcolor(COLOR_FG);
 			o = new Fl_Box(FL_NO_BOX, 450, 95+MENU_HEIGHT, 50, 15, "CTS:");
 			o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+      o->labelcolor(COLOR_FG);
 			o = new Fl_Box(FL_NO_BOX, 450, 120+MENU_HEIGHT, 50, 15, "DSR:");
 			o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+      o->labelcolor(COLOR_FG);
 
 			periph_ctrl.com.pPortName = new Fl_Box(FL_NO_BOX, 100, 
 				45+MENU_HEIGHT, 400, 15, periph_ctrl.com.sPortName);
 			periph_ctrl.com.pPortName->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+			periph_ctrl.com.pPortName->labelcolor(COLOR_FG);
 
 			periph_ctrl.com.pPortStatus = new Fl_Box(FL_NO_BOX, 100, 
 				70+MENU_HEIGHT, 50, 15, periph_ctrl.com.sPortStatus);
 			periph_ctrl.com.pPortStatus->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+			periph_ctrl.com.pPortStatus->labelcolor(COLOR_FG);
 
 			periph_ctrl.com.pBaud = new Fl_Box(FL_NO_BOX, 100, 
 				95+MENU_HEIGHT, 50, 15, periph_ctrl.com.sBaud);
 			periph_ctrl.com.pBaud->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+			periph_ctrl.com.pBaud->labelcolor(COLOR_FG);
 
 			periph_ctrl.com.pStartChar = new Fl_Box(FL_NO_BOX, 100, 
 				120+MENU_HEIGHT, 60, 15, periph_ctrl.com.sStartChar);
 			periph_ctrl.com.pStartChar->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+			periph_ctrl.com.pStartChar->labelcolor(COLOR_FG);
 			strcpy(periph_ctrl.com.sStartChar, "(Click)");
 
 			periph_ctrl.com.pWordSize = new Fl_Box(FL_NO_BOX, 260, 
 				70+MENU_HEIGHT, 50, 15, periph_ctrl.com.sWordSize);
 			periph_ctrl.com.pWordSize->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+			periph_ctrl.com.pWordSize->labelcolor(COLOR_FG);
 
 			periph_ctrl.com.pParity = new Fl_Box(FL_NO_BOX, 260, 
 				95+MENU_HEIGHT, 50, 15, periph_ctrl.com.sParity);
 			periph_ctrl.com.pParity->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+			periph_ctrl.com.pParity->labelcolor(COLOR_FG);
 
 			periph_ctrl.com.pStopChar = new Fl_Box(FL_NO_BOX, 260, 
 				120+MENU_HEIGHT, 120, 15, periph_ctrl.com.sStopChar);
 			periph_ctrl.com.pStopChar->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+			periph_ctrl.com.pStopChar->labelcolor(COLOR_FG);
 			strcpy(periph_ctrl.com.sStopChar, "(Shift/Right Click)");
 
 			periph_ctrl.com.pStopBits = new Fl_Box(FL_NO_BOX, 380, 
 				70+MENU_HEIGHT, 50, 15, periph_ctrl.com.sStopBits);
 			periph_ctrl.com.pStopBits->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+			periph_ctrl.com.pStopBits->labelcolor(COLOR_FG);
 
 			periph_ctrl.com.pDeltaTime = new Fl_Box(FL_NO_BOX, 20, 
 				145+MENU_HEIGHT, 190, 15, periph_ctrl.com.sDeltaTime);
 			periph_ctrl.com.pDeltaTime->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+			periph_ctrl.com.pDeltaTime->labelcolor(COLOR_FG);
 			strcpy(periph_ctrl.com.sDeltaTime, "");
 
 			ser_get_signals(&periph_ctrl.com.cSignal);
 
 			periph_ctrl.com.pRTS = new Fl_Box(FL_OVAL_BOX, 490, 47+MENU_HEIGHT, 12, 12, "");
 			periph_ctrl.com.pRTS->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+			periph_ctrl.com.pRTS->labelcolor(COLOR_FG);
 			if (periph_ctrl.com.cSignal & SER_SIGNAL_RTS)
 				periph_ctrl.com.pRTS->color(FL_YELLOW);
 			else
@@ -657,6 +698,7 @@ void cb_PeripheralDevices (Fl_Widget* w, void*)
 
 			periph_ctrl.com.pDTR = new Fl_Box(FL_OVAL_BOX, 490, 72+MENU_HEIGHT, 12, 12, "");
 			periph_ctrl.com.pDTR->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+			periph_ctrl.com.pDTR->labelcolor(COLOR_FG);
 			if (periph_ctrl.com.cSignal & SER_SIGNAL_DTR)
 				periph_ctrl.com.pDTR->color(FL_YELLOW);
 			else
@@ -664,6 +706,7 @@ void cb_PeripheralDevices (Fl_Widget* w, void*)
 
 			periph_ctrl.com.pCTS = new Fl_Box(FL_OVAL_BOX, 490, 97+MENU_HEIGHT, 12, 12, "");
 			periph_ctrl.com.pCTS->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+			periph_ctrl.com.pCTS->labelcolor(COLOR_FG);
 			if (periph_ctrl.com.cSignal & SER_SIGNAL_CTS)
 				periph_ctrl.com.pCTS->color(FL_YELLOW);
 			else
@@ -671,12 +714,16 @@ void cb_PeripheralDevices (Fl_Widget* w, void*)
 
 			periph_ctrl.com.pDSR = new Fl_Box(FL_OVAL_BOX, 490, 122+MENU_HEIGHT, 12, 12, "");
 			periph_ctrl.com.pDSR->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+			periph_ctrl.com.pDSR->labelcolor(COLOR_FG);
 			if (periph_ctrl.com.cSignal & SER_SIGNAL_DSR)
 				periph_ctrl.com.pDSR->color(FL_YELLOW);
 			else
 				periph_ctrl.com.pDSR->color(FL_BLACK);
 
 			periph_ctrl.com.pLog = new T100_ComMon(20, 200, 495, 190-MENU_HEIGHT);
+			periph_ctrl.com.pLog->color(COLOR_BG);
+			periph_ctrl.com.pLog->labelcolor(COLOR_FG);
+			periph_ctrl.com.pLog->box(FL_UP_FRAME);
 			periph_ctrl.com.g->resizable(periph_ctrl.com.pLog);
 //			periph_ctrl.com.pLog->color(FL_WHITE);
 
@@ -690,14 +737,19 @@ void cb_PeripheralDevices (Fl_Widget* w, void*)
 			// Create items on the Tab
 			periph_ctrl.com.pEnable = new Fl_Check_Button(20, 362, 130, 20, "Enable Capture");
 			periph_ctrl.com.pEnable->callback(cb_com_enable_box);
+			periph_ctrl.com.pEnable->color(COLOR_BG);
+			periph_ctrl.com.pEnable->labelcolor(COLOR_FG);
 
 			// Create items on the Tab
 			periph_ctrl.com.pHex = new Fl_Check_Button(160, 362, 50, 20, "HEX");
 			periph_ctrl.com.pHex->callback(cb_com_hex_box);
+			periph_ctrl.com.pHex->labelcolor(COLOR_FG);
 
 			// Create items on the Tab
 			periph_ctrl.com.pClear = new Fl_Button(330, 360, 80, 25, "Clear Log");
 			periph_ctrl.com.pClear->callback(cb_com_clear);
+			periph_ctrl.com.pClear->color(COLOR_BG);
+			periph_ctrl.com.pClear->labelcolor(COLOR_FG);
 
 			periph_ctrl.com.pFont = new Fl_Choice(250, 362, 60, 20, "Size");
 			periph_ctrl.com.pFont->callback(cb_com_font_size);
@@ -705,9 +757,14 @@ void cb_PeripheralDevices (Fl_Widget* w, void*)
 			periph_ctrl.com.pFont->add("14");
 			periph_ctrl.com.pFont->add("16");
 			periph_ctrl.com.pFont->value(0);
+			periph_ctrl.com.pFont->color(COLOR_BG);
+			periph_ctrl.com.pFont->labelcolor(COLOR_FG);
+			periph_ctrl.com.pFont->textcolor(COLOR_FG);
 
 			Fl_Button *but = new Fl_Button(430, 360, 80, 25, "Save Log");
 			but->callback(cb_save_serial_log);
+			but->color(COLOR_BG);
+			but->labelcolor(COLOR_FG);
 
 			periph_ctrl.com.g->end();
 
@@ -720,42 +777,58 @@ void cb_PeripheralDevices (Fl_Widget* w, void*)
 		{ 
 			// Create the Group item (the "Tab")
 			periph_ctrl.lpt.g = new Fl_Group(10, MENU_HEIGHT+30, 500, 380-MENU_HEIGHT, " LPT ");
+			periph_ctrl.lpt.g->color(COLOR_BG);
+      periph_ctrl.lpt.g->selection_color(COLOR_TAB_INACTIVE_BG);
+      periph_ctrl.lpt.g->labelcolor(COLOR_TAB_INACTIVE_FG);
 
 			// Create static text boxes
 			o = new Fl_Box(FL_NO_BOX, 20, 45+MENU_HEIGHT, 70, 15, "Emulation Mode:");
 			o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+			o->labelcolor(COLOR_FG);
 			o = new Fl_Box(FL_NO_BOX, 20, 70+MENU_HEIGHT, 50, 15, "Port Status:");
 			o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+			o->labelcolor(COLOR_FG);
 
 			// Create control for reporting emulaiton mode
 			periph_ctrl.lpt.pPortMode = new Fl_Box(150, 45+MENU_HEIGHT, 200, 15, "Unknown");
 			periph_ctrl.lpt.pPortMode->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+			periph_ctrl.lpt.pPortMode->labelcolor(COLOR_FG);
 
 			// Create control for reporting port status
 			periph_ctrl.lpt.pPortStatus = new Fl_Box(150, 70+MENU_HEIGHT, 200, 15, "Unknown");
 			periph_ctrl.lpt.pPortStatus->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+			periph_ctrl.lpt.pPortStatus->labelcolor(COLOR_FG);
 
 			// Create control for hex log
 			o = new Fl_Box(FL_NO_BOX, 20, 105+MENU_HEIGHT, 70, 15, "Hex Log");
 			o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+			o->labelcolor(COLOR_FG);
 			periph_ctrl.lpt.pHexLogBuffer = new Fl_Text_Buffer();
 			periph_ctrl.lpt.pHexLogDisplay = new Fl_Text_Display(20, 130+MENU_HEIGHT, 480, 180, "");
 			periph_ctrl.lpt.pHexLogDisplay->buffer(periph_ctrl.lpt.pHexLogBuffer);
 			periph_ctrl.lpt.pHexLogDisplay->wrap_mode(1, 48);
 			periph_ctrl.lpt.pHexLogDisplay->textfont(FL_COURIER);
+			periph_ctrl.lpt.pHexLogDisplay->color(COLOR_BG);
+			periph_ctrl.lpt.pHexLogDisplay->textcolor(COLOR_FG);
+			periph_ctrl.lpt.pHexLogDisplay->cursor_color(COLOR_FG);
 			periph_ctrl.lpt.g->resizable(periph_ctrl.lpt.pHexLogDisplay);
 
 			// Create control for enabling capture
 			periph_ctrl.lpt.pEnable = new Fl_Check_Button(20, 357, 130, 20, "Enable Hex Log");
 			periph_ctrl.lpt.pEnable->callback(cb_lpt_enable_box);
+			periph_ctrl.lpt.pEnable->labelcolor(COLOR_FG);
 
 			// Create control for Saving the log
 			periph_ctrl.lpt.pSave = new Fl_Button(240, 355, 80, 25, "Save Log");
 			periph_ctrl.lpt.pSave->callback(cb_lpt_save);
+			periph_ctrl.lpt.pSave->color(COLOR_BG);
+			periph_ctrl.lpt.pSave->labelcolor(COLOR_FG);
 
 			// Create control for Clearing the log
 			periph_ctrl.lpt.pClear = new Fl_Button(340, 355, 80, 25, "Clear Log");
 			periph_ctrl.lpt.pClear->callback(cb_lpt_clear);
+			periph_ctrl.lpt.pClear->color(COLOR_BG);
+			periph_ctrl.lpt.pClear->labelcolor(COLOR_FG);
 
 			// Populate controls with current status
 			if (gLpt != NULL)
@@ -776,10 +849,14 @@ void cb_PeripheralDevices (Fl_Widget* w, void*)
 			// Create the Group item (the "Tab")
 			periph_ctrl.mdm.g = new Fl_Group(10, MENU_HEIGHT+30, 500, 380-MENU_HEIGHT, 
 				" MDM ");
+			periph_ctrl.mdm.g->color(COLOR_BG);
+      periph_ctrl.mdm.g->selection_color(COLOR_TAB_INACTIVE_BG);
+      periph_ctrl.mdm.g->labelcolor(COLOR_TAB_INACTIVE_FG);
 
 			// Create controls
 			periph_ctrl.mdm.pText = new Fl_Box(120, MENU_HEIGHT+60, 60, 80, 
 				"Modem Port not supported yet");
+			periph_ctrl.mdm.pText->labelcolor(COLOR_FG);
 
 			// End of control for this tab
 			periph_ctrl.mdm.g->end();
@@ -790,10 +867,14 @@ void cb_PeripheralDevices (Fl_Widget* w, void*)
 		{ 
 			// Create the Group item (the "Tab")
 			periph_ctrl.cas.g = new Fl_Group(10, MENU_HEIGHT+30, 500, 380-MENU_HEIGHT, " CAS ");
+			periph_ctrl.cas.g->color(COLOR_BG);
+      periph_ctrl.cas.g->selection_color(COLOR_TAB_INACTIVE_BG);
+      periph_ctrl.cas.g->labelcolor(COLOR_TAB_INACTIVE_FG);
 
 			// Create controls
 			periph_ctrl.cas.pText = new Fl_Box(120, MENU_HEIGHT+60, 60, 80, 
 				"Cassette Port not supported yet");
+			periph_ctrl.cas.pText->labelcolor(COLOR_FG);
 
 			// End of control for this tab
 			periph_ctrl.cas.g->end();
@@ -804,10 +885,14 @@ void cb_PeripheralDevices (Fl_Widget* w, void*)
 		{ 
 			// Create the Group item (the "Tab")
 			periph_ctrl.bcr.g = new Fl_Group(10, MENU_HEIGHT+30, 500, 380-MENU_HEIGHT, " BCR ");
+			periph_ctrl.bcr.g->color(COLOR_BG);
+      periph_ctrl.bcr.g->selection_color(COLOR_TAB_INACTIVE_BG);
+      periph_ctrl.bcr.g->labelcolor(COLOR_TAB_INACTIVE_FG);
 
 			// Create controls
 			periph_ctrl.bcr.pText = new Fl_Box(120, MENU_HEIGHT+60, 60, 80, 
 				"BCR Port not supported yet");
+			periph_ctrl.bcr.pText->labelcolor(COLOR_FG);
 
 			// End of control for this tab
 			periph_ctrl.bcr.g->end();
@@ -834,6 +919,9 @@ void cb_PeripheralDevices (Fl_Widget* w, void*)
 
 			// Create a Tab for this printer
 			pDev->pTab = new Fl_Group(10, MENU_HEIGHT+30, 500, 380-MENU_HEIGHT, pDev->pName);
+      pDev->pTab->color(COLOR_BG);
+      pDev->pTab->selection_color(COLOR_TAB_INACTIVE_BG);
+      pDev->pTab->labelcolor(COLOR_TAB_INACTIVE_FG);
 
 			// Build th controls for this tab
 			gLpt->BuildPrinterMonTab(c);
@@ -981,20 +1069,20 @@ void T100_ComMon::AddByte(int rx_tx, char byte, char flags)
 		fl_font(FL_COURIER_BOLD,gFontSize);
 
 		// Determine xoffset of text
-		xpos = (int) (x() + m_LastCol * m_Width);
+		xpos = (int) (x() + m_LastCol * m_Width) + 5;
 
 		// Determine color & yoffset of text
 		if (b->entries[b->used].flags & 0x80)
 		{
 			// Byte is a TX byte
-			fl_color(FL_RED);
+      fl_color(gMidnight ? FL_LIGHT_RED : FL_RED);
 			ypos = (int) (y() + (m_LastLine-m_FirstLine+1) * m_Height);
 
 		}
 		else
 		{
 			// Byte is an RX byte
-			fl_color(FL_BLUE);
+		  fl_color(gMidnight ? FL_LIGHT_BLUE : FL_BLUE);
 			ypos = (int) (y() + (m_LastLine-m_FirstLine+2) * m_Height);
 		}
 
@@ -1133,8 +1221,9 @@ void T100_ComMon::draw()
 	}
 
 	// Draw white background
-    fl_color(FL_WHITE);
-    fl_rectf(x(),y(),w(),h());
+  fl_color(color());
+  fl_rectf(x(),y(),w(),h());
+  draw_box();
 
 	// Draw GRAY lines between every other line
 	fl_color(FL_GRAY);
@@ -1179,20 +1268,20 @@ void T100_ComMon::draw()
 			}
 
 			// Determine xoffset of text
-			xpos = (int) (x() + col * m_Width);
+			xpos = (int) (x() + col * m_Width)+5;
 
 			// Determine color & yoffset of text
 			if (clb->entries[index].flags & 0x80)
 			{
 				// Byte is a TX byte
-				fl_color(FL_RED);
+        fl_color(gMidnight ? FL_LIGHT_RED : FL_RED);
 				ypos = (int) (y() + (line+1) * m_Height);
 
 			}
 			else
 			{
 				// Byte is an RX byte
-				fl_color(FL_BLUE);
+				fl_color(gMidnight ? FL_LIGHT_BLUE : FL_BLUE);
 				ypos = (int) (y() + (line+2) * m_Height);
 			}
 
@@ -1221,12 +1310,12 @@ void T100_ComMon::draw()
 					if (m_pStartTime == m_pStopTime)
 						fl_color(FL_YELLOW);
 					else
-						fl_color(FL_RED);
+            fl_color(gMidnight ? FL_LIGHT_RED : FL_RED);
 					fl_rectf(xpos, ypos-(int)m_Height+3, (int) (adder * m_Width), (int) m_Height-1);
 					if (m_pStartTime == m_pStopTime)
-						fl_color(FL_BLACK);
+						fl_color(labelcolor());
 					else
-						fl_color(FL_WHITE);
+						fl_color(color());
 					m_StopTimeLine = line + m_FirstLine;
 					if ((clb->entries[index].flags & 0x80) == 0)
 						m_StopTimeLine++;
@@ -1296,7 +1385,7 @@ int T100_ComMon::handle(int event)
 		if ((c == FL_LEFT_MOUSE) || (c == FL_RIGHT_MOUSE))
 		{
 			// Get X,Y position of button press
-			xp = Fl::event_x();
+			xp = Fl::event_x()-5;
 			yp = Fl::event_y();
 
 			// Check if Shift was depressed during the Mouse Button event
@@ -1417,7 +1506,7 @@ int T100_ComMon::handle(int event)
 					if ((m_StopTimeLine >= m_FirstLine) && 
 						(m_StopTimeLine < m_FirstLine + m_Lines))
 					{
-						xpos = (int) (x() + m_StopTimeCol * m_Width);
+						xpos = (int) (x() + m_StopTimeCol * m_Width) + 5;
 						ypos = (int) (y() + (m_StopTimeLine - m_FirstLine) * m_Height);
 						prev_cle = m_pStopTime;
 						line = m_StopTimeLine;
@@ -1433,7 +1522,7 @@ int T100_ComMon::handle(int event)
 					if ((m_StartTimeLine >= m_FirstLine) && 
 						(m_StartTimeLine < m_FirstLine + m_Lines))
 					{
-						xpos = (int) (x() + m_StartTimeCol * m_Width);
+						xpos = (int) (x() + m_StartTimeCol * m_Width) + 5;
 						ypos = (int) (y() + (m_StartTimeLine - m_FirstLine) * m_Height);
 						prev_cle = m_pStartTime;
 						line = m_StartTimeLine;
@@ -1448,13 +1537,13 @@ int T100_ComMon::handle(int event)
 			if (prev_cle != NULL)
 			{
 				// Draw background
-				fl_color(FL_WHITE);
+				fl_color(color());
 				fl_rectf(xpos, ypos+3, (int) (adder * m_Width), (int) m_Height-1);
 
 				if (line & 0x01)
-					fl_color(FL_BLUE);
+					fl_color(gMidnight ? FL_LIGHT_BLUE : FL_BLUE);
 				else
-					fl_color(FL_RED);
+					fl_color(gMidnight ? FL_LIGHT_RED : FL_RED);
 
 				// Draw the text
 				if (gHexOn)
@@ -1479,7 +1568,7 @@ int T100_ComMon::handle(int event)
 					m_pStopTime = cle_sel;
 					m_StopTimeLine = line_click + m_FirstLine;
 					m_StopTimeCol = col;
-					fl_color(FL_RED);
+          fl_color(gMidnight ? FL_LIGHT_RED : FL_RED);
 				}
 				else
 				{
@@ -1496,7 +1585,7 @@ int T100_ComMon::handle(int event)
 				{
 					// Draw the Start selecton box
 					fl_color(FL_GREEN);
-					xpos = (int) (x() + m_StartTimeCol * m_Width);
+					xpos = (int) (x() + m_StartTimeCol * m_Width) + 5;
 					ypos = (int) (y() + (m_StartTimeLine - m_FirstLine) * m_Height);
 					fl_rectf(xpos, ypos+3, (int) (adder * m_Width), (int) m_Height-1);
 					
@@ -1516,16 +1605,16 @@ int T100_ComMon::handle(int event)
 					if (m_pStartTime == m_pStopTime)
 						fl_color(FL_YELLOW);
 					else
-						fl_color(FL_RED);
-					xpos = (int) (x() + m_StopTimeCol * m_Width);
+            fl_color(gMidnight ? FL_LIGHT_RED : FL_RED);
+					xpos = (int) (x() + m_StopTimeCol * m_Width) + 5;
 					ypos = (int) (y() + (m_StopTimeLine - m_FirstLine) * m_Height);
 					fl_rectf(xpos, ypos+3, (int) (adder * m_Width), (int) m_Height-1);
 					
 					// Draw the StartTime text
 					if (m_pStartTime == m_pStopTime)
-						fl_color(FL_BLACK);
+						fl_color(labelcolor());
 					else
-						fl_color(FL_WHITE);
+						fl_color(color());
 					if (gHexOn)
 						sprintf(string, "%02X", m_pStopTime->byte);
 					else

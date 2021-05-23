@@ -70,17 +70,36 @@ int				gRampacEmulation = 0;/* ReMem's Rampac emulation active? */
 int				gRex = 0;			/* Rex Emulation Enable flag */
 unsigned char	*gRex2Ram = NULL;	/* Rex2 RAM pointer */
 int				gRexSector = 0;		/* Active sector */
+
 int				gRexState = 7;		/* Rex Command State */
+int				gRexCState = 15;	/* REXCPM Command State */  // added SA
 unsigned char	gRexReturn = 0;		/* Return value for Status & HW reads */
 unsigned char	gRexModel = 0;		/* Rex model */
 unsigned char	gRexFlashSel = 1;	/* Rex Flash enable signal */
 int				gRexKeyState = 0;	/* Rex Key State */
+int 			gRexCKeyState = 15;	/* REXCPM Key State */
 int				gRexFlashPA = 0;	/* REX Flash Address Line during programing */
 unsigned char	gRex3Data = 0;		/* REX3 data to write for commands 2,5 and 6 */
 unsigned char	gRex3Cmd = 0;		/* REX3 command saved for state 6 */
 amd_flash_t		gRexFlash = { FLASH_STATE_RO, 0, FALSE, 0 };
 unsigned char	gRexKeyTable[6] = { 184, 242, 52, 176, 49, 191 };
+unsigned char	gRexCKeyTable[6] = { 184, 242, 196, 237, 161, 152 };	// added SA
+int				gRexCKey;
+int				gRexCKeyAddr;
+unsigned char				gRexCOSector = 1;		/* OPTROM 32k sector */			// added SA
+unsigned char				gRexCRLSector = 0;		/* lower 16k RAM sector */		// added SA
+unsigned char				gRexCRUSector = 1;		/* upper 16k RAM sector */		// added SA
+int				gRexCWP = 1;			/* write protect */				// added SA
+unsigned char	*gRexCRam = NULL;		/* Pointer to REXC RAM space */	// added SA
+int				readcounter = 1;		// read counter for REXC state machine, added SA
+int				lastreadcounter = 0;		// read counter for REXC state machine, added SA
+int				readcounterclear = 1;	// clear signal for REXC read counter, added SA
+int				optromcounter = 0;		// REX Optrom read counter, added SA
+
+int				gRexCModel = 0xE8;		// model # info for REXC, added SA
 int				gIndex[65536];
+int				temp;
+
 
 extern RomDescription_t		gM100_Desc;
 extern RomDescription_t		gM200_Desc;
@@ -101,13 +120,43 @@ uchar	gFlashCFIData[] = {
 	0x50, 0x52, 0x49, 0x31, 0x30, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00
 };
 
+
+unsigned char get_memory8_counter(unsigned short address)
+{		// added so that actual memory reads during emulation can be counted, for REXCPM state machine
+			if (readcounterclear == 1)
+			{ 
+				readcounter = 1;
+				lastreadcounter = 0;
+				optromcounter = 0;
+			}
+			else 
+				readcounter = ((readcounter + 1) & 0xFF);
+
+			return get_memory8(address);
+}
+
+
+
 unsigned char get_memory8(unsigned short address)
 {
 	if (gReMem)
 	{
-		if  (gRex)
-			return rex_read(address);
-		else
+		if (gRex && (gRex == REXC))							// modified SA
+		{		
+      		unsigned char ret;
+			ret = rexC_read(address);
+     	 	lastreadcounter = readcounter;
+      		return ret;
+		}
+		else if (gRex && (gRex != REXC))
+				// REX, REX3, REXS, REX2, REX3
+		{
+			unsigned char ret;		
+			ret = rex_read(address);
+     	 	lastreadcounter = readcounter;
+      		return ret;
+  		}		
+		else			// REMEM	
 		{
 			if (gReMemFlashReady)
 				return gMemory[address >> 10][address & 0x3FF];
@@ -123,9 +172,15 @@ unsigned short get_memory16(unsigned short address)
 {
 	if (gReMem)
 	{
-		if (gRex)
+		if (gRex && (gRex == REXC))							// modified SA
+			// REXC
+			return rexC_read(address) | (rexC_read(address+1) << 8);
+		else if (gRex && (gRex != REXC))			
+				// REX, REX3, REXS, REX2, REX3
 			return rex_read(address) | (rex_read(address+1) << 8);
-		return gMemory[address>>10][address&0x3FF] + (gMemory[(address+1)>>10][(address+1)&0x3FF] << 8);
+		else
+			// REMEM	
+			return gMemory[address>>10][address&0x3FF] + (gMemory[(address+1)>>10][(address+1)&0x3FF] << 8);
 	}
 	else
 		return (address>ROMSIZE&&address<RAMBOTTOM)? 0xFFFF: gBaseMemory[address] + (gBaseMemory[address+1] << 8);
@@ -135,7 +190,11 @@ void set_memory8(unsigned short address, unsigned char data)
 {
 	if (gReMem)
 	{
-		if (gRex)
+		if (gRex && (gRex==REXC))							// modified SA
+			// REXC
+			rexC_set8(address, data);
+		else if (gRex && (gRex != REXC))
+			// REX, REX3, REXS, REX2, REX3
 			rex_set8(address, data);
 		else
 			remem_set8(address, data);
@@ -146,7 +205,7 @@ void set_memory8(unsigned short address, unsigned char data)
 
 void set_memory16(unsigned short address, unsigned short data)
 {
-	set_memory8(address, (unsigned char) (data & 0xFF));
+	set_memory8((unsigned short)(address), (unsigned char) (data & 0x00FF));
 	set_memory8((unsigned short)(address+1), (unsigned char) (data >> 8));
 }
 
@@ -171,8 +230,15 @@ void get_memory8_ext(int region, long address, int count, unsigned char *data)
 		{
 			if (gReMem && !gRex)
 				data[c] = gMemory[addr>>10][addr&0x3FF];
+			else if (gRex == REXC)
+			{
+				if ( (addr&0xC000) == 0xC000 )
+					data[c]= gRexCRam[ gRexCRUSector<<14 | (addr&0x3FFF)]; //upper ram 
+				else
+					data[c]= gRexCRam[ gRexCRLSector<<14 | (addr&0x3FFF)]; // lower ram
+			}
 			else
-				data[c] = gBaseMemory[addr];
+				data[c] = gBaseMemory[addr];	
 			addr++;
 		}
 		break;
@@ -208,7 +274,13 @@ void get_memory8_ext(int region, long address, int count, unsigned char *data)
 	case REGION_OPTROM:
 		addr = address;
 		for (c = 0; c < count; c++)
-			data[c] = gOptROM[addr++];
+		{
+			if (gRex && (gRex == REXC))
+				data[c] = gRexCRam[(gRexCOSector <<15) | (0x07FFF & addr)];
+			else
+				data[c] = gOptROM[addr];
+			addr++;
+		}
 		break;
 
 	case REGION_RAM1:
@@ -373,6 +445,25 @@ void get_memory8_ext(int region, long address, int count, unsigned char *data)
 			data[cp_ptr] = ptr[addr++];
 		break;
 
+		
+	// added SA
+	case REGION_REXC_RAM:
+		// First check that the REXC RAM has been allocated
+		if (gRexCRam== NULL)
+			break;
+
+		// Indicate zero bytes copied so far
+		cp_ptr = 0;
+
+		// Determine which location to copy memory from
+		ptr = (uchar *) gRexCRam;
+
+		// Block is not mapped -- copy from 4Meg Region (RAM)
+		addr = address;
+		for (;(cp_ptr < count); cp_ptr++)
+			data[cp_ptr] = ptr[addr++];
+		break;	
+	
 	case REGION_ROM3:
 		addr = address;
 		if (gModel == MODEL_PC8300)
@@ -405,7 +496,6 @@ void set_memory8_ext(int region, long address, int count, unsigned char *data)
 {
 	int				addr;
 	int				c;
-	unsigned short	map;
 	int				cp_ptr;
 	unsigned char	*ptr;
 	int				map_changed = 0;
@@ -418,12 +508,19 @@ void set_memory8_ext(int region, long address, int count, unsigned char *data)
 		{
 			if (gReMem && !gRex)
 				gMemory[addr>>10][addr&0x3FF] = data[c];
+			else if (gRex == REXC)
+			{
+				if ((addr&0xC000) == 0xC000 )
+					gRexCRam[ gRexCRUSector<<14 | (addr&0x3FFF)] = data[c]; // upper ram
+				else
+					gRexCRam[ gRexCRLSector<<14 | (addr&0x3FFF)] = data[c]; // lower ram 
+			}
 			else
 				gBaseMemory[addr] = data[c];
 			addr++;
 		}
 		break;
-
+		
 	case REGION_ROM:
 		addr = address;
 		for (c = 0; c < count; c++)
@@ -445,7 +542,13 @@ void set_memory8_ext(int region, long address, int count, unsigned char *data)
 	case REGION_OPTROM:
 		addr = address;
 		for (c = 0; c < count; c++)
-			gOptROM[addr++] = data[c];
+		{
+			if (gRex == REXC)
+				gRexCRam[(gRexCOSector<<15) | (0x7FFF & addr)] = data[c];
+			else
+				gOptROM[addr] = data[c];
+			addr++;
+		}
 		break;
 
 	case REGION_RAM1:
@@ -582,7 +685,6 @@ void set_memory8_ext(int region, long address, int count, unsigned char *data)
 			addr = address;
 
 			// Calculate ReMemMap value to search for to test if
-			map = REMEM_VCTR_FLASH1_CS | REMEM_VCTR_FLASH2_CS;
 			ptr = gReMemRam;
 
 			/* Loop for each byte and copy to RAM.  If byte is in MMU space */
@@ -644,6 +746,30 @@ void set_memory8_ext(int region, long address, int count, unsigned char *data)
 			ptr[addr++] = data[cp_ptr];
 
 		break;
+
+			
+		
+		/*		
+		================================================================
+		The following deals with REXC RAM
+		================================================================
+		*/
+	case REGION_REXC_RAM:
+		// First check that the ReMem RAM has been allocated
+		if (gRexCRam == NULL)
+				break;	
+				
+		/* Get pointer to the REXCPM RAM  */
+		ptr = (uchar *) gRexCRam;
+
+		/* Setup to copy */
+		addr = address;
+
+		// Copy bytes up to the limit to allocation
+		for (cp_ptr = 0; cp_ptr < count; cp_ptr++)
+			ptr[addr++] = data[cp_ptr];
+
+		break;			
 	}
 }
 
@@ -779,10 +905,12 @@ void init_mem(void)
 	gReMem = (mem_setup.mem_mode == SETUP_MEM_REMEM) || (mem_setup.mem_mode == SETUP_MEM_REMEM_RAMPAC);
 	gRampac = (mem_setup.mem_mode == SETUP_MEM_RAMPAC) || (mem_setup.mem_mode == SETUP_MEM_REMEM_RAMPAC);
     gRex = (mem_setup.mem_mode == SETUP_MEM_REX || mem_setup.mem_mode == SETUP_MEM_REX_QUAD) ? REX : 
-           (mem_setup.mem_mode == SETUP_MEM_REX2) ? REX2 : 0;
+           (mem_setup.mem_mode == SETUP_MEM_REX2) ? REX2 : 
+           (mem_setup.mem_mode == SETUP_MEM_REXS) ? REXS :
+           (mem_setup.mem_mode == SETUP_MEM_REXC) ? REXC : 0;
     gQuad = (mem_setup.mem_mode == SETUP_MEM_QUAD || mem_setup.mem_mode == SETUP_MEM_REX_QUAD) ? 1 : 0;
 
-	if (gRex)
+	if (gRex && (gRex != REXC))
 	{
 		gRexModel = REX | gRex;		
 		gReMem = 1;
@@ -791,6 +919,19 @@ void init_mem(void)
 		gRexSector = 0;
 		gRexKeyState = 0;
 	}
+	
+	if (gRex == REXC)
+	{		
+		gRexModel = REXC | gRex;		// added SA
+		gReMem = 1;
+		gRexCState = 15;		
+		gRexCKeyState = 0;
+		gRexCOSector = 1;
+		gRexCRLSector = 0;
+		gRexCRUSector = 1;
+		gRexCWP = 1;
+	}
+	
 	gRampacEmulation = 0;
 	gRampacSectPtr = NULL;
 	gRamBank = 0;
@@ -812,8 +953,52 @@ void init_mem(void)
             rambanks[c] = 0;
     }
 
+    
+	/* Test if Rex emulation enabled */   
+	if (gRex)
+	{
+		/* Allocate memory only if not already allocated */  //only when not REXCPM  // added SA
+		if  ((gRex != REXC) && (gRexFlash.pFlash == 0) )
+		{
+			/* Size of allocation for RAM and FLASH */
+			size = 1024 * 1024;
+
+			/* Allocate space for Rex FLASH */
+			amd_flash_init(&gRexFlash, size, AMD_FLASH_TYPE_REX);
+		}
+		// test if REXCPM is enabled
+		if ((gRex == REXC) && (gRexCRam == 0))   // added SA, allocate if not already allocated
+		{
+			/* Size of allocation for REXCPM RAM */
+			size = 4 * 1024 * 1024;		
+			
+			/* Allocate space for RexCPM RAM */
+			gRexCRam = malloc(size);
+
+			/* Initialize memory to zero */
+			for (c = 0; c < size; c++)
+				gRexCRam[c] = 0;		
+		}   
+
+
+		/* Test if Rex2 enabled and allocate RAM */
+		if  ((gRex == REX2) && (gRex2Ram == 0))
+		{
+			/* Size of allocation for RAM and FLASH */
+			size = 1024 * 128;
+
+			/* Allocate space for Rex2 RAM */
+			gRex2Ram = malloc(size);
+
+			/* Initialize memory to zero */
+			for (c = 0; c < size; c++)
+				gRex2Ram[c] = 0;
+		}
+	}
+    
+    
 	/* Test if ReMem emulation enabled */
-	if (gReMem)
+	if (gReMem && !gRex)			// do this if ReMem
 	{
 		/* Allocate memory only if not already allocated */
 		if  (gReMemRam == 0)
@@ -833,7 +1018,7 @@ void init_mem(void)
 			amd_flash_init(&gReMemFlash1, size, AMD_FLASH_TYPE_REMEM);
 			amd_flash_init(&gReMemFlash2, size, AMD_FLASH_TYPE_REMEM);
 		}
-
+	
 		remem_copy_normal_to_system();
 
 		/* Initialize Rampac I/O mode access variables */
@@ -843,7 +1028,8 @@ void init_mem(void)
 		gReMemCounter = 0;
 		gReMemSectPtr = (unsigned char *) (gReMemRam + REMEM_MAP_OFFSET);
 	}
-	else
+	
+	else   // REX and non REX, not ReMem
 	{
 		/* Reset Rom Size back to original */
 		if (gModel == MODEL_T200)
@@ -854,36 +1040,14 @@ void init_mem(void)
 		/* Copy Memory */
 		for (c = 0; c < ROMSIZE/1024; c++)
 			gMemory[c] = &gSysROM[c*1024];
-
-		for (; c < 64; c++)
-			gMemory[c] = &gBaseMemory[next++ * 1024];
-	}
-
-	/* Test if Rex emulation enabled */
-	if (gRex)
-	{
-		/* Allocate memory only if not already allocated */
-		if  (gRexFlash.pFlash == 0)
-		{
-			/* Size of allocation for RAM and FLASH */
-			size = 1024 * 1024;
-
-			/* Allocate space for Rex FLASH */
-			amd_flash_init(&gRexFlash, size, AMD_FLASH_TYPE_REX);
+			
+		if (gRex == REXC)		// added SA - 
+		{		
 		}
-
-		/* Test if Rex2 enabled and allocate RAM */
-		if  ((gRex == REX2) && (gRex2Ram == 0))
+		else		// normal RAM assignment
 		{
-			/* Size of allocation for RAM and FLASH */
-			size = 1024 * 128;
-
-			/* Allocate space for Rex2 RAM */
-			gRex2Ram = malloc(size);
-
-			/* Initialize memory to zero */
-			for (c = 0; c < size; c++)
-				gRex2Ram[c] = 0;
+			for (; c < 64; c++)
+				gMemory[c] = &gBaseMemory[next++ * 1024];
 		}
 	}
 
@@ -917,7 +1081,8 @@ void reinit_mem(void)
 	gRomSize = gModel == MODEL_T200 ? 40960 : 32768;
 
 	/* Check if ReMem emulation on */
-	if (gReMem)
+//	if (gReMem)  SA
+	if (gReMem && !gRex)
 	{
 		gReMemMode = REMEM_MODE_FLASH1_RDY | REMEM_MODE_FLASH2_RDY;
 		gReMemFlashReady = TRUE;
@@ -933,7 +1098,7 @@ void reinit_mem(void)
 	}
 
 	/* Test if Rex needs to be reinitialized */
-	if (gRex)
+	if ((gRex) && (gRex != REXC))
 	{
 		/* Initialize Rex state varialbles */
 		gRexState = 7;
@@ -942,6 +1107,18 @@ void reinit_mem(void)
 		gRexKeyState = 0;
 	}
 
+	/* Test if RexCPM needs to be reinitialized */
+	if ((gRex) && (gRex == REXC))
+	{
+		/* Initialize RexCPM state varialbles */
+		gRexCState = 15;
+		gRexCOSector = 1;
+		gRexCRLSector = 0;
+		gRexCRUSector = 1;
+		gRexCWP = 1;
+		gRexCKeyState = 0;	
+	}
+	
 	// Clear the RAM
 //	for (x = ROMSIZE; x < 65536; x++)
 //		set_memory8(x, 0);
@@ -964,8 +1141,16 @@ void cold_boot_mem(void)
 	load_sys_rom();
 
 	// Now zero out the RAM
-	if (gReMem && (gRex == 0))
+	if (gReMem && !gRex)
 	{
+	}
+	else if (gRex == REXC)
+	{
+		for (x = 0; x < 0x04000; x++)		// init first 2 16k blocks of REXCPM RAM as pointed to by registers
+		{
+			gRexCRam[gRexCRUSector<<14 | x] = 0;	
+			gRexCRam[gRexCRLSector<<14 | x] = 0;
+		}
 	}
 	else
 	{
@@ -1025,6 +1210,24 @@ void free_rex_mem(void)
 
 	/* Set memory pointers to NULL */
 	gRexFlash.pFlash = 0;
+	
+}
+
+/*
+========================================================================
+free_rexc_mem:	This routine frees the memory used by the RexCPM 
+				emulation and resets the pointers to zero.
+========================================================================
+*/
+void free_rexc_mem(void)
+{
+	/* Delete memory allocated for RAM*/
+	if (gRexCRam != NULL)
+		free(gRexCRam);
+
+	/* Set memory pointers to NULL */
+	gRexCRam = 0;
+
 }
 
 /*
@@ -1043,8 +1246,11 @@ void free_mem(void)
 	if (gRampacRam != 0)
 		free_rampac_mem();
 
-	if (gRex != 0)
+	if (gRex && (gRex != REXC))
 		free_rex_mem();
+	
+	if (gRex == REXC)
+		free_rexc_mem();
 }
 
 /*
@@ -1164,6 +1370,44 @@ void save_rex2_ram(void)
 
 /*
 ========================================================================
+save_rexc_ram:	This routine saves the Rexc emulation RAM to the RexC
+				RAM file.
+				added SA
+========================================================================
+*/
+void save_rexc_ram(void)
+{
+	FILE	*fd;
+	int		size;
+
+	/* Open RexC RAM file */
+	fd = fopen(mem_setup.rexc_ram_file, "wb+");
+
+	/* Print error if unable to open the file */
+	if (fd == NULL)
+	{
+		char  msg[100];
+		sprintf(msg, "Could not save REXCPM RAM file %s", mem_setup.rexc_ram_file);
+		show_error(msg);
+		return;
+	}
+
+	/* Check if file opened successfully */
+	if (fd != 0)
+	{
+		size = 4 * 1024 * 1024;		/* Copy 4MB of RAM */
+
+		/* Write RexC RAM first */
+		fwrite(gRexCRam, 1, size, fd);
+
+		/* Close the file */
+		fclose(fd);
+	}
+}
+
+
+/*
+========================================================================
 save_rex_flash:	This routine saves the Rex emulation flash to the Rex
 				flash file.
 ========================================================================
@@ -1221,7 +1465,7 @@ void save_ram(void)
 	{
 		save_remem_ram();		/* Save ReMem data to file */
 	}
-	else
+	else if (gRex != REXC)		// modified SA
 	{
 		/* Base memory -- First get the emulation path */
 		get_emulation_path(file, gModel);
@@ -1299,10 +1543,21 @@ void save_ram(void)
 	Save Rex Flash & RAM if enabled
 	===========================================
 	*/
-	if (gRex)
+	if (gRex && (gRex != REXC))
 	{
 		save_rex_flash();		/* Save the flash */
 		save_rex2_ram();		/* Save Rex2 RAM to file */
+	}
+	
+	
+	/*	
+	===========================================
+	Save RexC RAM if enabled added SA
+	===========================================
+	*/
+	if (gRex == REXC)
+	{
+		save_rexc_ram();		/* Save RexCPM RAM to file */
 	}
 }
 
@@ -1372,14 +1627,17 @@ void load_remem_ram(void)
 	if (gModel == MODEL_T200)
 		for (x = 0; x < sizeof(gMsplanROM); x++)
 			gReMemFlash1.pFlash[0x10000 + x] = gMsplanROM[x];
+  (void) (readlen);
 }
 
 void reload_sys_rom(void)
 {
 	int		x;
-	
-	for (x = 0; x < ROMSIZE; x++)
-		gReMemFlash1.pFlash[x] = gSysROM[x];
+	if (gReMem && !gRex)
+	{
+		for (x = 0; x < ROMSIZE; x++)
+			gReMemFlash1.pFlash[x] = gSysROM[x];
+	}
 }
 
 /*
@@ -1417,6 +1675,7 @@ void load_rampac_ram(void)
 		/* Close the file */
 		fclose(fd);
 	}
+  (void) (readlen);
 }
 
 /*
@@ -1457,6 +1716,7 @@ void load_rex_flash(void)
 		/* Now update the VirtualT version if needed */
 		patch_vt_version(gRexFlash.pFlash, ROMSIZE);
 	}
+  (void) (readlen);
 }
 
 /*
@@ -1494,7 +1754,48 @@ void load_rex2_ram(void)
 		/* Close the file */
 		fclose(fd);
 	}
+  (void) (readlen);
 }
+
+/*
+========================================================================
+load_rexc_ram:	This routine loads the RexC emulation RAM from the 
+				RexC RAM file.
+				added SA
+========================================================================
+*/					
+void load_rexc_ram(void)
+{
+	FILE	*fd;
+	int		size;
+	int		readlen;
+
+	/* Open RexC RAM file */
+	fd = fopen(mem_setup.rexc_ram_file, "rb+");
+
+	/* Print error if unable to open the file */
+	if (fd == NULL)
+	{
+		char  msg[100];
+		sprintf(msg, "Could not open REXCPM RAM file %s", mem_setup.rexc_ram_file);
+		show_error(msg);
+		return;
+	}
+
+	/* Check if file opened successfully */
+	if (fd != 0)
+	{
+		size = 4 * 1024 * 1024;		/* Copy 4MB of RAM */
+
+		/* Read RexC RAM */
+		readlen = fread(gRexCRam, 1, size, fd);
+
+		/* Close the file */
+		fclose(fd);
+	}
+  (void) (readlen);
+}
+
 
 /*
 ========================================================================
@@ -1518,13 +1819,14 @@ void load_ram(void)
 	int				readlen;
 
 	/* Check if ReMem emulation enabled or Base Memory emulation */
-	if (gReMem & !gRex)
+	if (gReMem & !gRex )
 	{
 		/* In ReMem mode - load RAM */
 		load_remem_ram();		/* Call routine to load ReMem */
 		remem_copy_normal_to_system();
 	}
-	else
+		
+	else if (gRex != REXC)
 	{
         /* Zero the base memory */
 		for (x = 0; x < 64; x++)
@@ -1628,13 +1930,26 @@ void load_ram(void)
 	Load Rex Flash and RAM if enabled
 	===========================================
 	*/
-	if (gRex)
+	if (gRex & (gRex != REXC))
 	{
 		/* Load Rex Flash and RAM if needed */
 		load_rex_flash();
 		if (gRex == REX2)
 			load_rex2_ram();
 	}
+	
+	/*
+	===========================================
+	Load REXCPM RAM if enabled	// added SA 
+	===========================================
+	*/
+	if (gRex && (gRex == REXC))
+	{
+		/* Load RexCPM RAM if needed */
+		load_rexc_ram();
+
+	}
+  (void) (readlen);
 }
 
 /*
@@ -1718,7 +2033,7 @@ void patch_vt_version(char* pMem, int size)
 
 /*
 =============================================================================
-load_opt_rom:  This function loads option ROMS as specified by user settings.
+load_sys_rom:  This function loads option ROMS as specified by user settings.
 =============================================================================
 */
 void load_sys_rom(void)
@@ -1779,6 +2094,7 @@ void load_sys_rom(void)
 
 	/* Copy ROM into system memory */
 	memcpy(gBaseMemory, gSysROM, ROMSIZE);
+  (void) (readlen);
 }
 /*
 =============================================================================
@@ -1816,7 +2132,7 @@ void load_opt_rom(void)
 		for (c = 0; c < len; c++)
 			gOptROM[c] = buf[c];
 
-		if (gReMem)
+		if (gReMem && !gRex)		//changed SA)
 		{
 			if (gModel == MODEL_T200)
 				for (c = 0; c < len; c++)
@@ -1825,7 +2141,11 @@ void load_opt_rom(void)
 				for (c = 0; c < len; c++)
 					gReMemFlash1.pFlash[0x8000 + c] = buf[c];
 		}
-
+		else if (gRex == REXC)
+		{
+			for (c = 0; c < 32768; c++)
+			gRexCRam [0x8000 + c] = gOptROM[c];
+		}
 	}
 	else
 	{
@@ -1837,7 +2157,7 @@ void load_opt_rom(void)
 			fclose(fd);
 		}	
 
-		if (gReMem)
+		if (gReMem && !gRex)		//changed SA
 		{
 			if (gModel == MODEL_T200)
 				for (c = 0; c < OPTROMSIZE; c++)
@@ -1846,7 +2166,13 @@ void load_opt_rom(void)
 				for (c = 0; c < OPTROMSIZE; c++)
 					gReMemFlash1.pFlash[0x8000 + c] = gOptROM[c];
 		}
+		else if (gRex == REXC)
+		{
+			for (c = 0; c < 32768; c++)
+			gRexCRam [0x8000 + c] = gOptROM[c];
+		}
 	}
+  (void) (readlen);
 }
 
 /*
@@ -1861,9 +2187,10 @@ void set_ram_bank(unsigned char bank)
     char    sbank[10];
 	int		block;
 
-	if (!(gReMem && !gRex))
+//	if (!(gReMem && !gRex))
+	if (!gReMem || (gRex && (gRex != REXC)))
 	{
-		/* Deal with Non-Remem Banks */
+		/* Deal with Non-Remem Banks , excluding case where REXC is installed */  
 		switch (gModel)
 		{
         case MODEL_M100:    /* Moel 100 QUAD support */
@@ -1886,7 +2213,7 @@ void set_ram_bank(unsigned char bank)
             break;
 		}
 	}
-	else
+	else if (gReMem)
 	{
 		/* Deal with ReMem emulation mode */
 		if (gModel == MODEL_T200)
@@ -1957,91 +2284,119 @@ set_rom_bank:	This function sets the current ROM bank for all models.  It
 */
 void set_rom_bank(unsigned char bank)
 {
-	int		block, blocks;
+	int		block, blocks, x;
 
 	if (!(gReMem && !gRex))
 	{
-		/* Deal with non-ReMem emulation */
-		switch (gModel)
+		if (gRex == REXC)
 		{
-		case MODEL_M100:	/* Model 100 / 102 emulation */
-		case MODEL_M102:
-		case MODEL_KC85:
-			// Default ROM size
-			gRomSize = 32768;
-
-			// Save any writes to OptROM space
-			if ((gOptRomRW) && (gRomBank == 1))
-				memcpy(gOptROM, gBaseMemory, ROMSIZE);
-
-			// Update ROM bank
-			gRomBank = bank;
-			if (bank & 0x01) 
+				// Default ROM size
+				gRomSize = 32768;
+	
+				// Save any writes to OptROM space
+				if ((gOptRomRW) && (gRomBank == 1))
+					for (x = 0; x < 0x08000; x++)		// copy 32k
+						gRexCRam[gRexCOSector<<15 | x] = gBaseMemory[x];
+	
+				// Update ROM bank
+				gRomBank = bank;
+				if (bank & 0x01) 
+				{
+					memcpy(gBaseMemory,gOptROM,ROMSIZE);
+					for (x = 0; x < 0x08000; x++)		// copy 32k
+					{
+						gBaseMemory[x] = gRexCRam[gRexCOSector<<15 | x];
+					}	
+					gRomSize = gOptRomRW ? 0 : 32768;				
+				}	
+				else 
+					memcpy(gBaseMemory,gSysROM,ROMSIZE);
+		
+		}
+		else
+		{
+			/* Deal with non-ReMem emulation */
+			switch (gModel)
 			{
-				memcpy(gBaseMemory,gOptROM,ROMSIZE);
-				gRomSize = gOptRomRW ? 0 : 32768;				
-			}	
-			else 
-				memcpy(gBaseMemory,gSysROM,ROMSIZE);
-			break;
-
-		case MODEL_T200:	/* Model 200 emulation */
-			// Default ROM size
-			gRomSize = 40960;
-
-			// Save any writes to OptROM space
-			if ((gOptRomRW) && (gRomBank == 2))
-				memcpy(gOptROM, gBaseMemory, OPTROMSIZE);
-
-			// Save ROM bank
-			gRomBank = bank;
-
-			switch (bank) {
-			case 0:
-				memcpy(gBaseMemory,gSysROM,ROMSIZE);
+			case MODEL_M100:	/* Model 100 / 102 emulation */
+			case MODEL_M102:
+			case MODEL_KC85:
+				// Default ROM size
+				gRomSize = 32768;
+	
+				// Save any writes to OptROM space
+				if ((gOptRomRW) && (gRomBank == 1))
+					memcpy(gOptROM, gBaseMemory, ROMSIZE);
+	
+				// Update ROM bank
+				gRomBank = bank;
+				if (bank & 0x01) 
+				{
+					memcpy(gBaseMemory,gOptROM,ROMSIZE);
+					gRomSize = gOptRomRW ? 0 : 32768;				
+				}	
+				else 
+					memcpy(gBaseMemory,gSysROM,ROMSIZE);
 				break;
-			case 1:
-				memcpy(gBaseMemory, gMsplanROM, sizeof(gMsplanROM));
+	
+			case MODEL_T200:	/* Model 200 emulation */
+				// Default ROM size
+				gRomSize = 40960;
+	
+				// Save any writes to OptROM space
+				if ((gOptRomRW) && (gRomBank == 2))
+					memcpy(gOptROM, gBaseMemory, OPTROMSIZE);
+	
+				// Save ROM bank
+				gRomBank = bank;
+	
+				switch (bank) {
+				case 0:
+					memcpy(gBaseMemory,gSysROM,ROMSIZE);
+					break;
+				case 1:
+					memcpy(gBaseMemory, gMsplanROM, sizeof(gMsplanROM));
+					break;
+				case 2:
+					memcpy(gBaseMemory,gOptROM,sizeof(gOptROM));
+					gRomSize = gOptRomRW ? 0 : 40960;
+					break;
+				}
 				break;
-			case 2:
-				memcpy(gBaseMemory,gOptROM,sizeof(gOptROM));
-				gRomSize = gOptRomRW ? 0 : 40960;
+	
+			case MODEL_PC8201:	/* NEC laptops */
+			case MODEL_PC8300:
+				// Default ROM size
+				gRomSize = 32768;
+	
+				// Save any writes to OptROM space
+				if ((gOptRomRW) && (gRomBank == 2))
+					memcpy(gOptROM, gBaseMemory, ROMSIZE);
+	
+				// Save ROM bank
+				gRomBank = bank;	/* Update global ROM bank var */
+	
+				switch (bank)
+				{
+				case 0:			/* System ROM bank */
+					if (gModel == MODEL_PC8201)
+						memcpy(gBaseMemory, gSysROM, ROMSIZE);
+					else
+						memcpy(gBaseMemory, &gSysROM[gRom0Bank*32768], ROMSIZE);
+					break;
+	
+				case 1:			/* Option ROM bank */
+					memcpy(gBaseMemory,gOptROM,ROMSIZE);
+					gRomSize = gOptRomRW ? 0 : 32768;
+					break;
+	
+				case 2:			/* RAM banks */
+				case 3:
+					memcpy(gBaseMemory,&rambanks[(bank-1)*RAMSIZE],RAMSIZE);
+					break;
+				}
 				break;
 			}
-			break;
-
-		case MODEL_PC8201:	/* NEC laptops */
-		case MODEL_PC8300:
-			// Default ROM size
-			gRomSize = 32768;
-
-			// Save any writes to OptROM space
-			if ((gOptRomRW) && (gRomBank == 2))
-				memcpy(gOptROM, gBaseMemory, ROMSIZE);
-
-			// Save ROM bank
-			gRomBank = bank;	/* Update global ROM bank var */
-
-			switch (bank)
-			{
-			case 0:			/* System ROM bank */
-				if (gModel == MODEL_PC8201)
-					memcpy(gBaseMemory, gSysROM, ROMSIZE);
-				else
-					memcpy(gBaseMemory, &gSysROM[gRom0Bank*32768], ROMSIZE);
-				break;
-
-			case 1:			/* Option ROM bank */
-				memcpy(gBaseMemory,gOptROM,ROMSIZE);
-				gRomSize = gOptRomRW ? 0 : 32768;
-				break;
-
-			case 2:			/* RAM banks */
-			case 3:
-				memcpy(gBaseMemory,&rambanks[(bank-1)*RAMSIZE],RAMSIZE);
-				break;
-			}
-			break;
 		}
 	}
 	else
@@ -3109,6 +3464,8 @@ void remem_flash_proc_timer(void)
 		gReMemFlashReady = TRUE;
 }
 
+
+
 /*
 =============================================================================
 rex_read:	This routine processes reads during REX emulation mode.
@@ -3126,185 +3483,450 @@ unsigned char rex_read(unsigned short address)
 		if (address & 0x8000)
 			return (address>ROMSIZE&&address<RAMBOTTOM)? 0xFF : gBaseMemory[address];
 	}
-
+	
 	// If the RexFlash is busy, we need to process the timer
 	if (gRexFlash.iFlashTime > 0)
 		amd_flash_proc_timer(&gRexFlash);
+	
 
 	// Process read as a REX State machine read
 	switch (gRexState)
 	{
 	case 7:				/* Read State */
-		if ((address & 0xFF) == gRexKeyTable[gRexKeyState])
+		if ( (readcounter != lastreadcounter))
+		 // proceeed only if valid read
 		{
-			if (++gRexKeyState == 6)
-			{
-				/* Key sequence detected - switch to state zero */
-				gRexState = 0;
+			optromcounter = ((optromcounter +1) & 0xFF);  // a valid optrom read occured
+			
+			if ( ((address & 0xFF) == gRexKeyTable[gRexKeyState]) && (optromcounter == (gRexKeyState+1) ) )
+			{  // advance only if valid sequential optrom read occured
+				readcounterclear = 0;
+
+				if (++gRexKeyState == 6)
+				{
+					/* Key sequence detected - switch to state zero */
+					gRexState = 0;
+					gRexKeyState = 0;	/* ensure key state is set to 0 here  SA*/
+				}
 			}
+			else
+			{
+				/* Key state not detected - clear keystate */
+				gRexKeyState =  0;
+				readcounterclear = 1;
+
+			}
+				
 		}
-		else
-			/* Key state not detected - clear keystate */
-			gRexKeyState =  0;
 		return gRexFlash.pFlash[gRexSector | address];
 
 	case 0:				/* Command mode */
-		switch (address & 0x07)
+		if (readcounter != lastreadcounter)  // process in state machine only if valid read
 		{
-		case 3:		/* Read Status CMD */
-			gRexReturn =(gRexFlash.iFlashBusy ? 0 : 0x80) |
-						(gRexFlashSel ? 0x40 : 0) |
-						(gRexSector >> 15);
-			gRexState = address & 0x07;
-			return gRexReturn;
-
-		case 2:		/* Send AAA,AA CMD */
-		case 5:		/* Send 555,55 CMD */
-		case 6:		/* Send PA, PD */
-			/* For REX2 (PC8201), the state machine had to change because of no ALE.
-			   In this case, we transition to state 2 to await the data, then to state
-			   6 to await the address. */
-			if (gModel == MODEL_PC8201)
+			switch (address & 0x07)
 			{
-				// Go to state 2
-				gRexState = 2;
-				gRex3Cmd = address & 0x07;
+			case 3:		/* Read Status CMD */
+				gRexReturn =(gRexFlash.iFlashBusy ? 0 : 0x80) |
+							(gRexFlashSel ? 0x40 : 0) |
+							(gRexSector >> 15);
+				gRexState = address & 0x07;
+				return gRexReturn;
+	
+			case 2:		/* Send AAA,AA CMD */
+			case 5:		/* Send 555,55 CMD */
+			case 6:		/* Send PA, PD */
+				/* For REXS or REX3 (PC8201), the state machine had to change because of no ALE.
+				   In this case, we transition to state 2 to await the data, then to state
+				   6 to await the address. */
+				if ( (gModel == MODEL_PC8201) || (gRex == REXS) )
+				{
+					// Go to state 2
+					gRexState = 2;
+					gRex3Cmd = address & 0x07;
+					break;
+				}
+	
+				// Fall through
+	
+			case 1:		/* Set Sector CMD */
+			case 4:		/* Read from flash */
+				gRexState = address & 0x07;
+				gRexFlashPA = address & 0xFF;
+				break;
+	
+			case 7:		/* Read FW/HW ID */
+				gRexReturn = (gRex == REX2 ? 0x40 : 0) |
+							 (0x10) | gRexModel;
+				gRexState = 3;
+				return gRexReturn;
+	
+			default:
+				readcounterclear = 1;
+				gRexState = 7;
+
 				break;
 			}
-
-			// Fall through
-
-		case 1:		/* Set Sector CMD */
-		case 4:		/* Read from flash */
-			gRexState = address & 0x07;
-			gRexFlashPA = address & 0xFF;
-			break;
-
-		case 7:		/* Read FW/HW ID */
-			gRexReturn = (gRex == REX2 ? 0x40 : 0) |
-						 (0x10) | gRexModel;
-			gRexState = 3;
-			return gRexReturn;
-
-		default:
-			gRexState = 7;
-			break;
 		}
 		break;
 
 	case 1:		/* Set Sector state */
-		/* Test if RAM mode is enabled and set sector based on result */
-//		if (gModel && REX2_RAM_MODE)
-//			gRexSector = (address & 0x3F) << 15;
-//		else
-			gRexSector = (address & 0x1F) << 15;
-
-		/* Save Flash Select bit */
-		gRexFlashSel = address & 0x40 ? 0 : 1;
-
-		/* Back to state 0 for next command */
-		gRexState = 0;
+		if (readcounter != lastreadcounter)  // process in state machine only if valid read
+		{
+			/* Test if RAM mode is enabled and set sector based on result */
+	//		if (gModel && REX2_RAM_MODE)
+	//			gRexSector = (address & 0x3F) << 15;
+	//		else
+				gRexSector = (address & 0x1F) << 15;
+	
+			/* Save Flash Select bit when NOT REXS */ 
+	//		if (gRex <> REXS)
+				gRexFlashSel = address & 0x40 ? 0 : 1;
+	
+			/* Back to state 0 for next command */
+			gRexState = 0;
+		}
 		break;
 
 	case 2:		/* Send AAA, AD to Flash */
-		if (gModel == MODEL_PC8201)
+		if (readcounter != lastreadcounter)  // process in state machine only if valid read
 		{
-			/* For REX3 (PC8201), we save the write data during state 2, then go to 
-			   state 6 to await the address */
-			gRex3Data = address & 0xFF;
-			gRexState = 6;
-		}
-		else
-		{
-			/* Write to the REX Flash object.  LSB of address is actually data */
-			amd_flash_write(&gRexFlash, gRexSector | gRexFlashPA, address & 0xFF);
-
-			/* Back to state 0 for next command */
-			gRexState = 0;
+			if ( (gModel == MODEL_PC8201) || (gRex == REXS) )
+			{
+				/* For REXS or REX3 (PC8201), we save the write data during state 2, then go to 
+				   state 6 to await the address */
+				gRex3Data = address & 0xFF;
+				gRexState = 6;
+							
+			}
+			else
+			{
+				/* Write to the REX Flash object.  LSB of address is actually data */
+				amd_flash_write(&gRexFlash, gRexSector | gRexFlashPA, address & 0xFF);
+	
+				/* Back to state 0 for next command */
+				gRexState = 0;
+			}
 		}
 		break;
 
 	case 3:
-		/* Switch back to state 0 */
-		gRexState = 0;
-		return gRexReturn;
+		if (readcounter != lastreadcounter)  // process in state machine only if valid read
+		{
+			/* Switch back to state 0 */
+			gRexState = 0;
+			return gRexReturn;
+		}
+		break;
 
 	case 4:		/* Read from flash */
-		/* Test if reading from RAM sector */
-		gRexState = 8;		/* Holding state */
-
-		/* Read from either RAM for Flash */
-		if  (gRexSector & 0x100000)
+		if (readcounter != lastreadcounter)  // process in state machine only if valid read
 		{
-			/* Read from RAM if REX2 */
-			if (gRex == REX2)
-				gRexReturn = gRex2Ram[(gRexSector & 0x18000) | (address & 0x7FFF)];
+			/* Test if reading from RAM sector */
+			gRexState = 8;		/* Holding state */
+	
+			/* Read from either RAM for Flash */
+			if  (gRexSector & 0x100000)
+			{
+				/* Read from RAM if REX2 */
+				if (gRex == REX2)
+					gRexReturn = gRex2Ram[(gRexSector & 0x18000) | (address & 0x7FFF)];
+				else
+					gRexReturn = 0xFF;
+			}
 			else
-				gRexReturn = 0xFF;
+			{
+				/* Read from Flash if enabled */
+				if (gRexFlashSel)
+					gRexReturn = gRexFlash.pFlash[gRexSector | (address & 0x7FFF)];
+				else
+					gRexReturn = 0xFF;
+			}
+			return gRexReturn;
 		}
-		else
-		{
-			/* Read from Flash if enabled */
-			if (gRexFlashSel)
-				gRexReturn = gRexFlash.pFlash[gRexSector | (address & 0x7FFF)];
-			else
-				gRexReturn = 0xFF;
-		}
-		return gRexReturn;
+		break;	
 
 	case 8:		/* Temp holding state for state 4 */
-		gRexState = 0;		/* Back to state 0 */
-		return gRexReturn;
+		if (readcounter != lastreadcounter)  // process in state machine only if valid read
+		{
+			gRexState = 0;		/* Back to state 0 */
+			return gRexReturn;
+		}
+		break;
 
 	case 5:		/* Send 555,data to flash */
-		gRexState = 0;		/* Back to state 0 */
-
-		/* Send 555,data to flash */
-		amd_flash_write(&gRexFlash, 0x55, 0x55);
-
+		if (readcounter != lastreadcounter)  // process in state machine only if valid read
+		{
+			gRexState = 0;		/* Back to state 0 */
+	
+			/* Send 555,data to flash */
+			amd_flash_write(&gRexFlash, 0x55, 0x55);
+		}
 		break;
 
 	case 6:		/* Send PA,PD to flash, first we receive PA */
-		/* Test for REX3 (PC8201) */
-		if (gModel == MODEL_PC8201)
+		if (readcounter != lastreadcounter)  // process in state machine only if valid read
 		{
-			/* For REX3, we perform the write during state 6 */
-			switch (gRex3Cmd)
-			{
-				case 2:
-					gRexFlashPA = gRexSector | (address & 0xFF);
-					break;
-				case 5:
-					gRexFlashPA = address & 0xFF;
-					break;
-				case 6:
-					gRexFlashPA = gRexSector | (address & 0x7FFF);
-					break;
-				default:
-					gRexFlashPA = 0;
-					break;
+			/* Test for REXS or REX3 (PC8201) */
+			if ( (gModel == MODEL_PC8201) || (gRex == REXS) )
+			{		
+	//					gRexFlashPA = gRexSector | (address & 0x7FFF);	
+				/* For REXS or REX3, we perform the write during state 6 */
+				switch (gRex3Cmd)
+				{
+					case 2:
+						gRexFlashPA = gRexSector | (address & 0xFF);
+						break;
+					case 5:
+						gRexFlashPA = gRexSector | (address & 0xFF);  // SA						
+					//	gRexFlashPA = address & 0xFF;
+						break;
+					case 6:
+						gRexFlashPA = gRexSector | (address & 0x7FFF);
+						break;
+					default:
+						gRexFlashPA = 0;
+						break;
+				}
+				/* Write to the REX Flash object.  LSB of address is actually data */
+				amd_flash_write(&gRexFlash, gRexFlashPA, gRex3Data);
+	
+				/* Back to state 0 for next command */
+				gRexState = 0;
 			}
-
-			/* Write to the REX Flash object.  LSB of address is actually data */
-			amd_flash_write(&gRexFlash, gRexFlashPA, gRex3Data);
-
-			/* Back to state 0 for next command */
-			gRexState = 0;
+			else
+			{
+				/* Save the address from this read as our Flash PA */
+				gRexFlashPA = address & 0x7FFF;
+	
+				/* Go to State 2 to await the data */
+				gRexState = 2;
+			}
 		}
-		else
-		{
-			/* Save the address from this read as our Flash PA */
-			gRexFlashPA = address & 0x7FFF;
-
-			/* Go to State 2 to await the data */
-			gRexState = 2;
-		}
-
 		break;
 	}
-	return (unsigned char) (address & 0xFF);
+	return (unsigned char) (0xFF); //(address & 0xFF);
 }
 
+
+
+/*
+=============================================================================
+rexC_read:	This routine processes reads during REXC emulation mode.
+S. Adolph
+=============================================================================
+*/
+unsigned char rexC_read(unsigned short address)
+{
+	gRexCKey = gRexCKeyTable[gRexCKeyState];
+	gRexCKeyAddr = (address>>8)&0xFF ;
+	
+	/* Reads from primary ROM are processed as usual */
+	if (address < 0x8000)
+	{
+		if ((gRomBank == 0))
+			// return main ROM memory contents
+			return gBaseMemory[address];
+		else
+			return gRexCRam[ gRexCOSector <<15 | (address&0x7FFF)];	// OPTROM
+	}
+	else
+	{
+		// otherwise REXCPM is returning a RAM value based on register contents and state machine
+		// Process the read as a REXC State machine read		
+		switch (gRexCState)
+		{
+		case 15:				/* Default power up, Read State.. counter should be static at 1 */
+			if (readcounter == ((lastreadcounter+1) & 0xFF) )  // process in state machine only if valid read
+			{
+				if (((address>>8) & 0xFF) == gRexCKeyTable[gRexCKeyState])
+				{
+					gRexCState = 14;
+					gRexCKeyState = 1;
+					readcounterclear = 0;
+				}
+				else
+				{
+					gRexCState = 15;
+					gRexCKeyState = 0;
+					readcounterclear = 1;
+				}	
+			}		
+			if ( (address&0xC000) == 0xC000 )
+				return gRexCRam[ gRexCRUSector<<14 | (address&0x3FFF)];	// Upper RAM
+			else
+				return gRexCRam[ gRexCRLSector<<14 | (address&0x3FFF)];	// Lower RAM	
+			break;		
+		case 14:
+		case 13:
+		case 12:
+		case 11:
+		case 10:				/* Read State */
+			if (readcounter == ((lastreadcounter+1) & 0xFF) ) // process in state machine only if valid read
+			{
+				if (readcounter < ( (gRexCKeyState*4) +1  ) )
+				{
+				}
+				else if (readcounter > ( (gRexCKeyState*4) +1  ) ) 
+				{
+					gRexCState = 15;
+					gRexCKeyState = 0;
+					readcounterclear = 1;
+				}
+				else   // check for key
+				{
+					if (((address>>8) & 0xFF) == gRexCKeyTable[gRexCKeyState])
+					{
+						if (gRexCState == 10)
+							gRexCState = 0;
+						else
+							--gRexCState;	
+							++gRexCKeyState;
+					}
+					else
+					{
+						gRexCState = 15;
+						gRexCKeyState = 0;
+						readcounterclear = 1;
+					}
+				}
+			}
+			if ( (address&0xC000) == 0xC000 )
+				return gRexCRam[ gRexCRUSector<<14 | (address&0x3FFF)];	// Upper RAM
+			else
+				return gRexCRam[ gRexCRLSector<<14 | (address&0x3FFF)];	// Lower RAM
+			break;				 
+		case 0:				/* Command state, read registers or write register content */
+							/* enter on readcount = 21, execute on readcount = 23 */
+			readcounterclear = 0;
+			gRexCKeyState = 0;
+			if (readcounter == ((lastreadcounter+1) & 0xFF) )  // process in state machine only if valid read
+			{
+				if (readcounter < 23)
+				{
+				}
+				else if (readcounter > 24)
+					gRexCState = 15;				// jump out and search for keys again
+				else								// (readcounter == 23) 
+				{
+					gRexCState = 1;	
+					if (((address & 0x07000)>>12) == 1)	
+						gRexCOSector = ((address & 0x0F00)>>5);		// set upper 4 bits of OPTROM register
+					else if (((address & 0x07000)>>12) == 2)
+						gRexCRLSector = ((address & 0x0F00)>>4);	// set upper 4 bits of lower RAM register
+					else if (((address & 0x07000)>>12) == 3)
+						gRexCRUSector = ((address & 0x0F00)>>4);	// set upper 4 bits of upper RAM register
+				}
+			}
+			if ( (address&0xC000) == 0xC000 )
+				return gRexCRam[ gRexCRUSector<<14 | (address&0x3FFF)];	// Upper RAM
+			else
+				return gRexCRam[ gRexCRLSector<<14 | (address&0x3FFF)];	// Lower RAM
+			break;	
+			
+		case 1:					/* Command state,  read registers or write register content */
+								/* enter on readcount = 23, execute on readcount = 26 */
+
+			if (readcounter != ((lastreadcounter+1) & 0xFF) ) // return these returns if not valid read
+			{
+				if ( (address&0xC000) == 0xC000 )
+					return gRexCRam[ gRexCRUSector<<14 | (address&0x3FFF)];	// Upper RAM
+				else
+					return gRexCRam[ gRexCRLSector<<14 | (address&0x3FFF)];	// Lower RAM			
+			}
+			readcounterclear = 0;
+			gRexCKeyState = 0;
+			if (readcounter < 26)
+			{
+				if ( (address&0xC000) == 0xC000 )
+					return gRexCRam[ gRexCRUSector<<14 | (address&0x3FFF)];	// Upper RAM
+				else
+					return gRexCRam[ gRexCRLSector<<14 | (address&0x3FFF)];	// Lower RAM
+			}
+			else if (readcounter > 26)
+			{
+				gRexCState = 15;	
+				if ( (address&0xC000) == 0xC000 )
+					return gRexCRam[ gRexCRUSector<<14 | (address&0x3FFF)];	// Upper RAM
+				else
+					return gRexCRam[ gRexCRLSector<<14 | (address&0x3FFF)];	// Lower RAM	
+			}		
+			else						// (readcounter == 26) 
+			{
+				gRexCState = 15;	
+				if (((address & 0x07000)>>12) == 0)
+				{											//	gRexCState = 8;	
+					gRexCWP = ((address & 0x0100)>>8);	
+					return gRexCWP;
+				}
+				else if (((address & 0x07000)>>12) == 1)
+				{												// set lower 3 bits of OPTROM register RexCState = 5;	
+					gRexCOSector = gRexCOSector + ((address & 0x0E00)>>9);
+					return (gRexCOSector<<1);									
+				}	
+				else if (((address & 0x07000)>>12) == 2)
+				{											// set lower 4 bits of lower RAM register gRexCState = 6;
+					gRexCRLSector = gRexCRLSector + ((address & 0x0F00)>>8);;				
+					return gRexCRLSector;	
+				}	
+				else if (((address & 0x07000)>>12) == 3)
+				{				// set lower 4 bits of upper RAM register  gRexCState = 7;	
+					gRexCRUSector = gRexCRUSector + ((address & 0x0F00)>>8);
+					return gRexCRUSector;	
+				}	
+				else if (((address & 0x07000)>>12) == 4)  //	gRexCState = 4;
+					return gRexCModel;						
+				else if (((address & 0x07000)>>12) == 5)  //	gRexCState = 5;	
+					return (gRexCOSector<<1);							
+				else if (((address & 0x07000)>>12) == 6)  //	gRexCState = 6;	
+					return gRexCRLSector;							
+				else if (((address & 0x07000)>>12) == 7)  //	gRexCState = 7;	
+					return gRexCRUSector;							
+				else
+					return gRexCModel;
+			}
+			break;						
+		}
+	}
+}
+
+/*
+=============================================================================
+rexC_set8:	This routine processes writes during REXC emulation mode.
+S. Adolph
+=============================================================================
+*/
+void rexC_set8(unsigned short address, unsigned char val)
+{
+	/* writes are allowed to OPTROM and RAM in M100 and T102 */
+	/* write protection can be enabled for 16kblocks 8 and above, and block 1 (32k) */
+	/* range for gRexCOSector is 0 to 127 (4MB) */
+	/* range for gRexCRUSector is 0 to 255 (4MB) */
+
+	if ((address < 32768) && (gRomBank == 1))
+	{
+		if ( ( (gRexCWP) && ((gRexCOSector < 4) && (gRexCOSector != 1))) || (!gRexCWP)  ) // 32k basis
+		{
+			gRexCRam[ gRexCOSector<<15  | (address&0x7FFF)] = val;	// OPTROM
+		}
+	}
+	else if ((address >= 49152))
+	{
+		if ( ( (gRexCWP) && ((gRexCRUSector < 8) && (gRexCRUSector != 2) && (gRexCRUSector != 3))) || (!gRexCWP)  ) 
+		{
+			gRexCRam[ gRexCRUSector<<14  | (address&0x3FFF)] = val;	// Upper RAM  // 16k basis
+		}
+	}
+	else if ((address >= 32768) && (address < 49152))
+	{
+		if ( ( (gRexCWP) && ((gRexCRLSector < 8) && (gRexCRLSector != 2)&& (gRexCRLSector != 3))) || (!gRexCWP)  ) 
+		{
+			gRexCRam[ gRexCRLSector<<14  | (address&0x3FFF)] = val;	// Lower RAM // 16k basis	
+		}
+	}
+}
+
+//		if ( (gRexCWP!=1) || ( (gRexCWP==1) && ((gRexCRLSector==0) || (gRexCRLSector==1) || (gRexCRLSector==4) || (gRexCRLSector==5) || (gRexCRLSector==6) ||(gRexCRLSector== 7) )))
+//		if ( (gRexCWP!=1) || ( (gRexCWP==1) && ((gRexCRUSector==0) || (gRexCRUSector==1) || (gRexCRUSector==4) || (gRexCRUSector==5) || (gRexCRUSector ==6) || (gRexCRUSector== 7) )) )
 /*
 =============================================================================
 rex_set8:	This routine processes writes during REX emulation mode.
@@ -3326,4 +3948,6 @@ void rex_set8(unsigned short address, unsigned char val)
 		}
 	}
 }
+
+// vim: noet sw=4 ts=4
 

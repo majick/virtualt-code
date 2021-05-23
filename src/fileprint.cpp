@@ -56,6 +56,12 @@
 
 extern "C" struct tm* mytime;
 
+extern int gMidnight;
+
+#define COLOR_BG  		(gMidnight ? FL_BLACK : fl_rgb_color(192, 192, 192))
+#define COLOR_BG_INPUT  (gMidnight ? FL_BLACK : FL_WHITE)
+#define COLOR_FG  		(gMidnight ? FL_WHITE : FL_BLACK)
+
 /*
 ================================================================================
 VTFilePrint:	This is the class constructor for the FilePrint Printer.
@@ -305,38 +311,50 @@ void VTFilePrint::BuildPropertyDialog(Fl_Window* pParent)
 {
 	// Create controls for File Output emulaiton mode
 	Fl_Box* o = new Fl_Box(20, 20, 360, 20, "File Output Printer");
+	o->labelcolor(COLOR_FG);
 
 	// File Directory Name
 	o = new Fl_Box(20, 50, 300, 20, "File Output Directory");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	o->labelcolor(COLOR_FG);
 	m_pDirName = new Fl_Input(50, 75, 300, 20, "");
 	m_pDirName->value(m_DirName);
+	m_pDirName->color(COLOR_BG);
+	m_pDirName->textcolor(COLOR_FG);
+	m_pDirName->cursor_color(COLOR_FG);
 
 	// Prompt for filename
 	m_pPrompt = new Fl_Check_Button(20, 110, 200, 20, "Prompt for filename");
 	m_pPrompt->value(m_Prompt);
+	m_pPrompt->labelcolor(COLOR_FG);
 
 	// Pages in separate files
 	m_pSeparateFiles = new Fl_Check_Button(20, 135, 200, 20, "Print pages to separate files");
 	m_pSeparateFiles->value(m_SeparateFiles);
 	m_pSeparateFiles->callback(cb_SeparateFiles, this);
+	m_pSeparateFiles->labelcolor(COLOR_FG);
 
 	// Auto formatted filenames
 	m_pAutoFormat = new Fl_Check_Button(20, 160, 200, 20, "Automatically generate filenames");
 	m_pAutoFormat->value(m_AutoFormat);
+	m_pAutoFormat->labelcolor(COLOR_FG);
 
 	// Filename format string
 	o = new Fl_Box(50, 185, 50, 20, "Format");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 	m_pFormatCode = new Fl_Input(110, 185, 180, 20, "");
 	m_pFormatCode->value(m_FormatCode);
+	m_pFormatCode->color(COLOR_BG);
+	m_pFormatCode->textcolor(COLOR_FG);
+	m_pFormatCode->cursor_color(COLOR_FG);
 	o = new Fl_Box(110, 210, 50, 20, "%d=Date  %s=Seq#  %p=Page#");
 	o->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	o->labelcolor(COLOR_FG);
 
 	// Control code filtering
 	m_pFilterCodes = new Fl_Check_Button(20, 235, 200, 20, "Filter control codes");
 	m_pFilterCodes->value(m_FilterCodes);
-
+	m_pFilterCodes->labelcolor(COLOR_FG);
 }
 
 /*
