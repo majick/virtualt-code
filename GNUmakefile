@@ -129,7 +129,7 @@ else
 	if test -f /Developer/Tools/Rez; then \
 		 g++ $(MACLDFLAGS) $(OBJECTS) $(MACLIBFILES) -o $@ ; \
 	else \
-		  $(CC) -static $(OBJECTS) -L/opt/homebrew/lib  $(LDFLAGS) $(LIBFILES) -o $@ ; \
+		  $(CC) $(OBJECTS) -L/opt/homebrew/lib  $(LDFLAGS) $(LIBFILES) -o $@ ; \
 	fi;
 	cd ..
 
@@ -152,7 +152,7 @@ else
 	if test -f /Developer/Tools/Rez; then \
 		g++ $(MACLDFLAGS) $(CLIENT_OBJS) $(MACLIBFILES) -o $@ ; \
 	else \
-		$(CC) -static $(LDFLAGS) $(CLIENT_OBJS) $(LIBFILES) -o $@ ; \
+		$(CC) $(LDFLAGS) $(CLIENT_OBJS) $(LIBFILES) -o $@ ; \
 	fi
 	cd ..
 endif
