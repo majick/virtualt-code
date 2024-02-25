@@ -125,8 +125,10 @@ int						gNoGUI = 0;
 int						gRemoteSwitchModel = -1;
 
 //Added J. VERNET
+/* removed majick -- we have a header file bro
 char					path[512];
 char					file[512];
+*/
 #ifdef __APPLE__
 char					gOsxBundlePath[512];
 #endif

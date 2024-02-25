@@ -32,7 +32,7 @@ uchar			gSysROM[4*32768];	/* System ROM */
 uchar			gOptROM[32768];		/* Option ROM */
 uchar			gMsplanROM[32768];	/* MSPLAN ROM T200 Only */
 //extern char		path[255];
-extern char		file[255];
+char		file[255];
 
 int				gOptRomRW = 0;		/* Flag to make OptROM R/W */
 unsigned char	rambanks[4*32768];	/* Model T200 & NEC RAM banks */
