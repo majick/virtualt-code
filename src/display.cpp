@@ -607,8 +607,8 @@ void T100_Disp::CalcScreenCoords(void)
 	if (DisplayMode)
 	{
 		// Calculate the Bezel location
-		int		wantedH = 20;
-		int		wantedW = 40;
+		int		wantedH = 0;
+		int		wantedW = 0;
 //		int		topH, bottomH, leftW, rightW;
 		int		bottomSpace;
 		int		rightSpace;
@@ -1890,7 +1890,7 @@ void T100_Disp::draw_static()
 	if (DisplayMode == 1)
 	{
 		// Color for outer border
-		fl_color(m_DetailColor);
+		fl_color(FL_BLACK);
 
 		// Draw border along the top
 		if (m_HasTopChassis)
