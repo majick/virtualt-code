@@ -3546,6 +3546,49 @@ int T100_Disp::MouseMoveInText(int mx, int my)
 	return 1;
 }
 
+/* Unshift keys on OS X to make fltk behavior match Windows/Linux. */
+unsigned int unshiftKey(unsigned int inKey)
+{
+	unsigned int key = inKey;
+	switch (inKey)
+	{
+		case '_':
+			key = '-';
+			break;
+		case '+':
+			key = '=';
+			break;
+		case '{':
+			key = '[';
+			break;
+		case '}':
+			key = ']';
+			break;
+		case '\|':
+			key = '\\';
+			break;
+		case ':':
+			key = ';';
+			break;
+		case '"':
+			key = '\'';
+			break;
+		case '~':
+			key = '`';
+			break;
+		case '<':
+			key = ',';
+			break;
+		case '>':
+			key = '.';
+			break;
+		case '?':
+			key = '/';
+			break;
+	}
+	return key;
+}
+
 /*
 ==========================================================================
 Window handler for all events.
@@ -3769,6 +3812,7 @@ int T100_Disp::handle(int event)
 		// Get the Key that was pressed
 		//key = Fl::event_key();
 		key = event_key();
+		key = unshiftKey(key);
 		switch (key)
 		{
 		case FL_Escape:
@@ -4206,6 +4250,7 @@ int T100_Disp::handle(int event)
 
 		// Get the Key that was pressed
 		key = event_key();
+		key = unshiftKey(key);
 		switch (key)
 		{
 		case FL_Escape:
