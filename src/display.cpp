@@ -4958,7 +4958,7 @@ void T200_Disp::Command(int instruction, uchar data)
 
 	case RAM_BIT_CLR:		/* Clear the bit specified by data at cursaddr */
 		/* First calculate the AND mask */
-		mask = 0xFE << data;
+		mask = ~(0x01 << data);
 
 		/* Draw new data on the LCD */
 		SetByte(cursaddr, 0, m_ram[cursaddr] & mask);
