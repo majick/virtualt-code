@@ -31,7 +31,7 @@
 #ifndef _VIRTUALT_H_
 #define _VIRTUALT_H_
 
-#define VERSION	"1.8"
+#define VERSION	"1.8.1-majick"
 
 enum {
 	 MODEL_M100
